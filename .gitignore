@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/BabaIsYou/v15
+/bin
+/obj
+/packages
+/BabaIsYou.csproj.user
