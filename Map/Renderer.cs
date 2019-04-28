@@ -20,7 +20,7 @@ namespace BabaIsYou.Map {
 			int y = heightPadding / 2;
 			return new Rectangle(x, y, tileWidth, tileHeight);
 		}
-		public static void Render(Grid grid, Graphics g, int totalWidth, int totalHeight, bool showStacked = false) {
+		public static void Render(Grid grid, Graphics g, int totalWidth, int totalHeight, bool showStacked = false, bool showDirections = false) {
 			Rectangle mapBounds = GetBounds(grid, totalWidth, totalHeight);
 			int rowEnd = mapBounds.X + mapBounds.Width * grid.Width;
 			Palette palette = Reader.Palettes[grid.Palette];
@@ -40,6 +40,7 @@ namespace BabaIsYou.Map {
 			}
 
 			int xOrig = mapBounds.X;
+			int yOrig = mapBounds.Y;
 			int size = grid.Cells.Count;
 			for (int i = 0; i < size; i++) {
 				Cell cell = grid.Cells[i];
@@ -55,6 +56,77 @@ namespace BabaIsYou.Map {
 				if (mapBounds.X >= rowEnd) {
 					mapBounds.Y += mapBounds.Height;
 					mapBounds.X = xOrig;
+				}
+			}
+
+			if (showDirections) {
+				mapBounds.X = xOrig;
+				mapBounds.Y = yOrig;
+
+				DrawDirections(g, grid, mapBounds, xOrig, rowEnd);
+			}
+		}
+		private static void DrawDirections(Graphics g, Grid grid, Rectangle bounds, int xOrig, int rowEnd) {
+			int penWidth = bounds.Width / 16;
+			penWidth = penWidth > 0 ? penWidth : 1;
+			int arrowSize = bounds.Width / 9;
+			arrowSize = arrowSize > 0 ? arrowSize : 1;
+			AdjustableArrowCap endCap = new AdjustableArrowCap(arrowSize, arrowSize, true);
+			endCap.WidthScale = 0;
+			int size = grid.Cells.Count;
+			for (int i = 0; i < size; i++) {
+				Cell cell = grid.Cells[i];
+				int items = cell.Objects.Count;
+
+				for (int j = 0; j < items; j++) {
+					Item item = cell.Objects[j];
+					if (item.ID == 0) { continue; }
+
+					Color penColor;
+					if (items - j == 1) {
+						penColor = Color.Red;
+					} else if (items - j == 2) {
+						penColor = Color.Orange;
+					} else if (items - j == 3) {
+						penColor = Color.Blue;
+					} else if (items - j == 4) {
+						penColor = Color.Gray;
+					} else {
+						penColor = Color.Teal;
+					}
+					using (Pen pen = new Pen(penColor, penWidth)) {
+						int endX = 0;
+						int endY = 0;
+
+						switch ((Direction)item.Direction) {
+							case Direction.Right:
+								endX = bounds.X + bounds.Width - 1;
+								endY = bounds.Y + bounds.Height / 2;
+								break;
+							case Direction.Up:
+								endX = bounds.X + bounds.Width / 2;
+								endY = bounds.Y;
+								break;
+							case Direction.Left:
+								endX = bounds.X;
+								endY = bounds.Y + bounds.Height / 2;
+								break;
+							case Direction.Down:
+								endX = bounds.X + bounds.Width / 2;
+								endY = bounds.Y + bounds.Height - 1;
+								break;
+						}
+
+						pen.CustomEndCap = endCap;
+						g.PageUnit = GraphicsUnit.Pixel;
+						g.DrawLine(pen, bounds.X + bounds.Width / 2, bounds.Y + bounds.Height / 2, endX, endY);
+					}
+				}
+
+				bounds.X += bounds.Width;
+				if (bounds.X >= rowEnd) {
+					bounds.Y += bounds.Height;
+					bounds.X = xOrig;
 				}
 			}
 		}

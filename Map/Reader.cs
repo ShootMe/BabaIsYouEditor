@@ -380,6 +380,9 @@ namespace BabaIsYou.Map {
 					case "gate":
 						line.Gate = byte.Parse(pair.Value);
 						break;
+					case "dir":
+						line.Direction = byte.Parse(pair.Value);
+						break;
 					case "requirement":
 						line.Requirement = byte.Parse(pair.Value);
 						break;

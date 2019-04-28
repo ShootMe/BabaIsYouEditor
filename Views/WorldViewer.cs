@@ -436,7 +436,7 @@ namespace BabaIsYou.Views {
 		}
 		private void mapViewer_CellMouseWheel(Grid map, Cell cell, MouseEventArgs e) {
 			Item item = (Item)listObjects.SelectedItem.Value;
-			if (holdingControl) {
+			if (holdingControl || cell.Objects.Count == 0) {
 				ChangeItemDirection(item, e.Delta < 0);
 			} else {
 				Item cellItem = cell.GetItemOfType(item);
@@ -722,8 +722,8 @@ namespace BabaIsYou.Views {
 				browser.IsFolderPicker = true;
 				browser.Title = "Open World";
 				if (GameDirectory.IndexOf(@"Baba Is You\Data\", StringComparison.OrdinalIgnoreCase) > 0) {
-					if (Directory.Exists(Path.Combine(GameDirectory, "Worlds", GameWorld))) {
-						browser.InitialDirectory = Path.Combine(GameDirectory, "Worlds", GameWorld);
+					if (Directory.Exists(Path.Combine(GameDirectory, "Worlds"))) {
+						browser.InitialDirectory = Path.Combine(GameDirectory, "Worlds");
 					} else if (Directory.Exists(GameDirectory)) {
 						browser.InitialDirectory = GameDirectory;
 					}

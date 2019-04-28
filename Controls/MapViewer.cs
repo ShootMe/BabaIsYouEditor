@@ -130,7 +130,7 @@ namespace BabaIsYou.Controls {
 				DrawCurrentCellStart?.Invoke(e.Graphics, currentMap, currentCell, saved);
 			}
 
-			Renderer.Render(currentMap, e.Graphics, Width, Height, ShowStacked);
+			Renderer.Render(currentMap, e.Graphics, Width, Height, ShowStacked, ShowDirections);
 
 			if (saved.X >= 0) {
 				DrawCurrentCellFinish?.Invoke(e.Graphics, currentMap, currentCell, saved);
