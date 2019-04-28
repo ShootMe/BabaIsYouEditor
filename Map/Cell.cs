@@ -52,7 +52,7 @@ namespace BabaIsYou.Map {
 			Item next = null;
 			for (int i = Objects.Count - 1; i >= 0; i--) {
 				Item item = Objects[i];
-				if (!(item is Level) && !(item is Line)) {
+				if (!(item is Level) && !(item is Line) && item.ID != 0) {
 					if (next == null || current == null || item.Layer < current.Layer || (item.Layer == current.Layer && item.ID > current.ID)) {
 						if (next != null || current == null) {
 							return item;

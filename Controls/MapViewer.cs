@@ -39,10 +39,13 @@ namespace BabaIsYou.Controls {
 		public bool ShowStacked { get; set; }
 		[EditorBrowsable(EditorBrowsableState.Never), Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), ReadOnly(true)]
 		public bool ShowDirections { get; set; }
+		[EditorBrowsable(EditorBrowsableState.Never), Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), ReadOnly(true)]
+		public bool AllowEdgePlacement { get; set; }
 		public MapViewer() {
 			DoubleBuffered = true;
 			ShowStacked = false;
 			ShowDirections = false;
+			AllowEdgePlacement = false;
 		}
 
 		private void MapResized(Grid map) {
@@ -59,7 +62,10 @@ namespace BabaIsYou.Controls {
 			if (currentMap == null) { return; }
 
 			Rectangle rectangle = Renderer.GetBounds(currentMap, Width, Height);
-			if (CheckBounds(e.X, e.Y, rectangle.X + rectangle.Width, rectangle.Y + rectangle.Height, rectangle.Width * (currentMap.Width - 2), rectangle.Height * (currentMap.Height - 2))) {
+			int xpos = rectangle.X + (AllowEdgePlacement ? 0 : rectangle.Width);
+			int ypos = rectangle.Y + (AllowEdgePlacement ? 0 : rectangle.Height);
+			int edge = AllowEdgePlacement ? 0 : 2;
+			if (CheckBounds(e.X, e.Y, xpos, ypos, rectangle.Width * (currentMap.Width - edge), rectangle.Height * (currentMap.Height - edge))) {
 				int xOrig = rectangle.X;
 				int size = currentMap.Cells.Count;
 				int rowEnd = rectangle.X + rectangle.Width * currentMap.Width;

@@ -53,7 +53,7 @@ namespace BabaIsYou.Controls {
 		public int SelectedIndex {
 			get { return selectedIndex; }
 			set {
-				int newIndex = Items.Count == 0 ? -1 : value < 0 ? -1 : value > Items.Count ? Items.Count - 1 : value;
+				int newIndex = Items.Count == 0 ? -1 : value < 0 ? -1 : value >= Items.Count ? Items.Count - 1 : value;
 				if (topIndex >= newIndex) {
 					if (newIndex >= 0) {
 						topIndex = newIndex;
@@ -210,7 +210,7 @@ namespace BabaIsYou.Controls {
 					break;
 				case Keys.Right:
 				case Keys.Down:
-					if (SelectedIndex < Items.Count) {
+					if (SelectedIndex + 1 < Items.Count) {
 						SelectedIndex++;
 					}
 					break;

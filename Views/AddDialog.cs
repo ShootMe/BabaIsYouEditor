@@ -41,6 +41,9 @@ namespace BabaIsYou.Views {
 			int left = txtInput.Left;
 			txtInput.Left = lblInput.Right + 6;
 			txtInput.Width = txtInput.Width - txtInput.Left + left;
+			if (!string.IsNullOrEmpty(InputText) && InputText.Length > 0) {
+				txtInput.Select(0, InputText.Length);
+			}
 		}
 	}
 }

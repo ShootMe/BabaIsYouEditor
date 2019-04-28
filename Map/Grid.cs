@@ -117,7 +117,7 @@ namespace BabaIsYou.Map {
 				sb.Append(change.ObjectName).Append(',');
 				tiles.Append(change.Serialize());
 			}
-			sb.Append(tiles.ToString());
+			sb.AppendLine().Append(tiles.ToString());
 
 			return sb.ToString();
 		}
