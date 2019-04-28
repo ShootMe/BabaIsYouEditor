@@ -48,6 +48,7 @@
 			this.menuItemLevelSeperator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.menuItemShowStacked = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuItemShowDirections = new System.Windows.Forms.ToolStripMenuItem();
+			this.menuItemEdgePlacement = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuItemLevelSeperator2 = new System.Windows.Forms.ToolStripSeparator();
 			this.menuItemRevertChanges = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuPalette = new System.Windows.Forms.ToolStripMenuItem();
@@ -62,7 +63,6 @@
 			this.statusSprite = new System.Windows.Forms.ToolStripStatusLabel();
 			this.statusPosition = new System.Windows.Forms.ToolStripStatusLabel();
 			this.imgBaba = new System.Windows.Forms.PictureBox();
-			this.menuItemEdgePlacement = new System.Windows.Forms.ToolStripMenuItem();
 			((System.ComponentModel.ISupportInitialize)(this.splitMain)).BeginInit();
 			this.splitMain.Panel1.SuspendLayout();
 			this.splitMain.Panel2.SuspendLayout();
@@ -148,10 +148,11 @@
 			// 
 			// listObjects
 			// 
+			this.listObjects.BackColor = System.Drawing.Color.Black;
 			this.listObjects.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.listObjects.DrawText = false;
 			this.listObjects.Location = new System.Drawing.Point(0, 0);
-			this.listObjects.MaximumSize = new System.Drawing.Size(864, 180);
+			this.listObjects.MaximumSize = new System.Drawing.Size(864, 999);
 			this.listObjects.Name = "listObjects";
 			this.listObjects.Size = new System.Drawing.Size(864, 180);
 			this.listObjects.TabIndex = 0;
@@ -345,6 +346,15 @@
 			this.menuItemShowDirections.Text = "Show Directions";
 			this.menuItemShowDirections.Click += new System.EventHandler(this.menuItemShowDirections_Click);
 			// 
+			// menuItemEdgePlacement
+			// 
+			this.menuItemEdgePlacement.CheckOnClick = true;
+			this.menuItemEdgePlacement.Name = "menuItemEdgePlacement";
+			this.menuItemEdgePlacement.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.E)));
+			this.menuItemEdgePlacement.Size = new System.Drawing.Size(201, 22);
+			this.menuItemEdgePlacement.Text = "Edge Placement";
+			this.menuItemEdgePlacement.Click += new System.EventHandler(this.menuItemEdgePlacement_Click);
+			// 
 			// menuItemLevelSeperator2
 			// 
 			this.menuItemLevelSeperator2.Name = "menuItemLevelSeperator2";
@@ -449,22 +459,13 @@
 			// 
 			this.imgBaba.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.imgBaba.Image = global::BabaIsYou.Properties.Resources.baba;
-			this.imgBaba.Location = new System.Drawing.Point(0, 24);
+			this.imgBaba.Location = new System.Drawing.Point(0, 0);
 			this.imgBaba.Name = "imgBaba";
-			this.imgBaba.Size = new System.Drawing.Size(1009, 778);
+			this.imgBaba.Size = new System.Drawing.Size(1009, 826);
 			this.imgBaba.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
 			this.imgBaba.TabIndex = 1;
 			this.imgBaba.TabStop = false;
 			this.imgBaba.Visible = false;
-			// 
-			// menuItemEdgePlacement
-			// 
-			this.menuItemEdgePlacement.CheckOnClick = true;
-			this.menuItemEdgePlacement.Name = "menuItemEdgePlacement";
-			this.menuItemEdgePlacement.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.E)));
-			this.menuItemEdgePlacement.Size = new System.Drawing.Size(201, 22);
-			this.menuItemEdgePlacement.Text = "Edge Placement";
-			this.menuItemEdgePlacement.Click += new System.EventHandler(this.menuItemEdgePlacement_Click);
 			// 
 			// WorldViewer
 			// 
@@ -472,10 +473,10 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.Black;
 			this.ClientSize = new System.Drawing.Size(1009, 826);
-			this.Controls.Add(this.imgBaba);
 			this.Controls.Add(this.splitMain);
 			this.Controls.Add(this.status);
 			this.Controls.Add(this.menu);
+			this.Controls.Add(this.imgBaba);
 			this.DoubleBuffered = true;
 			this.KeyPreview = true;
 			this.MainMenuStrip = this.menu;

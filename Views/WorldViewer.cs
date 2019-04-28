@@ -1,7 +1,6 @@
 ﻿using BabaIsYou.Controls;
 using BabaIsYou.Map;
 using Microsoft.Win32;
-using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -327,6 +326,11 @@ namespace BabaIsYou.Views {
 					listObjects.Items.Add(listItem);
 				}
 			}
+			int rowCount = listObjects.Items.Count / 24;
+			if (rowCount * 24 < listObjects.Items.Count) {
+				rowCount++;
+			}
+			splitObjectsLevel.SplitterDistance = SpriteSize * rowCount;
 			listObjects.Items.Sort();
 			listObjects.BackColor = palette.Edge;
 			if (!listObjects.SelectItemWithText(currentText)) {
@@ -716,37 +720,35 @@ namespace BabaIsYou.Views {
 			}
 		}
 		private void menuItemOpenWorld_Click(object sender, EventArgs e) {
-			using (CommonOpenFileDialog browser = new CommonOpenFileDialog()) {
-				browser.IsFolderPicker = true;
-				browser.Title = "Open World";
-				if (GameDirectory.IndexOf(@"Baba Is You\Data\", StringComparison.OrdinalIgnoreCase) > 0) {
-					if (Directory.Exists(Path.Combine(GameDirectory, "Worlds"))) {
-						browser.InitialDirectory = Path.Combine(GameDirectory, "Worlds");
-					} else if (Directory.Exists(GameDirectory)) {
-						browser.InitialDirectory = GameDirectory;
-					}
-				} else if (!string.IsNullOrEmpty(GameDirectory)) {
+			OpenFolderDialog browser = new OpenFolderDialog();
+			browser.Title = "Open World";
+			if (GameDirectory.IndexOf(@"Baba Is You\Data\", StringComparison.OrdinalIgnoreCase) > 0) {
+				if (Directory.Exists(Path.Combine(GameDirectory, "Worlds"))) {
+					browser.InitialDirectory = Path.Combine(GameDirectory, "Worlds");
+				} else if (Directory.Exists(GameDirectory)) {
 					browser.InitialDirectory = GameDirectory;
-				} else {
-					browser.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
 				}
+			} else if (!string.IsNullOrEmpty(GameDirectory)) {
+				browser.InitialDirectory = GameDirectory;
+			} else {
+				browser.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+			}
 
-				if (browser.ShowDialog() == CommonFileDialogResult.Ok && !string.IsNullOrEmpty(browser.FileName)) {
-					string gameDir = browser.FileName;
-					gameDir = gameDir.Replace('/', '\\');
-					int index = gameDir.IndexOf(@"Baba Is You\Data\Worlds\", StringComparison.OrdinalIgnoreCase);
+			if (browser.Show(this.Handle) && !string.IsNullOrEmpty(browser.FileName)) {
+				string gameDir = browser.FileName;
+				gameDir = gameDir.Replace('/', '\\');
+				int index = gameDir.IndexOf(@"Baba Is You\Data\Worlds\", StringComparison.OrdinalIgnoreCase);
+				if (index > 0) {
+					GameDirectory = gameDir.Substring(0, index + 17);
+					GameWorld = gameDir.Substring(index + 24);
+					index = GameWorld.IndexOf('\\');
 					if (index > 0) {
-						GameDirectory = gameDir.Substring(0, index + 17);
-						GameWorld = gameDir.Substring(index + 24);
-						index = GameWorld.IndexOf('\\');
-						if (index > 0) {
-							GameWorld = GameWorld.Substring(0, index);
-						}
-
-						LoadWorld();
-					} else {
-						MessageBox.Show(this, "Invalid directory. Please verify and try again.", "Invalid World", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						GameWorld = GameWorld.Substring(0, index);
 					}
+
+					LoadWorld();
+				} else {
+					MessageBox.Show(this, "Invalid directory. Please verify and try again.", "Invalid World", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				}
 			}
 		}

@@ -18,12 +18,19 @@ namespace BabaIsYou.Map {
 
 			DefaultsByName.Clear();
 			DefaultsByID.Clear();
-			using (StreamReader reader = new StreamReader(Path.Combine(path, "values.lua"))) {
+			int maxID = 0;
+			using (StreamReader reader = new StreamReader(Path.Combine(DataPath, "values.lua"))) {
 				while (!reader.EndOfStream) {
 					string line = reader.ReadLine();
 					if (line.IndexOf("tileslist =", StringComparison.OrdinalIgnoreCase) == 0) {
-						ReadObjects(reader);
+						maxID = ReadObjects(reader);
 					}
+				}
+			}
+			string options = Path.Combine(DataPath, "Worlds", world, "Scripts", "options.lua");
+			if (File.Exists(options)) {
+				using (StreamReader reader = new StreamReader(options)) {
+					ReadExtraObjects(reader, maxID);
 				}
 			}
 
@@ -94,23 +101,70 @@ namespace BabaIsYou.Map {
 			}
 			return spriteName;
 		}
-		private static void ReadObjects(StreamReader reader) {
-			reader.ReadLine();
+		private static int ReadObjects(StreamReader reader) {
+			int maxID = 0;
 			while (!reader.EndOfStream) {
 				string title = reader.ReadLine().Trim();
-				if (title == "}," || title.Length <= 2) {
+				if (title == "}") {
 					break;
 				}
 
+				int index = title.IndexOf('=');
+				if (title.Length < 2 || index < 0) {
+					continue;
+				}
+
 				Item item = new Item();
-				title = title.Substring(0, title.Length - 2);
+				title = title.Substring(0, index).Trim();
+				if (title.IndexOf("object") == 0) {
+					int temp;
+					if (int.TryParse(title.Substring(6), out temp) && temp > maxID) {
+						maxID = temp;
+					}
+				}
 				item.Object = title;
 				item.Name = title;
 
-				reader.ReadLine();
 				while (!reader.EndOfStream) {
 					string obj = reader.ReadLine().Trim();
 					if (obj == "},") {
+						break;
+					}
+
+					index = obj.IndexOf('=');
+					if (index < 0) {
+						continue;
+					}
+
+					string value = obj.Substring(index + 1, obj.Length - index - 2).Trim();
+					obj = obj.Substring(0, index).Trim();
+					SetItemValue(item, obj, value);
+				}
+
+				DefaultsByName.Add(title, item);
+				DefaultsByID.Add(item.ID, item);
+			}
+
+			DefaultsByName.Add(Item.EMPTY.Name, Item.EMPTY);
+			DefaultsByID.Add(Item.EMPTY.ID, Item.EMPTY);
+
+			return maxID;
+		}
+		private static void ReadExtraObjects(StreamReader reader, int maxID) {
+			while (!reader.EndOfStream) {
+				string line = reader.ReadLine().Trim();
+				if (line.IndexOf("mod.tile[\"") != 0) {
+					continue;
+				}
+
+				maxID++;
+				Item item = new Item();
+				item.Object = $"object{maxID}";
+				item.Name = item.Object;
+
+				while (!reader.EndOfStream) {
+					string obj = reader.ReadLine().Trim();
+					if (obj == "}") {
 						break;
 					}
 
@@ -121,46 +175,26 @@ namespace BabaIsYou.Map {
 
 					string value = obj.Substring(index + 1, obj.Length - index - 2).Trim();
 					obj = obj.Substring(0, index).Trim();
-					switch (obj) {
-						case "name":
-							item.Name = value.Substring(1, value.Length - 2);
-							break;
-						case "sprite":
-							item.Sprite = value.Substring(1, value.Length - 2);
-							break;
-						case "sprite_in_root":
-							item.SpriteInRoot = bool.Parse(value);
-							break;
-						case "unittype":
-							item.IsObject = value == "\"object\"";
-							break;
-						case "type":
-							item.Type = byte.Parse(value);
-							break;
-						case "layer":
-							item.Layer = byte.Parse(value);
-							break;
-						case "colour":
-							item.Color = CoordinateToShort(value);
-							break;
-						case "active":
-							item.ActiveColor = CoordinateToShort(value);
-							break;
-						case "tiling":
-							item.Tiling = (byte)short.Parse(value);
-							break;
-						case "tile":
-							item.ID = CoordinateToShort(value);
-							break;
-					}
+					SetItemValue(item, obj, value);
 				}
 
-				DefaultsByName.Add(title, item);
+				DefaultsByName.Add(item.Object, item);
 				DefaultsByID.Add(item.ID, item);
 			}
-
-			DefaultsByName.Add(Item.EMPTY.Name, Item.EMPTY);
-			DefaultsByID.Add(Item.EMPTY.ID, Item.EMPTY);
+		}
+		private static void SetItemValue(Item item, string obj, string value) {
+			switch (obj) {
+				case "name": item.Name = value.Substring(1, value.Length - 2); break;
+				case "sprite": item.Sprite = value.Substring(1, value.Length - 2); break;
+				case "sprite_in_root": item.SpriteInRoot = bool.Parse(value); break;
+				case "unittype": item.IsObject = value == "\"object\""; break;
+				case "type": item.Type = byte.Parse(value); break;
+				case "layer": item.Layer = byte.Parse(value); break;
+				case "colour": item.Color = CoordinateToShort(value); break;
+				case "active": item.ActiveColor = CoordinateToShort(value); break;
+				case "tiling": item.Tiling = (byte)short.Parse(value); break;
+				case "tile": item.ID = CoordinateToShort(value); break;
+			}
 		}
 		public static short CoordinateToShort(string coordinate) {
 			int startIndex = 0;
@@ -191,13 +225,13 @@ namespace BabaIsYou.Map {
 				stream.Read(data, 0, 8);
 				long header = BitConverter.ToInt64(data, 0);
 				if (header != ACHTUNG) {
-					throw new Exception("Invalid map file");
+					throw new Exception($"Invalid map file {grid.FileName}");
 				}
 
 				stream.Read(data, 0, 2);
 				int version = BitConverter.ToInt16(data, 0);
 				if (version < 256 || version > 261) {
-					throw new Exception("Invalid map version");
+					throw new Exception($"Invalid map version in {grid.FileName}");
 				}
 
 				while (stream.Position < stream.Length) {
@@ -255,7 +289,7 @@ namespace BabaIsYou.Map {
 
 			int dataBlocks = stream.ReadByte();
 			if (dataBlocks < 1 && dataBlocks > 2) {
-				throw new Exception("Invalid data block count");
+				throw new Exception($"Invalid data block count in {grid.FileName}");
 			}
 
 			//MAIN
@@ -266,7 +300,7 @@ namespace BabaIsYou.Map {
 			byte[] decompressed = new byte[size * 2];
 			int read = zip.Read(decompressed, 0, size * 2);
 			if (read != size * 2) {
-				throw new Exception("Failed to read layer stream");
+				throw new Exception($"Failed to read layer stream in {grid.FileName}");
 			}
 			stream.Position = nextPosition;
 
@@ -276,7 +310,7 @@ namespace BabaIsYou.Map {
 				short id = BitConverter.ToInt16(decompressed, k);
 				Item item;
 				if (!DefaultsByID.TryGetValue(id, out item)) {
-					throw new Exception($"Failed to find Object with ID {id}");
+					throw new Exception($"Failed to find Object with ID {id} [{Reader.ShortToCoordinate(id)}] in {grid.FileName}");
 				}
 				item = item.Copy();
 				item.Position = (short)j;
@@ -365,27 +399,13 @@ namespace BabaIsYou.Map {
 				}
 
 				switch (property) {
-					case "object":
-						line.Object = pair.Value;
-						break;
-					case "x":
-						line.X = byte.Parse(pair.Value);
-						break;
-					case "y":
-						line.Y = byte.Parse(pair.Value);
-						break;
-					case "style":
-						line.Style = byte.Parse(pair.Value);
-						break;
-					case "gate":
-						line.Gate = byte.Parse(pair.Value);
-						break;
-					case "dir":
-						line.Direction = byte.Parse(pair.Value);
-						break;
-					case "requirement":
-						line.Requirement = byte.Parse(pair.Value);
-						break;
+					case "object": line.Object = pair.Value; break;
+					case "x": line.X = byte.Parse(pair.Value); break;
+					case "y": line.Y = byte.Parse(pair.Value); break;
+					case "style": line.Style = byte.Parse(pair.Value); break;
+					case "gate": line.Gate = byte.Parse(pair.Value); break;
+					case "dir": line.Direction = byte.Parse(pair.Value); break;
+					case "requirement": line.Requirement = byte.Parse(pair.Value); break;
 				}
 			}
 
@@ -430,30 +450,14 @@ namespace BabaIsYou.Map {
 				}
 
 				switch (property) {
-					case "name":
-						level.Name = pair.Value;
-						break;
-					case "file":
-						level.File = pair.Value;
-						break;
-					case "colour":
-						level.Color = CoordinateToShort(pair.Value);
-						break;
-					case "number":
-						level.Number = byte.Parse(pair.Value);
-						break;
-					case "style":
-						level.Style = (byte)short.Parse(pair.Value);
-						break;
-					case "x":
-						level.X = byte.Parse(pair.Value);
-						break;
-					case "y":
-						level.Y = byte.Parse(pair.Value);
-						break;
-					case "dir":
-						level.Direction = byte.Parse(pair.Value);
-						break;
+					case "name": level.Name = pair.Value; break;
+					case "file": level.File = pair.Value; break;
+					case "colour": level.Color = CoordinateToShort(pair.Value); break;
+					case "number": level.Number = byte.Parse(pair.Value); break;
+					case "style": level.Style = (byte)short.Parse(pair.Value); break;
+					case "x": level.X = byte.Parse(pair.Value); break;
+					case "y": level.Y = byte.Parse(pair.Value); break;
+					case "dir": level.Direction = byte.Parse(pair.Value); break;
 				}
 			}
 

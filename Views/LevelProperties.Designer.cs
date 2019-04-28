@@ -214,7 +214,7 @@
             0,
             0});
 			this.numWidth.Minimum = new decimal(new int[] {
-            5,
+            3,
             0,
             0,
             0});
@@ -257,7 +257,7 @@
             0,
             0});
 			this.numHeight.Minimum = new decimal(new int[] {
-            5,
+            3,
             0,
             0,
             0});
