@@ -96,7 +96,6 @@ namespace BabaIsYou.Views {
 				if (result == DialogResult.OK) {
 					Item item = (Item)selector.SelectedItem;
 					lineCopy.Object = item.Object;
-					lineCopy.ID = item.ID;
 					UpdateObject();
 				}
 			}
@@ -118,7 +117,11 @@ namespace BabaIsYou.Views {
 			Line.Gate = lineCopy.Gate;
 			Line.Requirement = lineCopy.Requirement;
 			Line.Object = lineCopy.Object;
-			Line.ID = lineCopy.ID;
+			Line.UpdateLine();
+			ItemChange change;
+			if (Map.Changes.TryGetValue(Line.ID, out change)) {
+				change.Apply(Line);
+			}
 			this.DialogResult = DialogResult.OK;
 			this.Close();
 		}

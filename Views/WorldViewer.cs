@@ -507,7 +507,6 @@ namespace BabaIsYou.Views {
 						editor.Icon = this.Icon;
 						DialogResult result = editor.ShowDialog(this);
 						if (result == DialogResult.OK) {
-							map.ApplyChanges();
 							UpdateCurrentLevel(listLevels.SelectedItem);
 						}
 					}
