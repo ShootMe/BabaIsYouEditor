@@ -223,11 +223,5 @@ namespace BabaIsYou.Views {
 			this.DialogResult = DialogResult.OK;
 			this.Close();
 		}
-		private void numLayer_Enter(object sender, EventArgs e) {
-			NumericUpDown num = (NumericUpDown)sender;
-			if (num.Text.Length > 0) {
-				num.Select(0, num.Text.Length);
-			}
-		}
 	}
 }

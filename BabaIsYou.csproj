@@ -60,6 +60,9 @@
     <Compile Include="Controls\MapViewer.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\NumericBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\OpenFolderDialog.cs" />
     <Compile Include="Views\LevelEdit.cs">
       <SubType>Form</SubType>
@@ -104,6 +107,12 @@
     <Compile Include="Views\ObjectSelector.Designer.cs">
       <DependentUpon>ObjectSelector.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\PathEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\PathEdit.Designer.cs">
+      <DependentUpon>PathEdit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\ReadMe.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -147,6 +156,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\ObjectSelector.resx">
       <DependentUpon>ObjectSelector.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\PathEdit.resx">
+      <DependentUpon>PathEdit.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\ReadMe.resx">
       <DependentUpon>ReadMe.cs</DependentUpon>

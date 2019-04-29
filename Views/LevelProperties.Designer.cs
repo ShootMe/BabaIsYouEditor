@@ -38,12 +38,12 @@
 			this.btnSave = new System.Windows.Forms.Button();
 			this.lblOther = new System.Windows.Forms.Label();
 			this.gridOther = new System.Windows.Forms.DataGridView();
-			this.numWidth = new System.Windows.Forms.NumericUpDown();
+			this.numWidth = new BabaIsYou.Controls.NumericBox();
 			this.lblWidth = new System.Windows.Forms.Label();
 			this.lblHeight = new System.Windows.Forms.Label();
-			this.numHeight = new System.Windows.Forms.NumericUpDown();
+			this.numHeight = new BabaIsYou.Controls.NumericBox();
 			this.lblUnlockCount = new System.Windows.Forms.Label();
-			this.numUnlockCount = new System.Windows.Forms.NumericUpDown();
+			this.numUnlockCount = new BabaIsYou.Controls.NumericBox();
 			this.txtCustomParent = new System.Windows.Forms.TextBox();
 			this.lblCustomParent = new System.Windows.Forms.Label();
 			this.btnSetLevel = new System.Windows.Forms.Button();
@@ -66,6 +66,7 @@
 			// txtName
 			// 
 			this.txtName.BackColor = System.Drawing.Color.White;
+			this.txtName.CharacterCasing = System.Windows.Forms.CharacterCasing.Lower;
 			this.txtName.ForeColor = System.Drawing.Color.Black;
 			this.txtName.Location = new System.Drawing.Point(97, 12);
 			this.txtName.MaxLength = 256;
@@ -76,6 +77,7 @@
 			// txtSubtitle
 			// 
 			this.txtSubtitle.BackColor = System.Drawing.Color.White;
+			this.txtSubtitle.CharacterCasing = System.Windows.Forms.CharacterCasing.Lower;
 			this.txtSubtitle.ForeColor = System.Drawing.Color.Black;
 			this.txtSubtitle.Location = new System.Drawing.Point(97, 38);
 			this.txtSubtitle.MaxLength = 256;
@@ -226,7 +228,6 @@
             0,
             0,
             0});
-			this.numWidth.Enter += new System.EventHandler(this.numWidthHeight_Enter);
 			// 
 			// lblWidth
 			// 
@@ -269,7 +270,6 @@
             0,
             0,
             0});
-			this.numHeight.Enter += new System.EventHandler(this.numWidthHeight_Enter);
 			// 
 			// lblUnlockCount
 			// 
@@ -292,6 +292,7 @@
 			// txtCustomParent
 			// 
 			this.txtCustomParent.BackColor = System.Drawing.Color.White;
+			this.txtCustomParent.CharacterCasing = System.Windows.Forms.CharacterCasing.Lower;
 			this.txtCustomParent.ForeColor = System.Drawing.Color.Black;
 			this.txtCustomParent.Location = new System.Drawing.Point(97, 144);
 			this.txtCustomParent.MaxLength = 256;
@@ -394,12 +395,12 @@
 		private System.Windows.Forms.Button btnSave;
 		private System.Windows.Forms.Label lblOther;
 		private System.Windows.Forms.DataGridView gridOther;
-		private System.Windows.Forms.NumericUpDown numWidth;
+		private BabaIsYou.Controls.NumericBox numWidth;
 		private System.Windows.Forms.Label lblWidth;
 		private System.Windows.Forms.Label lblHeight;
-		private System.Windows.Forms.NumericUpDown numHeight;
+		private BabaIsYou.Controls.NumericBox numHeight;
 		private System.Windows.Forms.Label lblUnlockCount;
-		private System.Windows.Forms.NumericUpDown numUnlockCount;
+		private BabaIsYou.Controls.NumericBox numUnlockCount;
 		private System.Windows.Forms.TextBox txtCustomParent;
 		private System.Windows.Forms.Label lblCustomParent;
 		private System.Windows.Forms.Button btnSetLevel;

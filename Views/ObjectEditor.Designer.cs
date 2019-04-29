@@ -37,7 +37,7 @@
 			this.imgActive = new System.Windows.Forms.PictureBox();
 			this.imgNormal = new System.Windows.Forms.PictureBox();
 			this.lblLayerNote = new System.Windows.Forms.Label();
-			this.numLayer = new System.Windows.Forms.NumericUpDown();
+			this.numLayer = new BabaIsYou.Controls.NumericBox();
 			this.lblLayer = new System.Windows.Forms.Label();
 			this.lblActiveColor = new System.Windows.Forms.Label();
 			this.btnReset = new System.Windows.Forms.Button();
@@ -227,7 +227,6 @@
             0,
             0});
 			this.numLayer.ValueChanged += new System.EventHandler(this.numLayer_ValueChanged);
-			this.numLayer.Enter += new System.EventHandler(this.numLayer_Enter);
 			// 
 			// lblLayer
 			// 
@@ -309,7 +308,7 @@
 		private System.Windows.Forms.Label lblColor;
 		private System.Windows.Forms.GroupBox grpProperties;
 		private System.Windows.Forms.Label lblActiveColor;
-		private System.Windows.Forms.NumericUpDown numLayer;
+		private BabaIsYou.Controls.NumericBox numLayer;
 		private System.Windows.Forms.Label lblLayer;
 		private System.Windows.Forms.Button btnReset;
 		private System.Windows.Forms.Label lblLayerNote;

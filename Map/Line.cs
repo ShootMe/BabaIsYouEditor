@@ -1,4 +1,13 @@
 ﻿namespace BabaIsYou.Map {
+	public enum LineGate : byte {
+		None,
+		LevelClears,
+		MapClears
+	}
+	public enum LineStyle : byte {
+		Hidden,
+		Visible
+	}
 	public class Line : Item {
 		public byte X;
 		public byte Y;

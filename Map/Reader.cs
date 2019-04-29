@@ -195,13 +195,13 @@ namespace BabaIsYou.Map {
 			switch (obj) {
 				case "name": item.Name = value.Substring(1, value.Length - 2); break;
 				case "sprite": item.Sprite = value.Substring(1, value.Length - 2); break;
-				case "sprite_in_root": item.SpriteInRoot = bool.Parse(value); break;
+				case "sprite_in_root": item.SpriteInRoot = ParseByte(value) == 1; break;
 				case "unittype": item.IsObject = value == "\"object\""; break;
-				case "type": item.Type = byte.Parse(value); break;
-				case "layer": item.Layer = byte.Parse(value); break;
+				case "type": item.Type = ParseByte(value); break;
+				case "layer": item.Layer = ParseByte(value); break;
 				case "colour": item.Color = CoordinateToShort(value); break;
 				case "active": item.ActiveColor = CoordinateToShort(value); break;
-				case "tiling": item.Tiling = (byte)short.Parse(value); break;
+				case "tiling": item.Tiling = ParseByte(value); break;
 				case "tile": item.ID = CoordinateToShort(value); break;
 			}
 		}
@@ -214,10 +214,10 @@ namespace BabaIsYou.Map {
 			}
 			int index = coordinate.IndexOf(',');
 			if (index < 0) {
-				return short.Parse(coordinate);
+				return ParseShort(coordinate);
 			}
-			int x = int.Parse(coordinate.Substring(startIndex, index - startIndex));
-			int y = int.Parse(coordinate.Substring(index + 1, endIndex - index - 1));
+			int x = ParseInt(coordinate.Substring(startIndex, index - startIndex));
+			int y = ParseInt(coordinate.Substring(index + 1, endIndex - index - 1));
 			return (short)((y << 8) | x);
 		}
 		public static string ShortToCoordinate(short value) {
@@ -409,18 +409,20 @@ namespace BabaIsYou.Map {
 
 				switch (property) {
 					case "object": line.Object = pair.Value; break;
-					case "x": line.X = byte.Parse(pair.Value); break;
-					case "y": line.Y = byte.Parse(pair.Value); break;
-					case "style": line.Style = byte.Parse(pair.Value); break;
-					case "gate": line.Gate = byte.Parse(pair.Value); break;
-					case "dir": line.Direction = byte.Parse(pair.Value); break;
-					case "requirement": line.Requirement = byte.Parse(pair.Value); break;
+					case "x": line.X = ParseByte(pair.Value); break;
+					case "y": line.Y = ParseByte(pair.Value); break;
+					case "style": line.Style = ParseByte(pair.Value); break;
+					case "gate": line.Gate = ParseByte(pair.Value); break;
+					case "dir": line.Direction = ParseByte(pair.Value); break;
+					case "requirement": line.Requirement = ParseByte(pair.Value); break;
 				}
 			}
 
 			foreach (Line line in lines.Values) {
 				line.UpdateLine();
 				line.Position = (short)(line.Y * grid.Width + line.X);
+				if (line.Position < 0 || line.Position >= grid.Cells.Count) { continue; }
+
 				grid.Cells[line.Position].Objects.Add(line);
 			}
 		}
@@ -453,12 +455,12 @@ namespace BabaIsYou.Map {
 					case "file": level.File = pair.Value; break;
 					case "colour": level.Color = CoordinateToShort(pair.Value); break;
 					case "clearcolour": level.ActiveColor = CoordinateToShort(pair.Value); break;
-					case "number": level.Number = byte.Parse(pair.Value); break;
-					case "style": level.Style = (byte)short.Parse(pair.Value); break;
-					case "state": level.State = byte.Parse(pair.Value); break;
-					case "x": level.X = byte.Parse(pair.Value); break;
-					case "y": level.Y = byte.Parse(pair.Value); break;
-					case "dir": level.Direction = byte.Parse(pair.Value); break;
+					case "number": level.Number = ParseByte(pair.Value); break;
+					case "style": level.Style = ParseByte(pair.Value); break;
+					case "state": level.State = ParseByte(pair.Value); break;
+					case "x": level.X = ParseByte(pair.Value); break;
+					case "y": level.Y = ParseByte(pair.Value); break;
+					case "dir": level.Direction = ParseByte(pair.Value); break;
 				}
 			}
 
@@ -471,8 +473,31 @@ namespace BabaIsYou.Map {
 					}
 				}
 				level.Position = (short)(level.Y * grid.Width + level.X);
+				if (level.Position < 0 || level.Position >= grid.Cells.Count) { continue; }
+
 				grid.Cells[level.Position].Objects.Add(level);
 			}
+		}
+		private static byte ParseByte(string value) {
+			short temp;
+			if (short.TryParse(value, out temp)) {
+				return (byte)temp;
+			}
+			return 0;
+		}
+		private static short ParseShort(string value) {
+			short temp;
+			if (short.TryParse(value, out temp)) {
+				return temp;
+			}
+			return 0;
+		}
+		private static int ParseInt(string value) {
+			int temp;
+			if (int.TryParse(value, out temp)) {
+				return temp;
+			}
+			return 0;
 		}
 		private static void AddImages(Grid grid) {
 			Dictionary<string, string> images = grid.Info["images"];

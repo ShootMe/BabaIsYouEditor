@@ -40,6 +40,7 @@
 			// txtInput
 			// 
 			this.txtInput.BackColor = System.Drawing.Color.White;
+			this.txtInput.CharacterCasing = System.Windows.Forms.CharacterCasing.Lower;
 			this.txtInput.ForeColor = System.Drawing.Color.Black;
 			this.txtInput.Location = new System.Drawing.Point(53, 19);
 			this.txtInput.MaxLength = 100;

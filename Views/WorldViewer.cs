@@ -192,8 +192,8 @@ namespace BabaIsYou.Views {
 			if (holdingControl) {
 				mapViewer.Invalidate();
 			}
-			if (e.KeyCode == Keys.Delete) {
-
+			if (e.KeyCode == Keys.Space && map != null && mapViewer.CurrentCell != null) {
+				mapViewer_CellMouseDown(map, mapViewer.CurrentCell, new MouseEventArgs(MouseButtons.Middle, 1, 0, 0, 0));
 			}
 		}
 		private void WorldViewer_KeyUp(object sender, KeyEventArgs e) {
@@ -304,29 +304,29 @@ namespace BabaIsYou.Views {
 			string paletteName = map == null ? "default.png" : map.Palette;
 			Palette palette = Reader.Palettes[paletteName];
 			foreach (Item item in Reader.DefaultsByName.Values) {
-				if (item.ID > 0 && !string.IsNullOrEmpty(item.Sprite)) {
-					ItemChange change;
-					Item copy = item.Copy();
-					if (map != null && map.Changes.TryGetValue(item.ID, out change)) {
-						change.Apply(copy);
-					}
+				if (item.ID <= 0 || string.IsNullOrEmpty(item.Sprite)) { continue; }
 
-					Bitmap img = new Bitmap(SpriteSize, SpriteSize);
-					Rectangle rect = new Rectangle(0, 0, img.Width, img.Height);
-					using (Graphics g = Graphics.FromImage(img)) {
-						Renderer.DrawSprite(null, g, rect, copy, palette);
-					}
-
-					string name = copy.Name;
-					int index = name.IndexOf("text");
-					if (index == 0) {
-						name = name.Substring(5) + "_text";
-					}
-					ListItem listItem = new ListItem(copy, name, img);
-					listItem.Changed = copy.Changed;
-					listItem.BackColor = palette.Background;
-					listObjects.Items.Add(listItem);
+				ItemChange change;
+				Item copy = item.Copy();
+				if (map != null && map.Changes.TryGetValue(item.ID, out change)) {
+					change.Apply(copy);
 				}
+
+				Bitmap img = new Bitmap(SpriteSize, SpriteSize);
+				Rectangle rect = new Rectangle(0, 0, img.Width, img.Height);
+				using (Graphics g = Graphics.FromImage(img)) {
+					Renderer.DrawSprite(null, g, rect, copy, palette);
+				}
+
+				string name = copy.Name;
+				int index = name.IndexOf("text");
+				if (index == 0) {
+					name = name.Substring(5) + "_text";
+				}
+				ListItem listItem = new ListItem(copy, name, img);
+				listItem.Changed = copy.Changed;
+				listItem.BackColor = palette.Background;
+				listObjects.Items.Add(listItem);
 			}
 			int rowCount = listObjects.Items.Count / 24;
 			if (rowCount * 24 < listObjects.Items.Count) {
@@ -499,16 +499,18 @@ namespace BabaIsYou.Views {
 						}
 					}
 				} else if (lineItem != null) {
-					//using (LevelEdit editor = new LevelEdit()) {
-					//	editor.Palette = palette;
-					//	editor.Level = currentObject;
-					//	editor.BackColor = palette.Edge;
-					//	editor.Icon = this.Icon;
-					//	DialogResult result = editor.ShowDialog(this);
-					//	if (result == DialogResult.OK) {
-					//		UpdateCurrentLevel(listLevels.SelectedItem);
-					//	}
-					//}
+					using (PathEdit editor = new PathEdit()) {
+						editor.Palette = palette;
+						editor.Line = (Line)lineItem;
+						editor.BackColor = palette.Edge;
+						editor.Map = map;
+						editor.Icon = this.Icon;
+						DialogResult result = editor.ShowDialog(this);
+						if (result == DialogResult.OK) {
+							map.ApplyChanges();
+							UpdateCurrentLevel(listLevels.SelectedItem);
+						}
+					}
 				}
 			}
 		}

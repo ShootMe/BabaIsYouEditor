@@ -191,7 +191,7 @@ namespace BabaIsYou.Views {
 				return;
 			}
 			Map.Name = txtName.Text;
-			Map.Info["general", "subtitle"] = string.IsNullOrEmpty(txtSubtitle.Text) ? null : txtSubtitle.Text;
+			Map.Info["general", "subtitle"] = string.IsNullOrEmpty(txtSubtitle.Text) ? null : txtSubtitle.Text.ToLower();
 			Map.Info["general", "music"] = cboMusic.SelectedItem == null || (Music)cboMusic.SelectedItem == Music.None ? null : ((Music)cboMusic.SelectedItem).ToString().ToLower();
 			Map.Info["general", "particles"] = cboParticles.SelectedItem == null || (Particles)cboParticles.SelectedItem == Particles.None ? null : ((Particles)cboParticles.SelectedItem).ToString().ToLower();
 			Map.Info["general", "unlockcount"] = numUnlockCount.Value.ToString();
@@ -215,12 +215,6 @@ namespace BabaIsYou.Views {
 
 			this.DialogResult = DialogResult.OK;
 			this.Close();
-		}
-		private void numWidthHeight_Enter(object sender, EventArgs e) {
-			NumericUpDown num = (NumericUpDown)sender;
-			if (num.Text.Length > 0) {
-				num.Select(0, num.Text.Length);
-			}
 		}
 		private void gridOther_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e) {
 			if (!loading) {

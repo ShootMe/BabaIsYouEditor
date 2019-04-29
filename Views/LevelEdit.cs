@@ -9,33 +9,43 @@ namespace BabaIsYou.Views {
 		public ListPanel LevelList { get; set; }
 		public Palette Palette { get; set; }
 		public Level Level { get; set; }
+		private Level levelCopy;
 		public LevelEdit() {
 			InitializeComponent();
 		}
 
 		private void LevelEdit_Shown(object sender, EventArgs e) {
-			txtName.Text = Level.Name;
-			txtFile.Text = Level.File;
-			numNumber.Value = Level.Number;
-			switch ((LevelStyle)Level.Style) {
-				case LevelStyle.Number: chkNumber.Checked = true; break;
+			levelCopy = (Level)Level.Copy();
+			txtName.Text = levelCopy.Name;
+			txtFile.Text = levelCopy.File;
+			numNumber.Value = levelCopy.Number;
+			switch ((LevelStyle)levelCopy.Style) {
 				case LevelStyle.Dot: chkDot.Checked = true; break;
 				case LevelStyle.Letter: chkLetter.Checked = true; break;
 				case LevelStyle.Icon:
 					UpdateIcon();
 					chkIcon.Checked = true;
 					break;
+				default: chkNumber.Checked = true; break;
 			}
-			switch ((LevelState)Level.State) {
-				case LevelState.Hidden: chkHidden.Checked = true; break;
+			switch ((LevelState)levelCopy.State) {
 				case LevelState.Normal: chkNormal.Checked = true; break;
 				case LevelState.Opened: chkOpened.Checked = true; break;
+				default: chkHidden.Checked = true; break;
 			}
-			imgColor.BackColor = Palette.Colors[Level.Color];
-			imgClearColor.BackColor = Palette.Colors[Level.ActiveColor];
-
+			imgColor.BackColor = Palette.Colors[levelCopy.Color];
+			imgClearColor.BackColor = Palette.Colors[levelCopy.ActiveColor];
 		}
 		private void btnSave_Click(object sender, EventArgs e) {
+			Level.Name = levelCopy.Name;
+			Level.File = levelCopy.File;
+			Level.Number = levelCopy.Number;
+			Level.Style = levelCopy.Style;
+			Level.State = levelCopy.State;
+			Level.Color = levelCopy.Color;
+			Level.ActiveColor = levelCopy.ActiveColor;
+			Level.Sprite = levelCopy.Sprite;
+			Level.SpriteInRoot = levelCopy.SpriteInRoot;
 			this.DialogResult = DialogResult.OK;
 			this.Close();
 		}
@@ -89,25 +99,29 @@ namespace BabaIsYou.Views {
 				DialogResult result = selector.ShowDialog(this);
 				if (result == DialogResult.OK) {
 					Grid map = (Grid)selector.SelectedItem;
-					Level.Name = map.Name;
-					Level.File = map.FileName;
+					levelCopy.Name = map.Name;
+					levelCopy.File = map.FileName;
 					txtFile.Text = map.FileName;
 					txtName.Text = map.Name;
 				}
 			}
 		}
 		private void chkStyle_CheckedChanged(object sender, EventArgs e) {
+			if (levelCopy == null) { return; }
+
 			imgIcon.Cursor = sender == chkIcon && chkIcon.Checked ? Cursors.Hand : Cursors.Default;
-			Level.Style = chkDot.Checked ? (byte)LevelStyle.Dot : Level.Style;
-			Level.Style = chkIcon.Checked ? (byte)LevelStyle.Icon : Level.Style;
-			Level.Style = chkLetter.Checked ? (byte)LevelStyle.Letter : Level.Style;
-			Level.Style = chkNumber.Checked ? (byte)LevelStyle.Number : Level.Style;
+			levelCopy.Style = chkDot.Checked ? (byte)LevelStyle.Dot : levelCopy.Style;
+			levelCopy.Style = chkIcon.Checked ? (byte)LevelStyle.Icon : levelCopy.Style;
+			levelCopy.Style = chkLetter.Checked ? (byte)LevelStyle.Letter : levelCopy.Style;
+			levelCopy.Style = chkNumber.Checked ? (byte)LevelStyle.Number : levelCopy.Style;
 			UpdateIcon();
 		}
 		private void chkState_CheckedChanged(object sender, EventArgs e) {
-			Level.State = chkNormal.Checked ? (byte)LevelState.Normal : Level.Style;
-			Level.State = chkHidden.Checked ? (byte)LevelState.Hidden : Level.Style;
-			Level.State = chkOpened.Checked ? (byte)LevelState.Opened : Level.Style;
+			if (levelCopy == null) { return; }
+
+			levelCopy.State = chkNormal.Checked ? (byte)LevelState.Normal : levelCopy.State;
+			levelCopy.State = chkHidden.Checked ? (byte)LevelState.Hidden : levelCopy.State;
+			levelCopy.State = chkOpened.Checked ? (byte)LevelState.Opened : levelCopy.State;
 		}
 		private void imgColor_Click(object sender, EventArgs e) {
 			bool isActive = sender == imgClearColor;
@@ -124,7 +138,7 @@ namespace BabaIsYou.Views {
 						}
 					}
 					ListItem item = new ListItem(new KeyValuePair<short, Color>(pair.Key, pair.Value), pair.Key.ToString("00000"), img);
-					selector.AddItem(item, pair.Key == (isActive ? Level.ActiveColor : Level.Color));
+					selector.AddItem(item, pair.Key == (isActive ? levelCopy.ActiveColor : levelCopy.Color));
 				}
 
 				selector.SortItems();
@@ -134,11 +148,11 @@ namespace BabaIsYou.Views {
 				if (result == DialogResult.OK) {
 					KeyValuePair<short, Color> pair = (KeyValuePair<short, Color>)selector.SelectedItem;
 					if (isActive) {
-						Level.ActiveColor = pair.Key;
+						levelCopy.ActiveColor = pair.Key;
 						imgClearColor.BackColor = pair.Value;
 						UpdateIcon();
 					} else {
-						Level.Color = pair.Key;
+						levelCopy.Color = pair.Key;
 						imgColor.BackColor = pair.Value;
 						UpdateIcon();
 					}
@@ -151,7 +165,7 @@ namespace BabaIsYou.Views {
 			using (ObjectSelector selector = new ObjectSelector()) {
 				int imgSize = 36;
 				Rectangle rect = new Rectangle(0, 0, imgSize, imgSize);
-				Color color = Palette.Colors[Level.ActiveColor >= 0 ? Level.ActiveColor : Level.Color];
+				Color color = Palette.Colors[levelCopy.ActiveColor >= 0 ? levelCopy.ActiveColor : levelCopy.Color];
 				int spriteCount = 0;
 				foreach (Sprite sprite in Reader.Sprites.Values) {
 					if (sprite.Name.IndexOf("img_") == 0) { continue; }
@@ -191,27 +205,23 @@ namespace BabaIsYou.Views {
 				DialogResult result = selector.ShowDialog(this);
 				if (result == DialogResult.OK) {
 					Sprite sprite = (Sprite)selector.SelectedItem;
-					Level.Sprite = sprite.Name;
-					Level.SpriteInRoot = sprite.IsRoot;
+					levelCopy.Sprite = sprite.Name;
+					levelCopy.SpriteInRoot = sprite.IsRoot;
 					UpdateIcon();
 				}
 			}
 		}
 		private void numNumber_ValueChanged(object sender, EventArgs e) {
-			Level.Number = (byte)numNumber.Value;
+			if (levelCopy == null) { return; }
+
+			levelCopy.Number = (byte)numNumber.Value;
 			UpdateIcon();
-		}
-		private void numNumber_Enter(object sender, EventArgs e) {
-			NumericUpDown num = (NumericUpDown)sender;
-			if (num.Text.Length > 0) {
-				num.Select(0, num.Text.Length);
-			}
 		}
 		private void UpdateIcon() {
 			if (imgIcon.Image != null) {
 				imgIcon.Image.Dispose();
 			}
-			imgIcon.Image = Renderer.DrawSprite(Level, imgIcon.Width, Palette);
+			imgIcon.Image = Renderer.DrawSprite(levelCopy, imgIcon.Width, Palette);
 		}
 	}
 }

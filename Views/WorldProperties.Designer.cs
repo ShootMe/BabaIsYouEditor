@@ -46,6 +46,7 @@
 			// txtName
 			// 
 			this.txtName.BackColor = System.Drawing.Color.White;
+			this.txtName.CharacterCasing = System.Windows.Forms.CharacterCasing.Lower;
 			this.txtName.ForeColor = System.Drawing.Color.Black;
 			this.txtName.Location = new System.Drawing.Point(85, 14);
 			this.txtName.Name = "txtName";

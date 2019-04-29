@@ -31,7 +31,7 @@
 			this.imgColor = new System.Windows.Forms.PictureBox();
 			this.lblClearColor = new System.Windows.Forms.Label();
 			this.lblColor = new System.Windows.Forms.Label();
-			this.numNumber = new System.Windows.Forms.NumericUpDown();
+			this.numNumber = new BabaIsYou.Controls.NumericBox();
 			this.lblNumber = new System.Windows.Forms.Label();
 			this.chkNumber = new BabaIsYou.Controls.ColorRadioButton();
 			this.chkLetter = new BabaIsYou.Controls.ColorRadioButton();
@@ -69,6 +69,7 @@
 			// 
 			this.txtName.BackColor = System.Drawing.Color.Gray;
 			this.txtName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.txtName.CharacterCasing = System.Windows.Forms.CharacterCasing.Lower;
 			this.txtName.ForeColor = System.Drawing.Color.Black;
 			this.txtName.Location = new System.Drawing.Point(60, 12);
 			this.txtName.Name = "txtName";
@@ -152,7 +153,6 @@
 			this.numNumber.Size = new System.Drawing.Size(48, 20);
 			this.numNumber.TabIndex = 6;
 			this.numNumber.ValueChanged += new System.EventHandler(this.numNumber_ValueChanged);
-			this.numNumber.Enter += new System.EventHandler(this.numNumber_Enter);
 			// 
 			// lblNumber
 			// 
@@ -409,7 +409,7 @@
 		private System.Windows.Forms.PictureBox imgColor;
 		private System.Windows.Forms.Label lblClearColor;
 		private System.Windows.Forms.Label lblColor;
-		private System.Windows.Forms.NumericUpDown numNumber;
+		private BabaIsYou.Controls.NumericBox numNumber;
 		private System.Windows.Forms.Label lblNumber;
 		private BabaIsYou.Controls.ColorRadioButton chkNumber;
 		private BabaIsYou.Controls.ColorRadioButton chkLetter;
