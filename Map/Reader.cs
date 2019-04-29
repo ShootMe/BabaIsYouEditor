@@ -195,7 +195,7 @@ namespace BabaIsYou.Map {
 			switch (obj) {
 				case "name": item.Name = value.Substring(1, value.Length - 2); break;
 				case "sprite": item.Sprite = value.Substring(1, value.Length - 2); break;
-				case "sprite_in_root": item.SpriteInRoot = ParseByte(value) == 1; break;
+				case "sprite_in_root": item.SpriteInRoot = ParseBool(value); break;
 				case "unittype": item.IsObject = value == "\"object\""; break;
 				case "type": item.Type = ParseByte(value); break;
 				case "layer": item.Layer = ParseByte(value); break;
@@ -477,6 +477,13 @@ namespace BabaIsYou.Map {
 
 				grid.Cells[level.Position].Objects.Add(level);
 			}
+		}
+		private static bool ParseBool(string value) {
+			bool temp;
+			if (bool.TryParse(value, out temp)) {
+				return temp;
+			}
+			return value != "0";
 		}
 		private static byte ParseByte(string value) {
 			short temp;

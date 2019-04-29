@@ -38,6 +38,7 @@ namespace BabaIsYou.Views {
 #endif
 		}
 		private const int SpriteSize = 36;
+		private const int MaxLayerCount = 3;
 		private Grid map;
 		private Bitmap textX;
 		private Item currentObject;
@@ -434,7 +435,7 @@ namespace BabaIsYou.Views {
 
 				bool hasObject = cell.ContainsObjectType(currentObject);
 				bool isLevelLine = currentObject is Level || currentObject is Line;
-				bool willAdd = cell.LayerCount() < 3 && (!isLevelLine || !cell.HasLevelPath());
+				bool willAdd = cell.LayerCount() < MaxLayerCount && (!isLevelLine || !cell.HasLevelPath());
 				if (currentObject.ID == short.MaxValue) {
 					Point location = cell.GetLocation(map.Width, map.Height);
 					string xpos = location.X.ToString();
@@ -557,7 +558,7 @@ namespace BabaIsYou.Views {
 			if (currentObject != null) {
 				bool containsType = cell.ContainsObjectType(currentObject);
 				bool isLevelLine = currentObject is Level || currentObject is Line;
-				addedObject = (cell.LayerCount() < 3 || currentObject.ID == short.MaxValue) && (!isLevelLine || !cell.HasLevelPath());
+				addedObject = (cell.LayerCount() < MaxLayerCount || currentObject.ID == short.MaxValue) && (!isLevelLine || !cell.HasLevelPath());
 				if (addedObject && (!containsType || holdingControl) && isAdding.GetValueOrDefault(true)) {
 					currentObject.Position = cell.Position;
 					cell.Objects.Add(currentObject);
