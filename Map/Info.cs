@@ -86,6 +86,9 @@ namespace BabaIsYou.Map {
 			}
 		}
 
+		public void RemoveSection(string section) {
+			data.Remove(section);
+		}
 		public Dictionary<string, string> this[string section] {
 			get {
 				Dictionary<string, string> temp;
@@ -140,9 +143,9 @@ namespace BabaIsYou.Map {
 				Serialize(sb, "general");
 				Serialize(sb, "images");
 				Serialize(sb, "levels");
+				Serialize(sb, "icons");
 				Serialize(sb, "paths");
 				Serialize(sb, "specials");
-				Serialize(sb, "icons");
 			}
 			return sb.ToString();
 		}

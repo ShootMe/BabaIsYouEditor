@@ -137,6 +137,8 @@
 			// 
 			// cboTiling
 			// 
+			this.cboTiling.BackColor = System.Drawing.Color.White;
+			this.cboTiling.ForeColor = System.Drawing.Color.Black;
 			this.cboTiling.FormattingEnabled = true;
 			this.cboTiling.Location = new System.Drawing.Point(21, 163);
 			this.cboTiling.Name = "cboTiling";
@@ -147,6 +149,8 @@
 			// 
 			// cboTextType
 			// 
+			this.cboTextType.BackColor = System.Drawing.Color.White;
+			this.cboTextType.ForeColor = System.Drawing.Color.Black;
 			this.cboTextType.FormattingEnabled = true;
 			this.cboTextType.Location = new System.Drawing.Point(139, 163);
 			this.cboTextType.Name = "cboTextType";
@@ -206,6 +210,8 @@
 			// 
 			// numLayer
 			// 
+			this.numLayer.BackColor = System.Drawing.Color.White;
+			this.numLayer.ForeColor = System.Drawing.Color.Black;
 			this.numLayer.Location = new System.Drawing.Point(21, 116);
 			this.numLayer.Maximum = new decimal(new int[] {
             99,

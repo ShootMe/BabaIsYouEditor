@@ -52,7 +52,7 @@ namespace BabaIsYou.Map {
 			Item next = null;
 			for (int i = Objects.Count - 1; i >= 0; i--) {
 				Item item = Objects[i];
-				if (!(item is Level) && !(item is Line) && item.ID != 0) {
+				if (item.ID != 0) {
 					if (next == null || current == null || item.Layer < current.Layer || (item.Layer == current.Layer && item.ID > current.ID)) {
 						if (next != null || current == null) {
 							return item;
@@ -69,7 +69,11 @@ namespace BabaIsYou.Map {
 		public Item GetItemOfType(Item item) {
 			for (int i = 0; i < Objects.Count; i++) {
 				Item test = Objects[i];
-				if (test.ID == item.ID) {
+				bool testLevel = test is Level;
+				bool testLine = test is Line;
+				bool itemLevel = item is Level;
+				bool itemLine = item is Line;
+				if ((testLevel && itemLevel) || (testLine && itemLine) || (!testLevel && !testLine && !itemLevel && !itemLine && test.ID == item.ID)) {
 					return test;
 				}
 			}
@@ -78,7 +82,11 @@ namespace BabaIsYou.Map {
 		public bool ContainsObjectType(Item item) {
 			for (int i = 0; i < Objects.Count; i++) {
 				Item test = Objects[i];
-				if (test.ID == item.ID) {
+				bool testLevel = test is Level;
+				bool testLine = test is Line;
+				bool itemLevel = item is Level;
+				bool itemLine = item is Line;
+				if ((testLevel && itemLevel) || (testLine && itemLine) || (!testLevel && !testLine && !itemLevel && !itemLine && test.ID == item.ID)) {
 					return true;
 				}
 			}
@@ -87,7 +95,11 @@ namespace BabaIsYou.Map {
 		public bool RemoveObjectOfType(Item item) {
 			for (int i = Objects.Count - 1; i >= 0; i--) {
 				Item test = Objects[i];
-				if (test.ID == item.ID) {
+				bool testLevel = test is Level;
+				bool testLine = test is Line;
+				bool itemLevel = item is Level;
+				bool itemLine = item is Line;
+				if ((testLevel && itemLevel) || (testLine && itemLine) || (!testLevel && !testLine && !itemLevel && !itemLine && test.ID == item.ID)) {
 					Objects.RemoveAt(i);
 					return true;
 				}

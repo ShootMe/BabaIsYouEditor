@@ -45,6 +45,8 @@
 			// 
 			// txtName
 			// 
+			this.txtName.BackColor = System.Drawing.Color.White;
+			this.txtName.ForeColor = System.Drawing.Color.Black;
 			this.txtName.Location = new System.Drawing.Point(85, 14);
 			this.txtName.Name = "txtName";
 			this.txtName.Size = new System.Drawing.Size(243, 20);
@@ -52,8 +54,12 @@
 			// 
 			// txtStart
 			// 
+			this.txtStart.BackColor = System.Drawing.Color.Gray;
+			this.txtStart.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.txtStart.ForeColor = System.Drawing.Color.Black;
 			this.txtStart.Location = new System.Drawing.Point(85, 40);
 			this.txtStart.Name = "txtStart";
+			this.txtStart.ReadOnly = true;
 			this.txtStart.Size = new System.Drawing.Size(243, 20);
 			this.txtStart.TabIndex = 3;
 			// 
@@ -68,8 +74,12 @@
 			// 
 			// txtFirst
 			// 
+			this.txtFirst.BackColor = System.Drawing.Color.Gray;
+			this.txtFirst.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.txtFirst.ForeColor = System.Drawing.Color.Black;
 			this.txtFirst.Location = new System.Drawing.Point(85, 66);
 			this.txtFirst.Name = "txtFirst";
+			this.txtFirst.ReadOnly = true;
 			this.txtFirst.Size = new System.Drawing.Size(243, 20);
 			this.txtFirst.TabIndex = 6;
 			// 

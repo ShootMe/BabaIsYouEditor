@@ -31,30 +31,16 @@
 			this.mapViewer = new BabaIsYou.Controls.MapViewer();
 			this.menu = new System.Windows.Forms.MenuStrip();
 			this.menuWorld = new System.Windows.Forms.ToolStripMenuItem();
-			this.menuItemAddWorld = new System.Windows.Forms.ToolStripMenuItem();
-			this.menuItemOpenWorld = new System.Windows.Forms.ToolStripMenuItem();
-			this.menuItemSaveWorld = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuItemWorldSperator1 = new System.Windows.Forms.ToolStripSeparator();
-			this.menuItemWorldProperties = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuItemWorldSeperator2 = new System.Windows.Forms.ToolStripSeparator();
-			this.menuItemAddLevel = new System.Windows.Forms.ToolStripMenuItem();
-			this.menuItemRemoveLevel = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuLevel = new System.Windows.Forms.ToolStripMenuItem();
-			this.menuItemLevelProperties = new System.Windows.Forms.ToolStripMenuItem();
-			this.menuItemSetTheme = new System.Windows.Forms.ToolStripMenuItem();
-			this.menuItemNewTheme = new System.Windows.Forms.ToolStripMenuItem();
-			this.menuItemThemeSeperator = new System.Windows.Forms.ToolStripSeparator();
-			this.menuItemThemeNone = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuItemLevelSeperator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.menuItemShowStacked = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuItemShowDirections = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuItemEdgePlacement = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuItemLevelSeperator2 = new System.Windows.Forms.ToolStripSeparator();
-			this.menuItemRevertChanges = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuPalette = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuHelp = new System.Windows.Forms.ToolStripMenuItem();
-			this.menuItemReadMe = new System.Windows.Forms.ToolStripMenuItem();
-			this.menuItemWebsite = new System.Windows.Forms.ToolStripMenuItem();
 			this.status = new System.Windows.Forms.StatusStrip();
 			this.statusLevel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.statusLevelName = new System.Windows.Forms.ToolStripStatusLabel();
@@ -63,6 +49,23 @@
 			this.statusSprite = new System.Windows.Forms.ToolStripStatusLabel();
 			this.statusPosition = new System.Windows.Forms.ToolStripStatusLabel();
 			this.imgBaba = new System.Windows.Forms.PictureBox();
+			this.statusAddLevel = new System.Windows.Forms.ToolStripSplitButton();
+			this.statusSetSelector = new System.Windows.Forms.ToolStripSplitButton();
+			this.statusAddPath = new System.Windows.Forms.ToolStripSplitButton();
+			this.menuItemAddWorld = new System.Windows.Forms.ToolStripMenuItem();
+			this.menuItemOpenWorld = new System.Windows.Forms.ToolStripMenuItem();
+			this.menuItemSaveWorld = new System.Windows.Forms.ToolStripMenuItem();
+			this.menuItemWorldProperties = new System.Windows.Forms.ToolStripMenuItem();
+			this.menuItemAddLevel = new System.Windows.Forms.ToolStripMenuItem();
+			this.menuItemRemoveLevel = new System.Windows.Forms.ToolStripMenuItem();
+			this.menuItemLevelProperties = new System.Windows.Forms.ToolStripMenuItem();
+			this.menuItemSetTheme = new System.Windows.Forms.ToolStripMenuItem();
+			this.menuItemNewTheme = new System.Windows.Forms.ToolStripMenuItem();
+			this.menuItemThemeSeperator = new System.Windows.Forms.ToolStripSeparator();
+			this.menuItemThemeNone = new System.Windows.Forms.ToolStripMenuItem();
+			this.menuItemRevertChanges = new System.Windows.Forms.ToolStripMenuItem();
+			this.menuItemReadMe = new System.Windows.Forms.ToolStripMenuItem();
+			this.menuItemWebsite = new System.Windows.Forms.ToolStripMenuItem();
 			((System.ComponentModel.ISupportInitialize)(this.splitMain)).BeginInit();
 			this.splitMain.Panel1.SuspendLayout();
 			this.splitMain.Panel2.SuspendLayout();
@@ -202,6 +205,183 @@
 			this.menuWorld.Size = new System.Drawing.Size(51, 20);
 			this.menuWorld.Text = "World";
 			// 
+			// menuItemWorldSperator1
+			// 
+			this.menuItemWorldSperator1.Name = "menuItemWorldSperator1";
+			this.menuItemWorldSperator1.Size = new System.Drawing.Size(185, 6);
+			// 
+			// menuItemWorldSeperator2
+			// 
+			this.menuItemWorldSeperator2.Name = "menuItemWorldSeperator2";
+			this.menuItemWorldSeperator2.Size = new System.Drawing.Size(185, 6);
+			// 
+			// menuLevel
+			// 
+			this.menuLevel.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuItemLevelProperties,
+            this.menuItemSetTheme,
+            this.menuItemLevelSeperator1,
+            this.menuItemShowStacked,
+            this.menuItemShowDirections,
+            this.menuItemEdgePlacement,
+            this.menuItemLevelSeperator2,
+            this.menuItemRevertChanges});
+			this.menuLevel.Name = "menuLevel";
+			this.menuLevel.Size = new System.Drawing.Size(46, 20);
+			this.menuLevel.Text = "Level";
+			// 
+			// menuItemLevelSeperator1
+			// 
+			this.menuItemLevelSeperator1.Name = "menuItemLevelSeperator1";
+			this.menuItemLevelSeperator1.Size = new System.Drawing.Size(198, 6);
+			// 
+			// menuItemShowStacked
+			// 
+			this.menuItemShowStacked.CheckOnClick = true;
+			this.menuItemShowStacked.Name = "menuItemShowStacked";
+			this.menuItemShowStacked.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.K)));
+			this.menuItemShowStacked.Size = new System.Drawing.Size(201, 22);
+			this.menuItemShowStacked.Text = "Show Stacked #";
+			this.menuItemShowStacked.Click += new System.EventHandler(this.menuItemShowStacked_Click);
+			// 
+			// menuItemShowDirections
+			// 
+			this.menuItemShowDirections.CheckOnClick = true;
+			this.menuItemShowDirections.Name = "menuItemShowDirections";
+			this.menuItemShowDirections.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
+			this.menuItemShowDirections.Size = new System.Drawing.Size(201, 22);
+			this.menuItemShowDirections.Text = "Show Directions";
+			this.menuItemShowDirections.Click += new System.EventHandler(this.menuItemShowDirections_Click);
+			// 
+			// menuItemEdgePlacement
+			// 
+			this.menuItemEdgePlacement.CheckOnClick = true;
+			this.menuItemEdgePlacement.Name = "menuItemEdgePlacement";
+			this.menuItemEdgePlacement.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.E)));
+			this.menuItemEdgePlacement.Size = new System.Drawing.Size(201, 22);
+			this.menuItemEdgePlacement.Text = "Edge Placement";
+			this.menuItemEdgePlacement.Click += new System.EventHandler(this.menuItemEdgePlacement_Click);
+			// 
+			// menuItemLevelSeperator2
+			// 
+			this.menuItemLevelSeperator2.Name = "menuItemLevelSeperator2";
+			this.menuItemLevelSeperator2.Size = new System.Drawing.Size(198, 6);
+			// 
+			// menuPalette
+			// 
+			this.menuPalette.Name = "menuPalette";
+			this.menuPalette.Size = new System.Drawing.Size(55, 20);
+			this.menuPalette.Text = "Palette";
+			// 
+			// menuHelp
+			// 
+			this.menuHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuItemReadMe,
+            this.menuItemWebsite});
+			this.menuHelp.Name = "menuHelp";
+			this.menuHelp.Size = new System.Drawing.Size(44, 20);
+			this.menuHelp.Text = "Help";
+			// 
+			// status
+			// 
+			this.status.AllowMerge = false;
+			this.status.BackColor = System.Drawing.Color.WhiteSmoke;
+			this.status.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.statusLevel,
+            this.statusLevelName,
+            this.statusLevelInfo,
+            this.statusAddLevel,
+            this.statusSetSelector,
+            this.statusAddPath,
+            this.statusBlank,
+            this.statusSprite,
+            this.statusPosition});
+			this.status.Location = new System.Drawing.Point(0, 802);
+			this.status.Name = "status";
+			this.status.Size = new System.Drawing.Size(1009, 24);
+			this.status.TabIndex = 2;
+			// 
+			// statusLevel
+			// 
+			this.statusLevel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
+			this.statusLevel.Name = "statusLevel";
+			this.statusLevel.Size = new System.Drawing.Size(56, 19);
+			this.statusLevel.Text = "LevelFile";
+			// 
+			// statusLevelName
+			// 
+			this.statusLevelName.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
+			this.statusLevelName.Name = "statusLevelName";
+			this.statusLevelName.Size = new System.Drawing.Size(70, 19);
+			this.statusLevelName.Text = "LevelName";
+			// 
+			// statusLevelInfo
+			// 
+			this.statusLevelInfo.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
+			this.statusLevelInfo.Name = "statusLevelInfo";
+			this.statusLevelInfo.Size = new System.Drawing.Size(59, 19);
+			this.statusLevelInfo.Text = "LevelInfo";
+			// 
+			// statusBlank
+			// 
+			this.statusBlank.ForeColor = System.Drawing.Color.Black;
+			this.statusBlank.Name = "statusBlank";
+			this.statusBlank.Size = new System.Drawing.Size(334, 19);
+			this.statusBlank.Spring = true;
+			// 
+			// statusSprite
+			// 
+			this.statusSprite.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
+			this.statusSprite.Name = "statusSprite";
+			this.statusSprite.Size = new System.Drawing.Size(41, 19);
+			this.statusSprite.Text = "Sprite";
+			// 
+			// statusPosition
+			// 
+			this.statusPosition.BackColor = System.Drawing.SystemColors.Control;
+			this.statusPosition.Name = "statusPosition";
+			this.statusPosition.Size = new System.Drawing.Size(35, 19);
+			this.statusPosition.Text = "[X, Y]";
+			// 
+			// imgBaba
+			// 
+			this.imgBaba.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.imgBaba.Image = global::BabaIsYou.Properties.Resources.baba;
+			this.imgBaba.Location = new System.Drawing.Point(0, 24);
+			this.imgBaba.Name = "imgBaba";
+			this.imgBaba.Size = new System.Drawing.Size(1009, 778);
+			this.imgBaba.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+			this.imgBaba.TabIndex = 1;
+			this.imgBaba.TabStop = false;
+			this.imgBaba.Visible = false;
+			// 
+			// statusAddLevel
+			// 
+			this.statusAddLevel.DropDownButtonWidth = 0;
+			this.statusAddLevel.Image = global::BabaIsYou.Properties.Resources.level;
+			this.statusAddLevel.Name = "statusAddLevel";
+			this.statusAddLevel.Size = new System.Drawing.Size(118, 22);
+			this.statusAddLevel.Text = "Add Level Object";
+			this.statusAddLevel.ButtonClick += new System.EventHandler(this.statusAddLevel_ButtonClick);
+			// 
+			// statusSetSelector
+			// 
+			this.statusSetSelector.DropDownButtonWidth = 0;
+			this.statusSetSelector.Image = global::BabaIsYou.Properties.Resources.selector;
+			this.statusSetSelector.Name = "statusSetSelector";
+			this.statusSetSelector.Size = new System.Drawing.Size(135, 22);
+			this.statusSetSelector.Text = "Set Selector Position";
+			this.statusSetSelector.ButtonClick += new System.EventHandler(this.statusSetSelector_ButtonClick);
+			// 
+			// statusAddPath
+			// 
+			this.statusAddPath.DropDownButtonWidth = 0;
+			this.statusAddPath.Image = global::BabaIsYou.Properties.Resources.path;
+			this.statusAddPath.Name = "statusAddPath";
+			this.statusAddPath.Size = new System.Drawing.Size(115, 22);
+			this.statusAddPath.Text = "Add Path Object";
+			this.statusAddPath.ButtonClick += new System.EventHandler(this.statusAddPath_ButtonClick);
+			// 
 			// menuItemAddWorld
 			// 
 			this.menuItemAddWorld.Image = global::BabaIsYou.Properties.Resources.add;
@@ -229,11 +409,6 @@
 			this.menuItemSaveWorld.Text = "Save World";
 			this.menuItemSaveWorld.Click += new System.EventHandler(this.menuItemSaveWorld_Click);
 			// 
-			// menuItemWorldSperator1
-			// 
-			this.menuItemWorldSperator1.Name = "menuItemWorldSperator1";
-			this.menuItemWorldSperator1.Size = new System.Drawing.Size(185, 6);
-			// 
 			// menuItemWorldProperties
 			// 
 			this.menuItemWorldProperties.Image = global::BabaIsYou.Properties.Resources.config;
@@ -242,11 +417,6 @@
 			this.menuItemWorldProperties.Size = new System.Drawing.Size(188, 22);
 			this.menuItemWorldProperties.Text = "Properties";
 			this.menuItemWorldProperties.Click += new System.EventHandler(this.menuItemWorldProperties_Click);
-			// 
-			// menuItemWorldSeperator2
-			// 
-			this.menuItemWorldSeperator2.Name = "menuItemWorldSeperator2";
-			this.menuItemWorldSeperator2.Size = new System.Drawing.Size(185, 6);
 			// 
 			// menuItemAddLevel
 			// 
@@ -265,21 +435,6 @@
 			this.menuItemRemoveLevel.Size = new System.Drawing.Size(188, 22);
 			this.menuItemRemoveLevel.Text = "Remove Level";
 			this.menuItemRemoveLevel.Click += new System.EventHandler(this.menuItemRemoveLevel_Click);
-			// 
-			// menuLevel
-			// 
-			this.menuLevel.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuItemLevelProperties,
-            this.menuItemSetTheme,
-            this.menuItemLevelSeperator1,
-            this.menuItemShowStacked,
-            this.menuItemShowDirections,
-            this.menuItemEdgePlacement,
-            this.menuItemLevelSeperator2,
-            this.menuItemRevertChanges});
-			this.menuLevel.Name = "menuLevel";
-			this.menuLevel.Size = new System.Drawing.Size(46, 20);
-			this.menuLevel.Text = "Level";
 			// 
 			// menuItemLevelProperties
 			// 
@@ -323,43 +478,6 @@
 			this.menuItemThemeNone.Text = "none";
 			this.menuItemThemeNone.Click += new System.EventHandler(this.menuItemSetTheme_Click);
 			// 
-			// menuItemLevelSeperator1
-			// 
-			this.menuItemLevelSeperator1.Name = "menuItemLevelSeperator1";
-			this.menuItemLevelSeperator1.Size = new System.Drawing.Size(198, 6);
-			// 
-			// menuItemShowStacked
-			// 
-			this.menuItemShowStacked.CheckOnClick = true;
-			this.menuItemShowStacked.Name = "menuItemShowStacked";
-			this.menuItemShowStacked.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.K)));
-			this.menuItemShowStacked.Size = new System.Drawing.Size(201, 22);
-			this.menuItemShowStacked.Text = "Show Stacked #";
-			this.menuItemShowStacked.Click += new System.EventHandler(this.menuItemShowStacked_Click);
-			// 
-			// menuItemShowDirections
-			// 
-			this.menuItemShowDirections.CheckOnClick = true;
-			this.menuItemShowDirections.Name = "menuItemShowDirections";
-			this.menuItemShowDirections.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
-			this.menuItemShowDirections.Size = new System.Drawing.Size(201, 22);
-			this.menuItemShowDirections.Text = "Show Directions";
-			this.menuItemShowDirections.Click += new System.EventHandler(this.menuItemShowDirections_Click);
-			// 
-			// menuItemEdgePlacement
-			// 
-			this.menuItemEdgePlacement.CheckOnClick = true;
-			this.menuItemEdgePlacement.Name = "menuItemEdgePlacement";
-			this.menuItemEdgePlacement.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.E)));
-			this.menuItemEdgePlacement.Size = new System.Drawing.Size(201, 22);
-			this.menuItemEdgePlacement.Text = "Edge Placement";
-			this.menuItemEdgePlacement.Click += new System.EventHandler(this.menuItemEdgePlacement_Click);
-			// 
-			// menuItemLevelSeperator2
-			// 
-			this.menuItemLevelSeperator2.Name = "menuItemLevelSeperator2";
-			this.menuItemLevelSeperator2.Size = new System.Drawing.Size(198, 6);
-			// 
 			// menuItemRevertChanges
 			// 
 			this.menuItemRevertChanges.Image = global::BabaIsYou.Properties.Resources.undo;
@@ -368,21 +486,6 @@
 			this.menuItemRevertChanges.Size = new System.Drawing.Size(201, 22);
 			this.menuItemRevertChanges.Text = "Revert Changes";
 			this.menuItemRevertChanges.Click += new System.EventHandler(this.menuItemRevertChanges_Click);
-			// 
-			// menuPalette
-			// 
-			this.menuPalette.Name = "menuPalette";
-			this.menuPalette.Size = new System.Drawing.Size(55, 20);
-			this.menuPalette.Text = "Palette";
-			// 
-			// menuHelp
-			// 
-			this.menuHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuItemReadMe,
-            this.menuItemWebsite});
-			this.menuHelp.Name = "menuHelp";
-			this.menuHelp.Size = new System.Drawing.Size(44, 20);
-			this.menuHelp.Text = "Help";
 			// 
 			// menuItemReadMe
 			// 
@@ -400,83 +503,16 @@
 			this.menuItemWebsite.Text = "Website";
 			this.menuItemWebsite.Click += new System.EventHandler(this.menuItemWebsite_Click);
 			// 
-			// status
-			// 
-			this.status.AllowMerge = false;
-			this.status.BackColor = System.Drawing.SystemColors.Control;
-			this.status.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.statusLevel,
-            this.statusLevelName,
-            this.statusLevelInfo,
-            this.statusBlank,
-            this.statusSprite,
-            this.statusPosition});
-			this.status.Location = new System.Drawing.Point(0, 802);
-			this.status.Name = "status";
-			this.status.Size = new System.Drawing.Size(1009, 24);
-			this.status.TabIndex = 2;
-			// 
-			// statusLevel
-			// 
-			this.statusLevel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
-			this.statusLevel.Name = "statusLevel";
-			this.statusLevel.Size = new System.Drawing.Size(56, 19);
-			this.statusLevel.Text = "LevelFile";
-			// 
-			// statusLevelName
-			// 
-			this.statusLevelName.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
-			this.statusLevelName.Name = "statusLevelName";
-			this.statusLevelName.Size = new System.Drawing.Size(70, 19);
-			this.statusLevelName.Text = "LevelName";
-			// 
-			// statusLevelInfo
-			// 
-			this.statusLevelInfo.Name = "statusLevelInfo";
-			this.statusLevelInfo.Size = new System.Drawing.Size(55, 19);
-			this.statusLevelInfo.Text = "LevelInfo";
-			// 
-			// statusBlank
-			// 
-			this.statusBlank.Name = "statusBlank";
-			this.statusBlank.Size = new System.Drawing.Size(737, 19);
-			this.statusBlank.Spring = true;
-			// 
-			// statusSprite
-			// 
-			this.statusSprite.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
-			this.statusSprite.Name = "statusSprite";
-			this.statusSprite.Size = new System.Drawing.Size(41, 19);
-			this.statusSprite.Text = "Sprite";
-			// 
-			// statusPosition
-			// 
-			this.statusPosition.Name = "statusPosition";
-			this.statusPosition.Size = new System.Drawing.Size(35, 19);
-			this.statusPosition.Text = "[X, Y]";
-			// 
-			// imgBaba
-			// 
-			this.imgBaba.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.imgBaba.Image = global::BabaIsYou.Properties.Resources.baba;
-			this.imgBaba.Location = new System.Drawing.Point(0, 0);
-			this.imgBaba.Name = "imgBaba";
-			this.imgBaba.Size = new System.Drawing.Size(1009, 826);
-			this.imgBaba.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-			this.imgBaba.TabIndex = 1;
-			this.imgBaba.TabStop = false;
-			this.imgBaba.Visible = false;
-			// 
 			// WorldViewer
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.Black;
 			this.ClientSize = new System.Drawing.Size(1009, 826);
+			this.Controls.Add(this.imgBaba);
 			this.Controls.Add(this.splitMain);
 			this.Controls.Add(this.status);
 			this.Controls.Add(this.menu);
-			this.Controls.Add(this.imgBaba);
 			this.DoubleBuffered = true;
 			this.KeyPreview = true;
 			this.MainMenuStrip = this.menu;
@@ -548,6 +584,9 @@
 		private System.Windows.Forms.ToolStripMenuItem menuItemNewTheme;
 		private System.Windows.Forms.ToolStripSeparator menuItemThemeSeperator;
 		private System.Windows.Forms.ToolStripMenuItem menuItemEdgePlacement;
+		private System.Windows.Forms.ToolStripSplitButton statusAddLevel;
+		private System.Windows.Forms.ToolStripSplitButton statusAddPath;
+		private System.Windows.Forms.ToolStripSplitButton statusSetSelector;
 	}
 }
 

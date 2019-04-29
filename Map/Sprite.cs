@@ -3,11 +3,13 @@ using System.Drawing;
 namespace BabaIsYou.Map {
 	public class Sprite {
 		public string Name;
+		public string ActualFile;
 		public bool IsRoot;
 		public Dictionary<int, Bitmap> Images = new Dictionary<int, Bitmap>();
 
-		public Sprite(string name, bool isRoot) {
+		public Sprite(string name, string actualFile, bool isRoot) {
 			Name = name;
+			ActualFile = actualFile;
 			IsRoot = isRoot;
 		}
 		public int MaxIndex {

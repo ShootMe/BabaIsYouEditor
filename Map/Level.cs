@@ -1,17 +1,23 @@
 ﻿namespace BabaIsYou.Map {
 	public enum LevelStyle : byte {
 		Number,
-		Text,
+		Letter,
 		Dot,
-		Custom = 255
+		Icon = 255
+	}
+	public enum LevelState : byte {
+		Hidden,
+		Normal,
+		Opened
 	}
 	public class Level : Item {
-		public static Level DEFAULT = new Level() { ID = 2568, Name = "level", Sprite = "default", Tiling = 255, Object = "level", Layer = 30, IsObject = true, SpriteInRoot = true };
+		public static Level DEFAULT = new Level() { ID = 2568, Name = "level", Sprite = "default", Tiling = 255, Object = "level", Layer = 100, IsObject = true, SpriteInRoot = true, Color = 768, ActiveColor = 512, State = 1 };
 		public string File;
 		public byte X;
 		public byte Y;
 		public byte Number;
 		public byte Style;
+		public byte State;
 
 		public override Item Copy() {
 			return new Level() {
@@ -35,7 +41,8 @@
 				X = X,
 				Y = Y,
 				Number = Number,
-				Style = Style
+				Style = Style,
+				State = State
 			};
 		}
 		public override string ToString() {

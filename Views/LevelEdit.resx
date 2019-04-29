@@ -117,41 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="lblReadme.Text" xml:space="preserve">
-    <value>Controls For Map
-   - Left Mouse
-       When current sprite is not under mouse it will place that sprite, and dragging the mouse will continue to place that sprite
-      + Holding CTRL will allow you to place the same sprite multiple times in the same cell
-
-       When current sprite is already under mouse it will remove that sprite, and dragging the mouse will continue to remove that sprite
-
-  - Right Mouse
-      Will replace your currently selected sprite with the one under the mouse.
-      If there are multiple sprites under your mouse it will toggle through them on each click
-
-  - Middle Mouse
-      Will bring up window to edit info if the cell contains a level object or a path object
-
-  - Mouse Wheel
-      Will change the direction of the top most sprite under the mouse or
-      If the currently selected sprite is in the cell it will change the direction of that sprite
-      + Holding CTRL will change the direction of the currently selected sprite
-
-
-Controls For Sprite List
-  - Right Mouse
-      Will open sprite editor window
-
-  - Digits and Letters on Keyboard
-      Will select the sprite that starts with the text you have typed in a short timespan
-      (ie. typing I C E will select the ice sprite)
-
-
-Controls For Level List
-  - Right Mouse
-      Will open the properties window for that level
-
-  - Mouse Wheel
-      Will scroll through the list of levels up and down</value>
-  </data>
 </root>

@@ -47,7 +47,7 @@
 			this.txtCustomParent = new System.Windows.Forms.TextBox();
 			this.lblCustomParent = new System.Windows.Forms.Label();
 			this.btnSetLevel = new System.Windows.Forms.Button();
-			this.chkCallingParent = new System.Windows.Forms.RadioButton();
+			this.chkCallingParent = new BabaIsYou.Controls.ColorRadioButton();
 			((System.ComponentModel.ISupportInitialize)(this.gridOther)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.numWidth)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.numHeight)).BeginInit();
@@ -322,8 +322,11 @@
 			// chkCallingParent
 			// 
 			this.chkCallingParent.AutoSize = true;
+			this.chkCallingParent.BackColor = System.Drawing.Color.Transparent;
 			this.chkCallingParent.Location = new System.Drawing.Point(267, 145);
 			this.chkCallingParent.Name = "chkCallingParent";
+			this.chkCallingParent.OffColour = System.Drawing.Color.Empty;
+			this.chkCallingParent.OnColor = System.Drawing.Color.Red;
 			this.chkCallingParent.Size = new System.Drawing.Size(85, 17);
 			this.chkCallingParent.TabIndex = 16;
 			this.chkCallingParent.TabStop = true;
@@ -400,6 +403,6 @@
 		private System.Windows.Forms.TextBox txtCustomParent;
 		private System.Windows.Forms.Label lblCustomParent;
 		private System.Windows.Forms.Button btnSetLevel;
-		private System.Windows.Forms.RadioButton chkCallingParent;
+		private BabaIsYou.Controls.ColorRadioButton chkCallingParent;
 	}
 }

@@ -94,6 +94,9 @@ namespace BabaIsYou.Views {
 			GameWorldName = string.IsNullOrEmpty(GameWorldName) ? GameWorld : GameWorldName;
 			statusLevel.Text = $"Loading world  \"{GameWorldName}\"  ...";
 			levelsToBeRemoved.Clear();
+			mapViewer.Map = null;
+			listLevels.Items.Clear();
+			listObjects.Items.Clear();
 
 			Thread thread = new Thread(delegate () {
 #if !DEBUG
@@ -128,7 +131,6 @@ namespace BabaIsYou.Views {
 					txtLevelFilter.Visible = true;
 
 					statusLevel.Text = "N/A";
-					listLevels.Items.Clear();
 					listLevels.Items.AddRange(newItems);
 
 					Text = $"{TitleBarText} - {GameWorldName} - {listLevels.Items.Count} Levels";
@@ -306,7 +308,7 @@ namespace BabaIsYou.Views {
 					ItemChange change;
 					Item copy = item.Copy();
 					if (map != null && map.Changes.TryGetValue(item.ID, out change)) {
-						copy = change.Copy();
+						change.Apply(copy);
 					}
 
 					Bitmap img = new Bitmap(SpriteSize, SpriteSize);
@@ -337,16 +339,46 @@ namespace BabaIsYou.Views {
 				listObjects.SelectedIndex = 0;
 			}
 		}
-		private void listObjects_IndexChanged(int index, ListItem item) {
-			UpdateCurrentObject(item, true);
+		private void statusAddLevel_ButtonClick(object sender, EventArgs e) {
+			if (map == null) { return; }
+
+			listObjects.SelectedItem = null;
+			Level level = (Level)Level.DEFAULT.Copy();
+			level.Name = map.Name;
+			level.File = map.FileName;
+			UpdateCurrentObject(level, true);
 		}
-		private void UpdateCurrentObject(ListItem item, bool invalidate) {
+		private void statusAddPath_ButtonClick(object sender, EventArgs e) {
+			if (map == null) { return; }
+
+			listObjects.SelectedItem = null;
+			Line line = new Line();
+			line.UpdateLine();
+			UpdateCurrentObject(line, true);
+		}
+		private void statusSetSelector_ButtonClick(object sender, EventArgs e) {
+			if (map == null) { return; }
+
+			listObjects.SelectedItem = null;
+			UpdateCurrentObject(Item.SELECTOR.Copy(), true);
+		}
+		private void listObjects_IndexChanged(int index, ListItem item) {
+			UpdateCurrentObject((Item)(item == null ? null : item.Value), true);
+		}
+		private void UpdateCurrentObject(Item item, bool invalidate) {
 			if (item == null) {
 				currentObject = null;
 				statusSprite.Text = "Empty";
 			} else {
-				currentObject = (Item)item.Value;
-				statusSprite.Text = $"{currentObject.Name}";
+				currentObject = item;
+
+				if (currentObject is Level) {
+					statusSprite.Text = $"Level Object";
+				} else if (currentObject is Line) {
+					statusSprite.Text = $"Path Object";
+				} else {
+					statusSprite.Text = $"{currentObject.Name}";
+				}
 			}
 
 			if (invalidate) {
@@ -388,7 +420,7 @@ namespace BabaIsYou.Views {
 			item.Image = img;
 
 			if (listObjects.SelectedItem == item) {
-				UpdateCurrentObject(item, false);
+				UpdateCurrentObject((Item)(item == null ? null : item.Value), false);
 			}
 			listObjects.Invalidate();
 		}
@@ -398,32 +430,85 @@ namespace BabaIsYou.Views {
 		}
 		private void mapViewer_CellMouseDown(Grid map, Cell cell, MouseEventArgs e) {
 			if (e.Button == MouseButtons.Left) {
-				if (currentObject != null) {
-					bool hasObject = cell.ContainsObjectType(currentObject);
-					if (cell.LayerCount() < 3 && (!hasObject || holdingControl) && isAdding.GetValueOrDefault(true)) {
-						isAdding = true;
-						Item item = currentObject.Copy();
-						item.Position = cell.Position;
-						cell.Objects.Add(item);
-						cell.Objects.Sort();
+				if (currentObject == null) { return; }
+
+				bool hasObject = cell.ContainsObjectType(currentObject);
+				bool isLevelLine = currentObject is Level || currentObject is Line;
+				bool willAdd = cell.LayerCount() < 3 && (!isLevelLine || !cell.HasLevelPath());
+				if (currentObject.ID == short.MaxValue) {
+					Point location = cell.GetLocation(map.Width, map.Height);
+					string xpos = location.X.ToString();
+					string ypos = location.Y.ToString();
+					string currentX = map.Info["general", "selectorX"];
+					string currentY = map.Info["general", "selectorY"];
+
+					if (xpos != currentX || ypos != currentY) {
+						map.Info["general", "selectorX"] = xpos;
+						map.Info["general", "selectorY"] = ypos;
+					} else {
+						map.Info["general", "selectorX"] = "-1";
+						map.Info["general", "selectorY"] = "-1";
+					}
+
+					UpdateCurrentLevel(listLevels.SelectedItem);
+				} else if (willAdd && (!hasObject || holdingControl) && isAdding.GetValueOrDefault(true)) {
+					isAdding = true;
+					Item item = currentObject.Copy();
+					item.Position = cell.Position;
+					cell.Objects.Add(item);
+					cell.Objects.Sort();
+					UpdateCurrentLevel(listLevels.SelectedItem);
+				} else if (hasObject && !isAdding.GetValueOrDefault(false)) {
+					isAdding = false;
+					if (cell.RemoveObjectOfType(currentObject)) {
 						UpdateCurrentLevel(listLevels.SelectedItem);
-					} else if (hasObject && !isAdding.GetValueOrDefault(false)) {
-						isAdding = false;
-						if (cell.RemoveObjectOfType(currentObject)) {
-							UpdateCurrentLevel(listLevels.SelectedItem);
-						}
 					}
 				}
 			} else if (e.Button == MouseButtons.Right) {
 				Item item = cell.GetNextItem(currentObject);
 				if (item != null) {
-					for (int i = 0; i < listObjects.Items.Count; i++) {
-						ListItem sprite = listObjects.Items[i];
-						if (((Item)sprite.Value).ID == item.ID) {
-							listObjects.SelectedIndex = i;
+					if (item is Level) {
+						statusAddLevel_ButtonClick(null, null);
+					} else if (item is Line) {
+						statusAddPath_ButtonClick(null, null);
+					} else {
+						for (int i = 0; i < listObjects.Items.Count; i++) {
+							ListItem sprite = listObjects.Items[i];
+							if (((Item)sprite.Value).ID == item.ID) {
+								listObjects.SelectedIndex = i;
+							}
 						}
 					}
 					mapViewer.Invalidate();
+				}
+			} else if (e.Button == MouseButtons.Middle) {
+				Item levelItem = cell.GetItemOfType(Level.DEFAULT);
+				Item lineItem = cell.GetItemOfType(new Line());
+
+				Palette palette = Reader.Palettes[map.Palette];
+				if (levelItem != null) {
+					using (LevelEdit editor = new LevelEdit()) {
+						editor.Palette = palette;
+						editor.Level = (Level)levelItem;
+						editor.LevelList = listLevels;
+						editor.BackColor = palette.Edge;
+						editor.Icon = this.Icon;
+						DialogResult result = editor.ShowDialog(this);
+						if (result == DialogResult.OK) {
+							UpdateCurrentLevel(listLevels.SelectedItem);
+						}
+					}
+				} else if (lineItem != null) {
+					//using (LevelEdit editor = new LevelEdit()) {
+					//	editor.Palette = palette;
+					//	editor.Level = currentObject;
+					//	editor.BackColor = palette.Edge;
+					//	editor.Icon = this.Icon;
+					//	DialogResult result = editor.ShowDialog(this);
+					//	if (result == DialogResult.OK) {
+					//		UpdateCurrentLevel(listLevels.SelectedItem);
+					//	}
+					//}
 				}
 			}
 		}
@@ -437,21 +522,21 @@ namespace BabaIsYou.Views {
 			mapViewer.Invalidate();
 		}
 		private void mapViewer_CellMouseWheel(Grid map, Cell cell, MouseEventArgs e) {
-			Item item = (Item)listObjects.SelectedItem.Value;
+			if (currentObject == null) { return; }
+
 			if (holdingControl || cell.Objects.Count == 0) {
-				ChangeItemDirection(item, e.Delta < 0);
+				ChangeItemDirection(currentObject, e.Delta < 0, false);
 			} else {
-				Item cellItem = cell.GetItemOfType(item);
+				Item cellItem = cell.GetItemOfType(currentObject);
 				if (cellItem == null) {
 					cellItem = cell.GetNextItem(null);
 				}
 				if (cellItem != null) {
-					ChangeItemDirection(cellItem, e.Delta < 0);
+					ChangeItemDirection(cellItem, e.Delta < 0, true);
 				}
 			}
-			mapViewer.Invalidate();
 		}
-		private void ChangeItemDirection(Item item, bool clockwise) {
+		private void ChangeItemDirection(Item item, bool clockwise, bool updateMap) {
 			if (clockwise) {
 				item.Direction--;
 				if (item.Direction > 3) {
@@ -463,11 +548,16 @@ namespace BabaIsYou.Views {
 					item.Direction = 0;
 				}
 			}
+			if (updateMap) {
+				UpdateCurrentLevel(listLevels.SelectedItem);
+			}
 		}
 		private void mapViewer_DrawCurrentCellStart(Graphics g, Grid map, Cell cell, Rectangle bounds) {
 			if (currentObject != null) {
-				addedObject = cell.LayerCount() < 3;
-				if (addedObject && (!cell.ContainsObjectType(currentObject) || holdingControl) && isAdding.GetValueOrDefault(true)) {
+				bool containsType = cell.ContainsObjectType(currentObject);
+				bool isLevelLine = currentObject is Level || currentObject is Line;
+				addedObject = (cell.LayerCount() < 3 || currentObject.ID == short.MaxValue) && (!isLevelLine || !cell.HasLevelPath());
+				if (addedObject && (!containsType || holdingControl) && isAdding.GetValueOrDefault(true)) {
 					currentObject.Position = cell.Position;
 					cell.Objects.Add(currentObject);
 					cell.Objects.Sort();
@@ -593,7 +683,16 @@ namespace BabaIsYou.Views {
 				for (int i = 0; i < listLevels.Items.Count; i++) {
 					ListItem item = listLevels.Items[i];
 					if (item.Changed) {
-						Writer.WriteMap((Grid)item.Value, Path.Combine(GameDirectory, "Worlds", GameWorld));
+						Grid mapToSave = (Grid)item.Value;
+						Writer.WriteMap(mapToSave, Path.Combine(GameDirectory, "Worlds", GameWorld));
+
+						using (Bitmap imgExtra = new Bitmap(72, 72)) {
+							using (Graphics g = Graphics.FromImage(imgExtra)) {
+								Renderer.Render(mapToSave, g, imgExtra.Width, imgExtra.Height);
+							}
+							imgExtra.Save(Path.Combine(GameDirectory, "Worlds", GameWorld, $"{mapToSave.FileName}.png"));
+						}
+
 						item.Changed = false;
 						saved++;
 					}

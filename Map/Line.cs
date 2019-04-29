@@ -9,6 +9,19 @@
 		public Line() {
 			Object = "object117";
 		}
+		public void UpdateLine() {
+			Item item = Reader.DefaultsByName[Object];
+			ID = item.ID;
+			Sprite = item.Sprite;
+			Name = item.Name;
+			SpriteInRoot = item.SpriteInRoot;
+			IsObject = item.IsObject;
+			Type = item.Type;
+			Color = item.Color;
+			ActiveColor = item.ActiveColor;
+			Tiling = item.Tiling;
+			Layer = item.Layer;
+		}
 
 		public override Item Copy() {
 			return new Line() {

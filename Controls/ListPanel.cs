@@ -410,11 +410,7 @@ namespace BabaIsYou.Controls {
 		public Size Size { get { return Image.Size; } }
 		private static Bitmap Warning;
 		static ListItem() {
-			try {
-				Warning = (Bitmap)Bitmap.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream("BabaIsYou.Images.changed.png"));
-			} catch {
-				Warning = null;
-			}
+			Warning = (Bitmap)Bitmap.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream("BabaIsYou.Images.changed.png"));
 		}
 
 		public ListItem(object value, string text, Bitmap image) {

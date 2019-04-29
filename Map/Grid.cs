@@ -104,6 +104,54 @@ namespace BabaIsYou.Map {
 			}
 			return layerCount;
 		}
+		public void UpdateLevelsAndPaths() {
+			Info.RemoveSection("Levels");
+			Info.RemoveSection("Paths");
+			Info.RemoveSection("Icons");
+
+			int levelID = 0;
+			int pathID = 0;
+			int iconID = 0;
+			int size = Cells.Count;
+			for (int i = 0; i < size; i++) {
+				Cell cell = Cells[i];
+				Point location = cell.GetLocation(Width, Height);
+
+				for (int j = cell.Objects.Count - 1; j >= 0; j--) {
+					Item item = cell.Objects[j];
+					if (item is Level level) {
+						Info["Levels", $"{levelID}name"] = level.Name;
+						Info["Levels", $"{levelID}file"] = level.File;
+						Info["Levels", $"{levelID}number"] = level.Style == (byte)LevelStyle.Icon ? iconID.ToString() : level.Number.ToString();
+						Info["Levels", $"{levelID}style"] = level.Style == (byte)LevelStyle.Icon ? "-1" : level.Style.ToString();
+						Info["Levels", $"{levelID}state"] = level.State.ToString();
+						Info["Levels", $"{levelID}colour"] = Reader.ShortToCoordinate(level.Color);
+						Info["Levels", $"{levelID}clearcolour"] = Reader.ShortToCoordinate(level.ActiveColor);
+						Info["Levels", $"{levelID}X"] = location.X.ToString();
+						Info["Levels", $"{levelID}Y"] = location.Y.ToString();
+						Info["Levels", $"{levelID}Z"] = "0";
+						Info["Levels", $"{levelID}dir"] = level.Direction.ToString();
+						if (level.Style == (byte)LevelStyle.Icon) {
+							Sprite sprite = Reader.Sprites[level.Sprite];
+							Info["Icons", $"{iconID}file"] = sprite.ActualFile;
+							Info["Icons", $"{iconID}root"] = sprite.IsRoot ? "1" : "0";
+							iconID++;
+						}
+						levelID++;
+					} else if (item is Line line) {
+						Info["Paths", $"{pathID}object"] = line.Object;
+						Info["Paths", $"{pathID}style"] = line.Style.ToString();
+						Info["Paths", $"{pathID}gate"] = line.Gate.ToString();
+						Info["Paths", $"{pathID}requirement"] = line.Requirement.ToString();
+						Info["Paths", $"{pathID}X"] = location.X.ToString();
+						Info["Paths", $"{pathID}Y"] = location.Y.ToString();
+						Info["Paths", $"{pathID}Z"] = "0";
+						Info["Paths", $"{pathID}dir"] = line.Direction.ToString();
+						pathID++;
+					}
+				}
+			}
+		}
 		public string SerializeChanges(string themeName) {
 			StringBuilder sb = new StringBuilder();
 			sb.AppendLine("[general]");
@@ -148,10 +196,7 @@ namespace BabaIsYou.Map {
 					Item item = cell.Objects[j];
 					ItemChange change;
 					if (Changes.TryGetValue(item.ID, out change)) {
-						Item copy = change.Copy();
-						copy.Position = item.Position;
-						copy.Direction = item.Direction;
-						cell.Objects[j] = copy;
+						change.Apply(item);
 					} else if (item.Changed) {
 						Item copy = Reader.DefaultsByID[item.ID].Copy();
 						copy.Position = item.Position;

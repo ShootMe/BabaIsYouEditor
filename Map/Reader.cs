@@ -60,14 +60,15 @@ namespace BabaIsYou.Map {
 				string file = files[i];
 				int index;
 				int sub;
-				string name = GetSpriteInfo(Path.GetFileNameWithoutExtension(file), isSprite, out index, out sub);
+				string fileNoExt = Path.GetFileNameWithoutExtension(file);
+				string name = GetSpriteInfo(fileNoExt, isSprite, out index, out sub);
 				if (string.IsNullOrEmpty(name)) {
 					continue;
 				}
 
 				Sprite sprite;
 				if (!Sprites.TryGetValue(name, out sprite)) {
-					sprite = new Sprite(name, isRoot);
+					sprite = new Sprite(name, fileNoExt, isRoot);
 					Sprites.Add(name, sprite);
 				}
 
@@ -178,8 +179,16 @@ namespace BabaIsYou.Map {
 					SetItemValue(item, obj, value);
 				}
 
-				DefaultsByName.Add(item.Object, item);
-				DefaultsByID.Add(item.ID, item);
+				Item existing;
+				if (DefaultsByID.TryGetValue(item.ID, out existing)) {
+					item.Object = existing.Object;
+					maxID--;
+					DefaultsByID[item.ID] = item;
+					DefaultsByName[item.Object] = item;
+				} else {
+					DefaultsByID.Add(item.ID, item);
+					DefaultsByName.Add(item.Object, item);
+				}
 			}
 		}
 		private static void SetItemValue(Item item, string obj, string value) {
@@ -410,17 +419,7 @@ namespace BabaIsYou.Map {
 			}
 
 			foreach (Line line in lines.Values) {
-				Item item = DefaultsByName[line.Object];
-				line.ID = item.ID;
-				line.Sprite = item.Sprite;
-				line.Name = item.Name;
-				line.SpriteInRoot = item.SpriteInRoot;
-				line.IsObject = item.IsObject;
-				line.Type = item.Type;
-				line.Color = item.Color;
-				line.ActiveColor = item.ActiveColor;
-				line.Tiling = item.Tiling;
-				line.Layer = item.Layer;
+				line.UpdateLine();
 				line.Position = (short)(line.Y * grid.Width + line.X);
 				grid.Cells[line.Position].Objects.Add(line);
 			}
@@ -453,27 +452,17 @@ namespace BabaIsYou.Map {
 					case "name": level.Name = pair.Value; break;
 					case "file": level.File = pair.Value; break;
 					case "colour": level.Color = CoordinateToShort(pair.Value); break;
+					case "clearcolour": level.ActiveColor = CoordinateToShort(pair.Value); break;
 					case "number": level.Number = byte.Parse(pair.Value); break;
 					case "style": level.Style = (byte)short.Parse(pair.Value); break;
+					case "state": level.State = byte.Parse(pair.Value); break;
 					case "x": level.X = byte.Parse(pair.Value); break;
 					case "y": level.Y = byte.Parse(pair.Value); break;
 					case "dir": level.Direction = byte.Parse(pair.Value); break;
 				}
 			}
 
-			Dictionary<string, Level> usedLevel = new Dictionary<string, Level>();
 			foreach (Level level in maps.Values) {
-				Level current;
-				if (usedLevel.TryGetValue(level.Name, out current)) {
-					if (current.Position > level.Position) {
-						usedLevel[level.Name] = level;
-					}
-				} else {
-					usedLevel.Add(level.Name, level);
-				}
-			}
-
-			foreach (Level level in usedLevel.Values) {
 				if (level.Style == 255) {
 					string icon = grid.Info["icons", $"{level.Number}file"];
 					if (!string.IsNullOrEmpty(icon)) {

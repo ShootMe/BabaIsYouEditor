@@ -46,6 +46,7 @@ namespace BabaIsYou.Map {
 			map.Info["general", "levels"] = levelCount.ToString();
 			int pathCount = map.PathCount();
 			map.Info["general", "paths"] = pathCount.ToString();
+			map.UpdateLevelsAndPaths();
 
 			using (FileStream stream = File.Open(Path.Combine(filePath, $"{map.FileName}.ld"), FileMode.Create, FileAccess.ReadWrite)) {
 				string info = map.Info.Serialize();

@@ -2,8 +2,13 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Reflection;
 namespace BabaIsYou.Map {
 	public class Renderer {
+		private static Bitmap Selector;
+		static Renderer() {
+			Selector = (Bitmap)Bitmap.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream("BabaIsYou.Images.grid.png"));
+		}
 		public static Rectangle GetBounds(Grid grid, int totalWidth, int totalHeight) {
 			int tileWidth = totalWidth / grid.Width;
 			int tileHeight = totalHeight / grid.Height;
@@ -64,6 +69,20 @@ namespace BabaIsYou.Map {
 				mapBounds.Y = yOrig;
 
 				DrawDirections(g, grid, mapBounds, xOrig, rowEnd);
+			}
+
+			int selectorX;
+			if (!int.TryParse(grid.Info["general", "selectorX"], out selectorX)) {
+				selectorX = -1;
+			}
+			int selectorY;
+			if (!int.TryParse(grid.Info["general", "selectorY"], out selectorY)) {
+				selectorY = -1;
+			}
+			if (selectorX >= 0 && selectorY >= 0 && selectorX < grid.Width && selectorY < grid.Height) {
+				mapBounds.X = xOrig + mapBounds.Width * selectorX;
+				mapBounds.Y = yOrig + mapBounds.Height * selectorY;
+				DrawSprite(grid, g, mapBounds, Item.SELECTOR, palette);
 			}
 		}
 		private static void DrawDirections(Graphics g, Grid grid, Rectangle bounds, int xOrig, int rowEnd) {
@@ -134,6 +153,17 @@ namespace BabaIsYou.Map {
 			Bitmap image = sprite[0, 1];
 			DrawImage(g, image, destination, color);
 		}
+		public static Bitmap DrawSprite(Item item, int imgSize, Palette palette) {
+			Bitmap img = new Bitmap(imgSize, imgSize);
+			Rectangle rect = new Rectangle(0, 0, img.Width, img.Height);
+			using (Graphics g = Graphics.FromImage(img)) {
+				using (SolidBrush brush = new SolidBrush(palette.Background)) {
+					g.FillRectangle(brush, rect);
+				}
+				DrawSprite(null, g, rect, item, palette);
+			}
+			return img;
+		}
 		public static void DrawSprite(Grid grid, Graphics g, Rectangle destination, Item item, Palette palette, int stackCount = 0) {
 			Color color = palette.Colors[item.Active && item.ActiveColor != -1 ? item.ActiveColor : item.Color];
 
@@ -144,11 +174,11 @@ namespace BabaIsYou.Map {
 				return;
 			}
 
-			Sprite sprite;
-			if (!Reader.Sprites.TryGetValue(item.Sprite, out sprite)) {
+			Sprite sprite = null;
+			if (item.ID != short.MaxValue && !Reader.Sprites.TryGetValue(item.Sprite, out sprite)) {
 				throw new Exception($"Failed to find Sprite {item.Sprite}");
 			}
-			Bitmap image = sprite[0, 1];
+			Bitmap image = item.ID == short.MaxValue ? Selector : sprite[0, 1];
 			switch ((Tiling)item.Tiling) {
 				case Tiling.Directional:
 				case Tiling.Animated:
@@ -217,6 +247,7 @@ namespace BabaIsYou.Map {
 			if (item is Level level) {
 				int inc = 40;
 				Color colorInc = ColorUtil.TransformBrightness(color, ColorUtil.ColorTransformMode.Hsb, 0.6);
+				Color colorText = palette.Colors[item.Color];
 				if (colorInc.R == 0 && colorInc.G == 0 && colorInc.B == 0) {
 					colorInc = Color.FromArgb(color.R + inc, color.G + inc, color.B + inc);
 				}
@@ -226,7 +257,7 @@ namespace BabaIsYou.Map {
 						g.FillPath(brush, path);
 					}
 
-					if (level.Style == (byte)LevelStyle.Custom) {
+					if (level.Style == (byte)LevelStyle.Icon) {
 						DrawImage(g, image, destination, color);
 					}
 
@@ -235,12 +266,18 @@ namespace BabaIsYou.Map {
 					}
 				}
 
-				if (level.Style == (byte)LevelStyle.Number || level.Style == (byte)LevelStyle.Text) {
-					using (SolidBrush brush = new SolidBrush(color)) {
+				if (level.Style == (byte)LevelStyle.Number || level.Style == (byte)LevelStyle.Letter) {
+					using (SolidBrush brush = new SolidBrush(colorText)) {
 						int fontWidth = destination.Width * 2 / 3;
 						if (fontWidth <= 0) { fontWidth = 1; }
 						using (Font font = new Font(FontFamily.GenericSansSerif, fontWidth, FontStyle.Bold, GraphicsUnit.Pixel)) {
-							string text = level.Style == (byte)LevelStyle.Number ? level.Number.ToString("00") : ((char)(level.Number + 0x41)).ToString();
+							int number = level.Number;
+							if (level.Style == (byte)LevelStyle.Number) {
+								number = number > 99 ? 99 : number;
+							} else {
+								number = number > 25 ? 25 : number;
+							}
+							string text = level.Style == (byte)LevelStyle.Number ? number.ToString("00") : ((char)(number + 0x41)).ToString();
 							SizeF textSize = g.MeasureString(text, font, 9999999, StringFormat.GenericTypographic);
 							g.DrawString(text, font, brush, new Point(destination.X + (int)(destination.Width / 2 - textSize.Width / 2), destination.Y + (int)(destination.Height / 2 - textSize.Height / 2)), StringFormat.GenericTypographic);
 						}

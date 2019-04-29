@@ -5,34 +5,29 @@ namespace BabaIsYou.Map {
 	public class ItemChange {
 		public string ObjectName;
 		private Dictionary<string, string> changes = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-		private Item item;
 		public bool HasChanges {
 			get { return changes.Count > 0; }
 		}
 
 		public ItemChange(string objectName) {
 			ObjectName = objectName;
-			item = Reader.DefaultsByName[objectName].Copy();
 		}
-		public Item Copy() {
-			Item copy = item.Copy();
-			copy.Changed = true;
+		public void Apply(Item item) {
+			item.Changed = changes.Count > 0;
 
 			foreach (KeyValuePair<string, string> pair in changes) {
 				switch (pair.Key) {
-					case "root": copy.SpriteInRoot = pair.Value != "0"; break;
-					case "image": copy.Sprite = pair.Value; break;
-					case "name": copy.Name = pair.Value; break;
-					case "colour": copy.Color = Reader.CoordinateToShort(pair.Value); break;
-					case "activecolour": copy.ActiveColor = Reader.CoordinateToShort(pair.Value); break;
-					case "type": copy.Type = byte.Parse(pair.Value); break;
-					case "unittype": copy.IsObject = pair.Value == "object"; break;
-					case "layer": copy.Layer = byte.Parse(pair.Value); break;
-					case "tiling": copy.Tiling = (byte)short.Parse(pair.Value); break;
+					case "root": item.SpriteInRoot = pair.Value != "0"; break;
+					case "image": item.Sprite = pair.Value; break;
+					case "name": item.Name = pair.Value; break;
+					case "colour": item.Color = Reader.CoordinateToShort(pair.Value); break;
+					case "activecolour": item.ActiveColor = Reader.CoordinateToShort(pair.Value); break;
+					case "type": item.Type = byte.Parse(pair.Value); break;
+					case "unittype": item.IsObject = pair.Value == "object"; break;
+					case "layer": item.Layer = byte.Parse(pair.Value); break;
+					case "tiling": item.Tiling = (byte)short.Parse(pair.Value); break;
 				}
 			}
-
-			return copy;
 		}
 		public string this[string property] {
 			get {
@@ -56,6 +51,7 @@ namespace BabaIsYou.Map {
 		}
 		public string Serialize() {
 			List<string> data = new List<string>();
+			Item item = Reader.DefaultsByName[ObjectName];
 			foreach (KeyValuePair<string, string> pair in changes) {
 				bool changed = false;
 				switch (pair.Key) {

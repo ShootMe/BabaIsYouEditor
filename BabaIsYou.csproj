@@ -51,6 +51,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\ColorRadioButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\ListPanel.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -58,6 +61,12 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\OpenFolderDialog.cs" />
+    <Compile Include="Views\LevelEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\LevelEdit.Designer.cs">
+      <DependentUpon>LevelEdit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\LevelProperties.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -127,6 +136,9 @@
     <Compile Include="Zip\OutputWindow.cs" />
     <Compile Include="Zip\PendingBuffer.cs" />
     <Compile Include="Zip\StreamManipulator.cs" />
+    <EmbeddedResource Include="Views\LevelEdit.resx">
+      <DependentUpon>LevelEdit.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Views\LevelProperties.resx">
       <DependentUpon>LevelProperties.cs</DependentUpon>
     </EmbeddedResource>
@@ -188,6 +200,18 @@
     <None Include="Images\open.png" />
     <None Include="Images\config.png" />
     <None Include="Images\undo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\level.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\path.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\selector.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Images\grid.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

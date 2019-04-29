@@ -24,20 +24,9 @@ namespace BabaIsYou.Views {
 			DefaultItem = Reader.DefaultsByID[Sprite.ID].Copy();
 			Text = $"Edit - {DefaultItem.Object} - {DefaultItem.Name}";
 
-			imgOriginal.Image = DrawSprite(DefaultItem, imgOriginal.Width);
+			imgOriginal.Image = Renderer.DrawSprite(DefaultItem, imgOriginal.Width, Palette);
 
 			UpdateImages();
-		}
-		private Bitmap DrawSprite(Item item, int imgSize) {
-			Bitmap img = new Bitmap(imgSize, imgSize);
-			Rectangle rect = new Rectangle(0, 0, img.Width, img.Height);
-			using (Graphics g = Graphics.FromImage(img)) {
-				using (SolidBrush brush = new SolidBrush(Palette.Background)) {
-					g.FillRectangle(brush, rect);
-				}
-				Renderer.DrawSprite(null, g, rect, item, Palette);
-			}
-			return img;
 		}
 		private void numLayer_ValueChanged(object sender, EventArgs e) {
 			Sprite.Layer = (byte)numLayer.Value;
@@ -205,10 +194,10 @@ namespace BabaIsYou.Views {
 			if (useNameOnly) {
 				string image = Sprite.Sprite;
 				Sprite.Sprite = Sprite.Name;
-				img.Image = DrawSprite(Sprite, img.Width);
+				img.Image = Renderer.DrawSprite(Sprite, img.Width, Palette);
 				Sprite.Sprite = image;
 			} else {
-				img.Image = DrawSprite(Sprite, img.Width);
+				img.Image = Renderer.DrawSprite(Sprite, img.Width, Palette);
 			}
 		}
 		private void btnReset_Click(object sender, EventArgs e) {

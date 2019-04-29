@@ -28,17 +28,19 @@
 			this.btnSave = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
-			// lblName
+			// lblInput
 			// 
 			this.lblInput.AutoSize = true;
 			this.lblInput.Location = new System.Drawing.Point(12, 22);
-			this.lblInput.Name = "lblName";
+			this.lblInput.Name = "lblInput";
 			this.lblInput.Size = new System.Drawing.Size(35, 13);
 			this.lblInput.TabIndex = 0;
 			this.lblInput.Text = "Name";
 			// 
 			// txtInput
 			// 
+			this.txtInput.BackColor = System.Drawing.Color.White;
+			this.txtInput.ForeColor = System.Drawing.Color.Black;
 			this.txtInput.Location = new System.Drawing.Point(53, 19);
 			this.txtInput.MaxLength = 100;
 			this.txtInput.Name = "txtInput";

@@ -33,6 +33,8 @@ namespace BabaIsYou.Views {
 			filterKeys.Add("specials");
 			filterKeys.Add("customparent");
 			filterKeys.Add("unlockcount");
+			filterKeys.Add("selectorX");
+			filterKeys.Add("selectorY");
 		}
 
 		private void LevelProperties_Shown(object sender, EventArgs e) {
