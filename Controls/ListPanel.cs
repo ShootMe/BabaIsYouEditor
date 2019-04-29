@@ -221,7 +221,7 @@ namespace BabaIsYou.Controls {
 					MoveList(false, true);
 					break;
 				default: {
-					string keyVal = e.KeyCode.ToString();
+					string keyVal = e.KeyCode == Keys.Space ? " " : e.KeyCode.ToString();
 					if (keyVal.Length == 1) {
 						if ((DateTime.Now - lastTyped).TotalSeconds > 1) {
 							typedString.Length = 0;

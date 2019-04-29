@@ -246,8 +246,8 @@ namespace BabaIsYou.Map {
 
 			if (item is Level level) {
 				int inc = 40;
-				Color colorInc = ColorUtil.TransformBrightness(color, ColorUtil.ColorTransformMode.Hsb, 0.6);
 				Color colorText = palette.Colors[item.Color];
+				Color colorInc = ColorUtil.TransformBrightness(colorText, ColorUtil.ColorTransformMode.Hsb, 0.6);
 				if (colorInc.R == 0 && colorInc.G == 0 && colorInc.B == 0) {
 					colorInc = Color.FromArgb(color.R + inc, color.G + inc, color.B + inc);
 				}
@@ -261,13 +261,13 @@ namespace BabaIsYou.Map {
 						DrawImage(g, image, destination, color);
 					}
 
-					using (Pen pen = new Pen(color, destination.Width / 10)) {
+					using (Pen pen = new Pen(colorText, destination.Width / 10)) {
 						g.DrawPath(pen, path);
 					}
 				}
 
 				if (level.Style == (byte)LevelStyle.Number || level.Style == (byte)LevelStyle.Letter) {
-					using (SolidBrush brush = new SolidBrush(colorText)) {
+					using (SolidBrush brush = new SolidBrush(color)) {
 						int fontWidth = destination.Width * 2 / 3;
 						if (fontWidth <= 0) { fontWidth = 1; }
 						using (Font font = new Font(FontFamily.GenericSansSerif, fontWidth, FontStyle.Bold, GraphicsUnit.Pixel)) {

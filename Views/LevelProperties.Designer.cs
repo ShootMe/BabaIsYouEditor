@@ -317,6 +317,7 @@
 			this.btnSetLevel.Name = "btnSetLevel";
 			this.btnSetLevel.Size = new System.Drawing.Size(68, 23);
 			this.btnSetLevel.TabIndex = 17;
+			this.btnSetLevel.TabStop = false;
 			this.btnSetLevel.Text = "Set Level";
 			this.btnSetLevel.Click += new System.EventHandler(this.btnSetLevel_Click);
 			// 

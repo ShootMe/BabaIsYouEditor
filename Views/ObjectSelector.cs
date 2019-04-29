@@ -29,5 +29,12 @@ namespace BabaIsYou.Views {
 				this.Close();
 			}
 		}
+		private void ObjectSelector_KeyDown(object sender, KeyEventArgs e) {
+			if (e.KeyCode == Keys.Enter && listSelector.SelectedItem != null) {
+				SelectedItem = listSelector.SelectedItem.Value;
+				this.DialogResult = DialogResult.OK;
+				this.Close();
+			}
+		}
 	}
 }

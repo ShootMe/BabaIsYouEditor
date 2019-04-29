@@ -46,6 +46,7 @@
 			this.DoubleBuffered = true;
 			this.ForeColor = System.Drawing.Color.White;
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+			this.KeyPreview = true;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "ObjectSelector";
@@ -53,6 +54,7 @@
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Select";
+			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ObjectSelector_KeyDown);
 			this.ResumeLayout(false);
 
 		}
