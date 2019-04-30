@@ -20,17 +20,17 @@ namespace BabaIsYou.Views {
 #if !DEBUG
 			try {
 #endif
-				string path = @"C:\Program Files (x86)\Steam\steamapps\common\Baba Is You\Data\";
-				GameDirectory = RegistryRead<string>("GameDirectory", path);
-				if (!Directory.Exists(GameDirectory)) {
-					GameDirectory = Environment.CurrentDirectory;
-				}
-				GameDirectory = GameDirectory.Replace('/', '\\');
-				GameWorld = RegistryRead<string>("GameWorld", "baba");
+			string path = @"C:\Program Files (x86)\Steam\steamapps\common\Baba Is You\Data\";
+			GameDirectory = RegistryRead<string>("GameDirectory", path);
+			if (!Directory.Exists(GameDirectory)) {
+				GameDirectory = Environment.CurrentDirectory;
+			}
+			GameDirectory = GameDirectory.Replace('/', '\\');
+			GameWorld = RegistryRead<string>("GameWorld", "baba");
 
-				Application.EnableVisualStyles();
-				Application.SetCompatibleTextRenderingDefault(false);
-				Application.Run(new WorldViewer());
+			Application.EnableVisualStyles();
+			Application.SetCompatibleTextRenderingDefault(false);
+			Application.Run(new WorldViewer());
 #if !DEBUG
 			} catch (Exception ex) {
 				MessageBox.Show(ex.ToString(), "Application Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -105,71 +105,71 @@ namespace BabaIsYou.Views {
 #if !DEBUG
 				try {
 #endif
-					string[] files = Directory.GetFiles(Path.Combine(GameDirectory, "Worlds", GameWorld), "*.l", SearchOption.TopDirectoryOnly);
-					Reader.Initialize(GameDirectory, GameWorld);
+				string[] files = Directory.GetFiles(Path.Combine(GameDirectory, "Worlds", GameWorld), "*.l", SearchOption.TopDirectoryOnly);
+				Reader.Initialize(GameDirectory, GameWorld);
 
-					map = null;
-					List<ListItem> newItems = new List<ListItem>();
-					int imgSize = listLevels.Width;
-					for (int i = 0; i < files.Length; i++) {
-						string file = files[i];
-						map = Reader.ReadMap(files[i]);
-						if (map == null) { continue; }
+				map = null;
+				List<ListItem> newItems = new List<ListItem>();
+				int imgSize = listLevels.Width;
+				for (int i = 0; i < files.Length; i++) {
+					string file = files[i];
+					map = Reader.ReadMap(files[i]);
+					if (map == null) { continue; }
 
-						float widthRatio = imgSize / map.Width;
-						Bitmap img = new Bitmap(imgSize, (int)(widthRatio * map.Height) + listLevels.Font.Height * 2);
-						using (Graphics g = Graphics.FromImage(img)) {
-							Renderer.Render(map, g, img.Width, img.Height);
-						}
-						Bitmap imgExtra = new Bitmap(ExtraImageWidth, ExtraImageHeight);
-						using (Graphics g = Graphics.FromImage(imgExtra)) {
-							Renderer.Render(map, g, imgExtra.Width, imgExtra.Height);
-						}
-						ListItem item = new ListItem(map, map.Name, img);
-						item.Extra = imgExtra;
-						newItems.Add(item);
+					float widthRatio = imgSize / map.Width;
+					Bitmap img = new Bitmap(imgSize, (int)(widthRatio * map.Height) + listLevels.Font.Height * 2);
+					using (Graphics g = Graphics.FromImage(img)) {
+						Renderer.Render(map, g, img.Width, img.Height);
+					}
+					Bitmap imgExtra = new Bitmap(ExtraImageWidth, ExtraImageHeight);
+					using (Graphics g = Graphics.FromImage(imgExtra)) {
+						Renderer.Render(map, g, imgExtra.Width, imgExtra.Height);
+					}
+					ListItem item = new ListItem(map, map.Name, img);
+					item.Extra = imgExtra;
+					newItems.Add(item);
+				}
+
+				this.Invoke((MethodInvoker)delegate () {
+					txtLevelFilter.Visible = true;
+
+					statusLevel.Text = "N/A";
+					listLevels.Items.AddRange(newItems);
+
+					Text = $"{TitleBarText} - {GameWorldName} - {listLevels.Items.Count} Levels";
+
+					menuPalette.DropDownItems.Clear();
+					foreach (string name in Reader.Palettes.Keys) {
+						string paletteName = $"{char.ToUpper(name[0])}{name.Substring(1, name.Length - 5)}";
+						ToolStripMenuItem menuItem = new ToolStripMenuItem(paletteName, null, PaletteMenuItemClick);
+						menuItem.CheckOnClick = true;
+						menuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
+						menuPalette.DropDownItems.Add(menuItem);
 					}
 
-					this.Invoke((MethodInvoker)delegate () {
-						txtLevelFilter.Visible = true;
+					listLevels.Items.Sort();
+					listLevels.SelectedIndex = -1;
+					listLevels.SelectTopMostVisible();
 
-						statusLevel.Text = "N/A";
-						listLevels.Items.AddRange(newItems);
+					if (txtLevelFilter.ForeColor == Color.Black) {
+						txtLevelFilter.Text = string.Empty;
+						txtLevelFilter_Leave(null, null);
+					}
+					menu.Enabled = true;
+					imgBaba.Visible = false;
+					menuLevel.Enabled = true;
+					menuPalette.Enabled = true;
+					menuItemWorldProperties.Enabled = true;
+					menuItemAddLevel.Enabled = true;
+					menuItemRemoveLevel.Enabled = true;
+					menuItemSaveWorld.Enabled = true;
 
-						Text = $"{TitleBarText} - {GameWorldName} - {listLevels.Items.Count} Levels";
-
-						menuPalette.DropDownItems.Clear();
-						foreach (string name in Reader.Palettes.Keys) {
-							string paletteName = $"{char.ToUpper(name[0])}{name.Substring(1, name.Length - 5)}";
-							ToolStripMenuItem menuItem = new ToolStripMenuItem(paletteName, null, PaletteMenuItemClick);
-							menuItem.CheckOnClick = true;
-							menuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
-							menuPalette.DropDownItems.Add(menuItem);
-						}
-
-						listLevels.Items.Sort();
-						listLevels.SelectedIndex = -1;
-						listLevels.SelectTopMostVisible();
-
-						if (txtLevelFilter.ForeColor == Color.Black) {
-							txtLevelFilter.Text = string.Empty;
-							txtLevelFilter_Leave(null, null);
-						}
-						menu.Enabled = true;
-						imgBaba.Visible = false;
-						menuLevel.Enabled = true;
-						menuPalette.Enabled = true;
-						menuItemWorldProperties.Enabled = true;
-						menuItemAddLevel.Enabled = true;
-						menuItemRemoveLevel.Enabled = true;
-						menuItemSaveWorld.Enabled = true;
-
-						if (listLevels.SelectedItem == null) {
-							AddSprites();
-							SelectPalette("default.png");
-						}
-						listObjects.Focus();
-					});
+					if (listLevels.SelectedItem == null) {
+						AddSprites();
+						SelectPalette("default.png");
+					}
+					listObjects.Focus();
+				});
 #if !DEBUG
 				} catch (Exception ex) {
 					MessageBox.Show(ex.ToString(), "Loading World Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -187,6 +187,7 @@ namespace BabaIsYou.Views {
 		}
 		private void Solver_Resize(object sender, EventArgs e) {
 			listLevels.Invalidate();
+			ResizeListObjects();
 			listObjects.Invalidate();
 			mapViewer.Invalidate();
 		}
@@ -311,7 +312,7 @@ namespace BabaIsYou.Views {
 			currentObject = null;
 			string paletteName = map == null ? "default.png" : map.Palette;
 			Palette palette = Reader.Palettes[paletteName];
-			foreach (Item item in Reader.DefaultsByName.Values) {
+			foreach (Item item in Reader.DefaultsByObject.Values) {
 				if (item.ID <= 0 || string.IsNullOrEmpty(item.Sprite)) { continue; }
 
 				ItemChange change;
@@ -336,33 +337,64 @@ namespace BabaIsYou.Views {
 				listItem.BackColor = palette.Background;
 				listObjects.Items.Add(listItem);
 			}
-			int rowCount = listObjects.Items.Count / 24;
-			if (rowCount * 24 < listObjects.Items.Count) {
-				rowCount++;
-			}
-			splitObjectsLevel.SplitterDistance = SpriteSize * rowCount;
+			ResizeListObjects();
 			listObjects.Items.Sort();
 			listObjects.BackColor = palette.Edge;
 			if (!listObjects.SelectItemWithText(currentText)) {
 				listObjects.SelectedIndex = 0;
 			}
 		}
+		private void ResizeListObjects() {
+			int rowSize = listObjects.Width / SpriteSize;
+			int rowCount = listObjects.Items.Count / rowSize;
+			if (rowCount * rowSize < listObjects.Items.Count) {
+				rowCount++;
+			}
+			splitObjectsLevel.SplitterDistance = SpriteSize * rowCount;
+		}
 		private void statusAddLevel_ButtonClick(object sender, EventArgs e) {
 			if (map == null) { return; }
 
 			listObjects.SelectedItem = null;
-			Level level = (Level)Level.DEFAULT.Copy();
-			level.Name = map.Name;
-			level.File = map.FileName;
+
+			Level level;
+			if (mapViewer.CurrentCell == null || (level = mapViewer.CurrentCell.GetExtraObject<Level>()) == null) {
+				level = new Level();
+				level.Name = map.Name;
+				level.File = map.FileName;
+			} else {
+				level = (Level)level.Copy();
+			}
 			UpdateCurrentObject(level, true);
 		}
 		private void statusAddPath_ButtonClick(object sender, EventArgs e) {
 			if (map == null) { return; }
 
 			listObjects.SelectedItem = null;
-			Line line = new Line();
-			line.UpdateLine();
-			UpdateCurrentObject(line, true);
+
+			LevelPath path;
+			if (mapViewer.CurrentCell == null || (path = mapViewer.CurrentCell.GetExtraObject<LevelPath>()) == null) {
+				path = new LevelPath();
+				path.UpdatePath();
+			} else {
+				path = (LevelPath)path.Copy();
+			}
+			UpdateCurrentObject(path, true);
+		}
+		private void statusAddSpecial_ButtonClick(object sender, EventArgs e) {
+			if (map == null) { return; }
+
+			listObjects.SelectedItem = null;
+
+			Special special;
+			if (mapViewer.CurrentCell == null || (special = mapViewer.CurrentCell.GetExtraObject<Special>()) == null) {
+				special = new Special();
+				special.Object = Special.FLOWER;
+				special.Type = (byte)SpecialType.Flower;
+			} else {
+				special = (Special)special.Copy();
+			}
+			UpdateCurrentObject(special, true);
 		}
 		private void statusSetSelector_ButtonClick(object sender, EventArgs e) {
 			if (map == null) { return; }
@@ -382,8 +414,10 @@ namespace BabaIsYou.Views {
 
 				if (currentObject is Level) {
 					statusSprite.Text = $"Level Object";
-				} else if (currentObject is Line) {
+				} else if (currentObject is LevelPath) {
 					statusSprite.Text = $"Path Object";
+				} else if (currentObject is Special) {
+					statusSprite.Text = $"Special Object";
 				} else {
 					statusSprite.Text = $"{currentObject.Name}";
 				}
@@ -398,13 +432,13 @@ namespace BabaIsYou.Views {
 				Palette palette = Reader.Palettes[map.Palette];
 				using (ObjectEditor editor = new ObjectEditor()) {
 					editor.Palette = palette;
-					editor.Sprite = ((Item)item.Value).Copy();
+					editor.Edit = ((Item)item.Value).Copy();
 					editor.Map = map;
 					editor.BackColor = palette.Edge;
 					editor.Icon = this.Icon;
 					DialogResult result = editor.ShowDialog(this);
 					if (result == DialogResult.OK) {
-						UpdateSprite(item, editor.Sprite, palette);
+						UpdateSprite(item, editor.Edit, palette);
 						UpdateCurrentLevel(listLevels.SelectedItem);
 					}
 				}
@@ -440,9 +474,9 @@ namespace BabaIsYou.Views {
 			if (e.Button == MouseButtons.Left) {
 				if (currentObject == null) { return; }
 
-				bool hasObject = cell.ContainsObjectType(currentObject);
-				bool isLevelLine = currentObject is Level || currentObject is Line;
-				bool willAdd = cell.LayerCount() < MaxLayerCount && (!isLevelLine || !cell.HasLevelPath());
+				bool hasObject = cell.ContainsObject(currentObject);
+				bool isLevelPath = currentObject is Level || currentObject is LevelPath;
+				bool willAdd = cell.LayerCount() < MaxLayerCount && (!isLevelPath || !cell.HasLevelPath()) && (!(currentObject is Special) || !cell.HasObject<Special>());
 				if (currentObject.ID == short.MaxValue) {
 					Point location = cell.GetLocation(map.Width, map.Height);
 					string xpos = location.X.ToString();
@@ -473,12 +507,14 @@ namespace BabaIsYou.Views {
 					}
 				}
 			} else if (e.Button == MouseButtons.Right) {
-				Item item = cell.GetNextItem(currentObject);
+				Item item = cell.GetNextObject(currentObject);
 				if (item != null) {
 					if (item is Level) {
 						statusAddLevel_ButtonClick(null, null);
-					} else if (item is Line) {
+					} else if (item is LevelPath) {
 						statusAddPath_ButtonClick(null, null);
+					} else if (item is Special) {
+						statusAddSpecial_ButtonClick(null, null);
 					} else {
 						for (int i = 0; i < listObjects.Items.Count; i++) {
 							ListItem sprite = listObjects.Items[i];
@@ -490,14 +526,14 @@ namespace BabaIsYou.Views {
 					mapViewer.Invalidate();
 				}
 			} else if (e.Button == MouseButtons.Middle) {
-				Item levelItem = cell.GetItemOfType(Level.DEFAULT);
-				Item lineItem = cell.GetItemOfType(new Line());
+				Item extraItem = cell.GetExtraObject();
+				if (extraItem == null) { return; }
 
 				Palette palette = Reader.Palettes[map.Palette];
-				if (levelItem != null) {
+				if (extraItem is Level levelItem) {
 					using (LevelEdit editor = new LevelEdit()) {
 						editor.Palette = palette;
-						editor.Level = (Level)levelItem;
+						editor.Edit = levelItem;
 						editor.LevelList = listLevels;
 						editor.BackColor = palette.Edge;
 						editor.Icon = this.Icon;
@@ -506,12 +542,27 @@ namespace BabaIsYou.Views {
 							UpdateCurrentLevel(listLevels.SelectedItem);
 						}
 					}
-				} else if (lineItem != null) {
+				} else if (extraItem is LevelPath pathItem) {
 					using (PathEdit editor = new PathEdit()) {
 						editor.Palette = palette;
-						editor.Line = (Line)lineItem;
+						editor.Edit = pathItem;
 						editor.BackColor = palette.Edge;
 						editor.Map = map;
+						editor.Icon = this.Icon;
+						DialogResult result = editor.ShowDialog(this);
+						if (result == DialogResult.OK) {
+							UpdateCurrentLevel(listLevels.SelectedItem);
+						}
+					}
+				} else if (extraItem is Special specialItem) {
+					if (specialItem.Type == (byte)SpecialType.Art || specialItem.Type == (byte)SpecialType.Unknown) { return; }
+
+					using (SpecialEdit editor = new SpecialEdit()) {
+						editor.Palette = palette;
+						editor.LevelList = listLevels;
+						editor.Edit = specialItem;
+						editor.Map = map;
+						editor.BackColor = palette.Edge;
 						editor.Icon = this.Icon;
 						DialogResult result = editor.ShowDialog(this);
 						if (result == DialogResult.OK) {
@@ -536,9 +587,9 @@ namespace BabaIsYou.Views {
 			if (holdingControl || cell.Objects.Count == 0) {
 				ChangeItemDirection(currentObject, e.Delta < 0, false);
 			} else {
-				Item cellItem = cell.GetItemOfType(currentObject);
+				Item cellItem = cell.GetObject(currentObject);
 				if (cellItem == null) {
-					cellItem = cell.GetNextItem(null);
+					cellItem = cell.GetNextObject(null);
 				}
 				if (cellItem != null) {
 					ChangeItemDirection(cellItem, e.Delta < 0, true);
@@ -563,9 +614,9 @@ namespace BabaIsYou.Views {
 		}
 		private void mapViewer_DrawCurrentCellStart(Graphics g, Grid map, Cell cell, Rectangle bounds) {
 			if (currentObject != null) {
-				bool containsType = cell.ContainsObjectType(currentObject);
-				bool isLevelLine = currentObject is Level || currentObject is Line;
-				addedObject = (cell.LayerCount() < MaxLayerCount || currentObject.ID == short.MaxValue) && (!isLevelLine || !cell.HasLevelPath());
+				bool containsType = cell.ContainsObject(currentObject);
+				bool isLevelPath = currentObject is Level || currentObject is LevelPath;
+				addedObject = (cell.LayerCount() < MaxLayerCount || currentObject.ID == short.MaxValue) && (!isLevelPath || !cell.HasLevelPath()) && (!(currentObject is Special) || !cell.HasObject<Special>());
 				if (addedObject && (!containsType || holdingControl) && isAdding.GetValueOrDefault(true)) {
 					currentObject.Position = cell.Position;
 					cell.Objects.Add(currentObject);

@@ -103,7 +103,7 @@
 			// 
 			this.imgClearColor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.imgClearColor.Cursor = System.Windows.Forms.Cursors.Hand;
-			this.imgClearColor.Location = new System.Drawing.Point(132, 170);
+			this.imgClearColor.Location = new System.Drawing.Point(133, 170);
 			this.imgClearColor.Name = "imgClearColor";
 			this.imgClearColor.Size = new System.Drawing.Size(48, 48);
 			this.imgClearColor.TabIndex = 13;
@@ -124,7 +124,7 @@
 			// lblClearColor
 			// 
 			this.lblClearColor.AutoSize = true;
-			this.lblClearColor.Location = new System.Drawing.Point(127, 150);
+			this.lblClearColor.Location = new System.Drawing.Point(128, 150);
 			this.lblClearColor.Name = "lblClearColor";
 			this.lblClearColor.Size = new System.Drawing.Size(58, 13);
 			this.lblClearColor.TabIndex = 12;
@@ -227,7 +227,7 @@
 			// 
 			this.imgIcon.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.imgIcon.Cursor = System.Windows.Forms.Cursors.Hand;
-			this.imgIcon.Location = new System.Drawing.Point(201, 170);
+			this.imgIcon.Location = new System.Drawing.Point(202, 170);
 			this.imgIcon.Name = "imgIcon";
 			this.imgIcon.Size = new System.Drawing.Size(48, 48);
 			this.imgIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -238,7 +238,7 @@
 			// lblIcon
 			// 
 			this.lblIcon.AutoSize = true;
-			this.lblIcon.Location = new System.Drawing.Point(211, 150);
+			this.lblIcon.Location = new System.Drawing.Point(212, 150);
 			this.lblIcon.Name = "lblIcon";
 			this.lblIcon.Size = new System.Drawing.Size(28, 13);
 			this.lblIcon.TabIndex = 13;

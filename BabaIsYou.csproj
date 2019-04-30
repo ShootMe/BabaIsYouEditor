@@ -64,6 +64,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\OpenFolderDialog.cs" />
+    <Compile Include="Map\Special.cs" />
     <Compile Include="Views\LevelEdit.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -84,7 +85,7 @@
     <Compile Include="Map\ItemChange.cs" />
     <Compile Include="Map\Level.cs" />
     <Compile Include="Map\Palette.cs" />
-    <Compile Include="Map\Line.cs" />
+    <Compile Include="Map\LevelPath.cs" />
     <Compile Include="Map\Reader.cs" />
     <Compile Include="Map\Renderer.cs" />
     <Compile Include="Map\Sprite.cs" />
@@ -118,6 +119,12 @@
     </Compile>
     <Compile Include="Views\ReadMe.Designer.cs">
       <DependentUpon>ReadMe.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SpecialEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\SpecialEdit.Designer.cs">
+      <DependentUpon>SpecialEdit.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\WorldProperties.cs">
       <SubType>Form</SubType>
@@ -162,6 +169,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\ReadMe.resx">
       <DependentUpon>ReadMe.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\SpecialEdit.resx">
+      <DependentUpon>SpecialEdit.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\WorldProperties.resx">
       <DependentUpon>WorldProperties.cs</DependentUpon>
@@ -224,6 +234,24 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Images\grid.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Images\petal.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\special.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Images\special_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Images\down.png" />
+    <EmbeddedResource Include="Images\idle.png" />
+    <EmbeddedResource Include="Images\left.png" />
+    <EmbeddedResource Include="Images\pause.png" />
+    <EmbeddedResource Include="Images\right.png" />
+    <EmbeddedResource Include="Images\undo_icon.png" />
+    <EmbeddedResource Include="Images\up.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -8,14 +8,15 @@ namespace BabaIsYou.Views {
 	public partial class LevelEdit : Form {
 		public ListPanel LevelList { get; set; }
 		public Palette Palette { get; set; }
-		public Level Level { get; set; }
+		public Level Edit { get; set; }
+		public bool NoIcon { get; set; }
 		private Level levelCopy;
 		public LevelEdit() {
 			InitializeComponent();
 		}
 
 		private void LevelEdit_Shown(object sender, EventArgs e) {
-			levelCopy = (Level)Level.Copy();
+			levelCopy = (Level)Edit.Copy();
 			txtName.Text = levelCopy.Name;
 			txtFile.Text = levelCopy.File;
 			numNumber.Value = levelCopy.Number;
@@ -24,9 +25,23 @@ namespace BabaIsYou.Views {
 				case LevelStyle.Letter: chkLetter.Checked = true; break;
 				case LevelStyle.Icon:
 					UpdateIcon();
-					chkIcon.Checked = true;
+					if (NoIcon) {
+						chkDot.Checked = true;
+					} else {
+						chkIcon.Checked = true;
+					}
 					break;
 				default: chkNumber.Checked = true; break;
+			}
+			if (NoIcon) {
+				btnSave.Visible = false;
+				chkIcon.Visible = false;
+				lblColor.Visible = false;
+				imgColor.Visible = false;
+				lblClearColor.Visible = false;
+				imgClearColor.Visible = false;
+				lblIcon.Location = new Point(144, 150);
+				imgIcon.Location = new Point(133, 170);
 			}
 			switch ((LevelState)levelCopy.State) {
 				case LevelState.Normal: chkNormal.Checked = true; break;
@@ -37,17 +52,20 @@ namespace BabaIsYou.Views {
 			imgClearColor.BackColor = Palette.Colors[levelCopy.ActiveColor];
 		}
 		private void btnSave_Click(object sender, EventArgs e) {
-			Level.Name = levelCopy.Name;
-			Level.File = levelCopy.File;
-			Level.Number = levelCopy.Number;
-			Level.Style = levelCopy.Style;
-			Level.State = levelCopy.State;
-			Level.Color = levelCopy.Color;
-			Level.ActiveColor = levelCopy.ActiveColor;
-			Level.Sprite = levelCopy.Sprite;
-			Level.SpriteInRoot = levelCopy.SpriteInRoot;
+			SaveLevel();
 			this.DialogResult = DialogResult.OK;
 			this.Close();
+		}
+		public void SaveLevel() {
+			Edit.Name = levelCopy.Name;
+			Edit.File = levelCopy.File;
+			Edit.Number = levelCopy.Number;
+			Edit.Style = levelCopy.Style;
+			Edit.State = levelCopy.State;
+			Edit.Color = levelCopy.Color;
+			Edit.ActiveColor = levelCopy.ActiveColor;
+			Edit.Sprite = levelCopy.Sprite;
+			Edit.SpriteInRoot = levelCopy.SpriteInRoot;
 		}
 		private void btnSetLevel_Click(object sender, EventArgs e) {
 			string text = txtFile.Text;
@@ -183,7 +201,7 @@ namespace BabaIsYou.Views {
 					}
 					ListItem item = new ListItem(sprite, name, img);
 					item.BackColor = Palette.Background;
-					selector.AddItem(item, false);
+					selector.AddItem(item, levelCopy.Sprite == sprite.Name);
 				}
 
 				selector.SortItems();

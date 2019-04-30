@@ -41,12 +41,14 @@ namespace BabaIsYou.Map {
 				}
 			}
 
-			int levelCount = map.LevelCount();
+			int levelCount = map.CountOfType<Level>();
 			map.Info["general", "leveltype"] = levelCount > 0 ? "1" : "0";
 			map.Info["general", "levels"] = levelCount.ToString();
-			int pathCount = map.PathCount();
+			int pathCount = map.CountOfType<LevelPath>();
 			map.Info["general", "paths"] = pathCount.ToString();
-			map.UpdateLevelsAndPaths();
+			int specialCount = map.CountOfType<Special>();
+			map.Info["general", "specials"] = specialCount.ToString();
+			map.UpdateExtraObjects();
 
 			using (FileStream stream = File.Open(Path.Combine(filePath, $"{map.FileName}.ld"), FileMode.Create, FileAccess.ReadWrite)) {
 				string info = map.Info.Serialize();
@@ -57,8 +59,11 @@ namespace BabaIsYou.Map {
 				changed.AppendLine().Append("changed=");
 				StringBuilder sb = new StringBuilder();
 				foreach (ItemChange change in map.Changes.Values) {
-					changed.Append(change.ObjectName).Append(',');
-					sb.Append(change.Serialize());
+					string objectChange = change.Serialize();
+					if (!string.IsNullOrEmpty(objectChange)) {
+						changed.Append(change.ObjectName).Append(',');
+						sb.Append(objectChange);
+					}
 				}
 				changed.AppendLine();
 				data = Encoding.UTF8.GetBytes(changed.ToString());
@@ -124,7 +129,7 @@ namespace BabaIsYou.Map {
 				bool wroteID = false;
 				for (int j = 0; j < itemCount; j++) {
 					Item item = cell.Objects[j];
-					if (!(item is Line) && !(item is Level)) {
+					if (!(item is LevelPath) && !(item is Level) && !(item is Special)) {
 						if (objectCount < layer) {
 							objectCount++;
 						} else {

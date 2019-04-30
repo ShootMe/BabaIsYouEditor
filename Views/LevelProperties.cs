@@ -37,7 +37,7 @@ namespace BabaIsYou.Views {
 			filterKeys.Add("selectorY");
 		}
 
-		private void LevelProperties_Shown(object sender, EventArgs e) {
+		private void LevelProperties_Load(object sender, EventArgs e) {
 			txtName.Text = Map.Name;
 			txtSubtitle.Text = Map.Info["general", "subtitle"];
 			string music = Map.Info["general", "music"];
@@ -98,7 +98,7 @@ namespace BabaIsYou.Views {
 				for (int i = 0; i < LevelList.Items.Count; i++) {
 					ListItem level = LevelList.Items[i];
 					Grid map = (Grid)level.Value;
-					if (map.LevelCount() == 0) { continue; }
+					if (map.CountOfType<Level>() == 0) { continue; }
 					addedCount++;
 
 					imgWidth = level.Extra.Width;

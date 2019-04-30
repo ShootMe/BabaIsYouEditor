@@ -84,7 +84,7 @@ namespace BabaIsYou.Map {
 			return ID < other.ID ? 1 : ID > other.ID ? -1 : 0;
 		}
 		public override string ToString() {
-			return $"{ID} {Name} {Direction} {Active}";
+			return $"{ID} {Object} {Name} {Direction}";
 		}
 		public override bool Equals(object obj) {
 			return obj != null && obj == (object)this;

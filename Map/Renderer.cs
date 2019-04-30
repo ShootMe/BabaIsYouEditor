@@ -6,8 +6,20 @@ using System.Reflection;
 namespace BabaIsYou.Map {
 	public class Renderer {
 		private static Bitmap Selector;
+		private static Bitmap Petal;
+		private static Bitmap SpecialIcon, DownIcon, IdleIcon, LeftIcon, PauseIcon, RightIcon, UndoIcon, UpIcon;
 		static Renderer() {
-			Selector = (Bitmap)Bitmap.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream("BabaIsYou.Images.grid.png"));
+			Assembly assembly = Assembly.GetExecutingAssembly();
+			Selector = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.grid.png"));
+			Petal = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.petal.png"));
+			SpecialIcon = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.special_icon.png"));
+			DownIcon = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.down.png"));
+			IdleIcon = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.idle.png"));
+			LeftIcon = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.left.png"));
+			PauseIcon = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.pause.png"));
+			RightIcon = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.right.png"));
+			UndoIcon = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.undo_icon.png"));
+			UpIcon = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.up.png"));
 		}
 		public static Rectangle GetBounds(Grid grid, int totalWidth, int totalHeight) {
 			int tileWidth = totalWidth / grid.Width;
@@ -46,15 +58,25 @@ namespace BabaIsYou.Map {
 
 			int xOrig = mapBounds.X;
 			int yOrig = mapBounds.Y;
+			DrawSpecials(g, grid, mapBounds, rowEnd, palette, true);
+
+			mapBounds.X = xOrig;
+			mapBounds.Y = yOrig;
 			int size = grid.Cells.Count;
 			for (int i = 0; i < size; i++) {
 				Cell cell = grid.Cells[i];
 				int items = cell.Objects.Count;
 				cell.Objects.Sort();
 
+				int itemCount = 0;
+				Special special = cell.GetExtraObject<Special>();
+				bool hasSpecialLevel = special != null && special.Type == (byte)SpecialType.Level;
 				for (int j = 0; j < items; j++) {
 					Item item = cell.Objects[j];
-					DrawSprite(grid, g, mapBounds, item, palette, showStacked && items > 1 && j + 1 == items ? items : 0);
+					if (!(item is Level) && !(item is LevelPath) && !(item is Special)) {
+						itemCount++;
+					}
+					DrawSprite(grid, g, mapBounds, item, palette, showStacked && itemCount > 1 && j + 1 == items ? itemCount : 0, hasSpecialLevel);
 				}
 
 				mapBounds.X += mapBounds.Width;
@@ -68,8 +90,12 @@ namespace BabaIsYou.Map {
 				mapBounds.X = xOrig;
 				mapBounds.Y = yOrig;
 
-				DrawDirections(g, grid, mapBounds, xOrig, rowEnd);
+				DrawDirections(g, grid, mapBounds, rowEnd);
 			}
+
+			mapBounds.X = xOrig;
+			mapBounds.Y = yOrig;
+			DrawSpecials(g, grid, mapBounds, rowEnd, palette, false);
 
 			int selectorX;
 			if (!int.TryParse(grid.Info["general", "selectorX"], out selectorX)) {
@@ -85,7 +111,52 @@ namespace BabaIsYou.Map {
 				DrawSprite(grid, g, mapBounds, Item.SELECTOR, palette);
 			}
 		}
-		private static void DrawDirections(Graphics g, Grid grid, Rectangle bounds, int xOrig, int rowEnd) {
+		private static void DrawSpecials(Graphics g, Grid grid, Rectangle bounds, int rowEnd, Palette palette, bool drawLevels) {
+			int xOrig = bounds.X;
+			int size = grid.Cells.Count;
+			g.Clip = new Region(new Rectangle(bounds.X, bounds.Y, bounds.Width * grid.Width, bounds.Height * grid.Height));
+			for (int i = 0; i < size; i++) {
+				Cell cell = grid.Cells[i];
+				int items = cell.Objects.Count;
+
+				for (int j = 0; j < items; j++) {
+					Item item = cell.Objects[j];
+					if (item is Special specialItem) {
+						if (!drawLevels && specialItem.Type == (byte)SpecialType.Flower) {
+							Flower flower = specialItem.GetFlower();
+							DrawFlower(g, bounds, flower.Radius, palette.Colors[flower.Color], palette.Colors[flower.InnerColor]);
+						} else if (!drawLevels && specialItem.Type == (byte)SpecialType.Controls) {
+							GameControl gameControl = specialItem.GetGameControl();
+							switch (gameControl.Type) {
+								case ControlType.Down: g.DrawImage(DownIcon, bounds); break;
+								case ControlType.Idle: g.DrawImage(IdleIcon, bounds); break;
+								case ControlType.Left: g.DrawImage(LeftIcon, bounds); break;
+								case ControlType.Pause: g.DrawImage(PauseIcon, bounds); break;
+								case ControlType.Right: g.DrawImage(RightIcon, bounds); break;
+								case ControlType.Undo: g.DrawImage(UndoIcon, bounds); break;
+								case ControlType.Up: g.DrawImage(UpIcon, bounds); break;
+								case ControlType.Unknown: g.DrawImage(SpecialIcon, bounds); break;
+							}
+						} else if (drawLevels && specialItem.Type == (byte)SpecialType.Level) {
+							Level level = specialItem.GetLevel();
+							if (level.Style == (byte)LevelStyle.Icon) {
+								level.Style = (byte)LevelStyle.Dot;
+							}
+							DrawLevel(g, bounds, level, null, palette.Colors[level.ActiveColor], palette.Colors[level.Color]);
+						}
+						break;
+					}
+				}
+
+				bounds.X += bounds.Width;
+				if (bounds.X >= rowEnd) {
+					bounds.Y += bounds.Height;
+					bounds.X = xOrig;
+				}
+			}
+		}
+		private static void DrawDirections(Graphics g, Grid grid, Rectangle bounds, int rowEnd) {
+			int xOrig = bounds.X;
 			int penWidth = bounds.Width / 16;
 			penWidth = penWidth > 0 ? penWidth : 1;
 			int arrowSize = bounds.Width / 9;
@@ -151,7 +222,7 @@ namespace BabaIsYou.Map {
 		}
 		public static void DrawSprite(Graphics g, Rectangle destination, Sprite sprite, Color color) {
 			Bitmap image = sprite[0, 1];
-			DrawImage(g, image, destination, color);
+			DrawImage(g, image, destination, color, false);
 		}
 		public static Bitmap DrawSprite(Item item, int imgSize, Palette palette) {
 			Bitmap img = new Bitmap(imgSize, imgSize);
@@ -164,10 +235,14 @@ namespace BabaIsYou.Map {
 			}
 			return img;
 		}
-		public static void DrawSprite(Grid grid, Graphics g, Rectangle destination, Item item, Palette palette, int stackCount = 0) {
+		public static void DrawSprite(Grid grid, Graphics g, Rectangle destination, Item item, Palette palette, int stackCount = 0, bool hasSpecialLevel = false) {
 			Color color = palette.Colors[item.Active && item.ActiveColor != -1 ? item.ActiveColor : item.Color];
-
-			if (item.ID == 0 || string.IsNullOrEmpty(item.Sprite)) {
+			if (item is Special specialItem) {
+				if (specialItem.Type == (byte)SpecialType.Art || specialItem.Type == (byte)SpecialType.Unknown) {
+					g.DrawImage(SpecialIcon, destination);
+				}
+				return;
+			} else if (item.ID == 0 || string.IsNullOrEmpty(item.Sprite)) {
 				using (SolidBrush brush = new SolidBrush(item.ID == 0 ? palette.Edge : color)) {
 					g.FillRectangle(brush, destination);
 				}
@@ -183,44 +258,38 @@ namespace BabaIsYou.Map {
 				case Tiling.Directional:
 				case Tiling.Animated:
 					switch ((Direction)item.Direction) {
-						case Direction.Up:
-							image = sprite[8, 1];
-							break;
-						case Direction.Left:
-							image = sprite[16, 1];
-							break;
-						case Direction.Down:
-							image = sprite[24, 1];
-							break;
+						case Direction.Up: image = sprite[8, 1]; break;
+						case Direction.Left: image = sprite[16, 1]; break;
+						case Direction.Down: image = sprite[24, 1]; break;
 					}
 					break;
 				case Tiling.Tiled:
 					if (grid != null) {
-						bool isLevelLine = item is Level || item is Line;
+						bool isLevelPath = item is Level || item is LevelPath;
 						int position = item.Position + grid.Width;
 						int value = 0;
 						Cell cell;
 						if (position < grid.Cells.Count) {
 							cell = grid.Cells[position];
-							value = cell.ContainsObjectType(item) || IsEdge(grid, position) || (isLevelLine && cell.HasLevelPath()) ? 8 : 0;
+							value = cell.ContainsObject(item) || IsEdge(grid, position) || (isLevelPath && cell.HasLevelPath()) ? 8 : 0;
 						}
 
 						position = item.Position - 1;
 						if (position >= 0) {
 							cell = grid.Cells[position];
-							value |= cell.ContainsObjectType(item) || IsEdge(grid, position) || (isLevelLine && cell.HasLevelPath()) ? 4 : 0;
+							value |= cell.ContainsObject(item) || IsEdge(grid, position) || (isLevelPath && cell.HasLevelPath()) ? 4 : 0;
 						}
 
 						position = item.Position - grid.Width;
 						if (position >= 0) {
 							cell = grid.Cells[position];
-							value |= cell.ContainsObjectType(item) || IsEdge(grid, position) || (isLevelLine && cell.HasLevelPath()) ? 2 : 0;
+							value |= cell.ContainsObject(item) || IsEdge(grid, position) || (isLevelPath && cell.HasLevelPath()) ? 2 : 0;
 						}
 
 						position = item.Position + 1;
 						if (position < grid.Cells.Count) {
 							cell = grid.Cells[position];
-							value |= cell.ContainsObjectType(item) || IsEdge(grid, position) || (isLevelLine && cell.HasLevelPath()) ? 1 : 0;
+							value |= cell.ContainsObject(item) || IsEdge(grid, position) || (isLevelPath && cell.HasLevelPath()) ? 1 : 0;
 						}
 
 						image = sprite[value, 1];
@@ -228,15 +297,9 @@ namespace BabaIsYou.Map {
 					break;
 				case Tiling.Character:
 					switch ((Direction)item.Direction) {
-						case Direction.Up:
-							image = sprite[8, 1];
-							break;
-						case Direction.Left:
-							image = sprite[16, 1];
-							break;
-						case Direction.Down:
-							image = sprite[24, 1];
-							break;
+						case Direction.Up: image = sprite[8, 1]; break;
+						case Direction.Left: image = sprite[16, 1]; break;
+						case Direction.Down: image = sprite[24, 1]; break;
 					}
 					if (item.Sleeping) {
 						image = sprite[31, 1];
@@ -245,48 +308,9 @@ namespace BabaIsYou.Map {
 			}
 
 			if (item is Level level) {
-				int inc = 40;
-				Color colorText = palette.Colors[item.Color];
-				Color colorInc = ColorUtil.TransformBrightness(colorText, ColorUtil.ColorTransformMode.Hsb, 0.6);
-				if (colorInc.R == 0 && colorInc.G == 0 && colorInc.B == 0) {
-					colorInc = Color.FromArgb(color.R + inc, color.G + inc, color.B + inc);
-				}
-
-				using (GraphicsPath path = RoundedRect(destination, destination.Width / 3)) {
-					using (SolidBrush brush = new SolidBrush(colorInc)) {
-						g.FillPath(brush, path);
-					}
-
-					if (level.Style == (byte)LevelStyle.Icon) {
-						DrawImage(g, image, destination, color);
-					}
-
-					using (Pen pen = new Pen(colorText, destination.Width / 10)) {
-						g.DrawPath(pen, path);
-					}
-				}
-
-				if (level.Style == (byte)LevelStyle.Number || level.Style == (byte)LevelStyle.Letter) {
-					using (SolidBrush brush = new SolidBrush(color)) {
-						int fontWidth = destination.Width * 2 / 3;
-						if (fontWidth <= 0) { fontWidth = 1; }
-						using (Font font = new Font(FontFamily.GenericSansSerif, fontWidth, FontStyle.Bold, GraphicsUnit.Pixel)) {
-							int number = level.Number;
-							if (level.Style == (byte)LevelStyle.Number) {
-								number = number > 99 ? 99 : number;
-							} else {
-								number = number > 25 ? 25 : number;
-							}
-							string text = level.Style == (byte)LevelStyle.Number ? number.ToString("00") : ((char)(number + 0x41)).ToString();
-							SizeF textSize = g.MeasureString(text, font, 9999999, StringFormat.GenericTypographic);
-							g.DrawString(text, font, brush, new Point(destination.X + (int)(destination.Width / 2 - textSize.Width / 2), destination.Y + (int)(destination.Height / 2 - textSize.Height / 2)), StringFormat.GenericTypographic);
-						}
-					}
-				} else if (level.Style == (byte)LevelStyle.Dot) {
-					DrawDots(g, destination, level.Number, color);
-				}
+				DrawLevel(g, destination, level, image, color, palette.Colors[level.Color]);
 			} else {
-				DrawImage(g, image, destination, color);
+				DrawImage(g, image, destination, color, hasSpecialLevel);
 			}
 
 			if (stackCount > 0) {
@@ -301,76 +325,143 @@ namespace BabaIsYou.Map {
 				}
 			}
 		}
-		private static void DrawDots(Graphics g, Rectangle destination, int number, Color inside) {
-			int diameter = destination.Width / 4 - 1;
+		private static void DrawLevel(Graphics g, Rectangle bounds, Level level, Bitmap image, Color color, Color colorText) {
+			int inc = 40;
+			Color colorInc = ColorUtil.TransformBrightness(colorText, ColorUtil.ColorTransformMode.Hsb, 0.6);
+			if (colorInc.R == 0 && colorInc.G == 0 && colorInc.B == 0) {
+				colorInc = Color.FromArgb(color.R + inc, color.G + inc, color.B + inc);
+			}
+
+			using (GraphicsPath path = RoundedRect(bounds, bounds.Width / 3)) {
+				using (SolidBrush brush = new SolidBrush(colorInc)) {
+					g.FillPath(brush, path);
+				}
+
+				if (level.Style == (byte)LevelStyle.Icon) {
+					DrawImage(g, image, bounds, color, false);
+				}
+
+				using (Pen pen = new Pen(colorText, bounds.Width / 10)) {
+					g.DrawPath(pen, path);
+				}
+			}
+
+			if (level.Style == (byte)LevelStyle.Number || level.Style == (byte)LevelStyle.Letter) {
+				using (SolidBrush brush = new SolidBrush(color)) {
+					int fontWidth = bounds.Width * 2 / 3;
+					if (fontWidth <= 0) { fontWidth = 1; }
+					using (Font font = new Font(FontFamily.GenericSansSerif, fontWidth, FontStyle.Bold, GraphicsUnit.Pixel)) {
+						int number = level.Number;
+						if (level.Style == (byte)LevelStyle.Number) {
+							number = number > 99 ? 99 : number;
+						} else {
+							number = number > 25 ? 25 : number;
+						}
+						string text = level.Style == (byte)LevelStyle.Number ? number.ToString("00") : ((char)(number + 0x41)).ToString();
+						SizeF textSize = g.MeasureString(text, font, 9999999, StringFormat.GenericTypographic);
+						g.DrawString(text, font, brush, new Point(bounds.X + (int)(bounds.Width / 2 - textSize.Width / 2), bounds.Y + (int)(bounds.Height / 2 - textSize.Height / 2)), StringFormat.GenericTypographic);
+					}
+				}
+			} else if (level.Style == (byte)LevelStyle.Dot) {
+				DrawDots(g, bounds, level.Number, color);
+			}
+		}
+		private static void DrawFlower(Graphics g, Rectangle bounds, int radius, Color color, Color center) {
+			GraphicsState state = g.Save();
+			Matrix matrix = g.Transform;
+			for (int i = radius; i > 0; i--) {
+				float increase = 360f / (i * 8f);
+
+				float offset = bounds.Height * 2f / 3f;
+				for (int j = 1; j < i; j++) {
+					offset += (float)bounds.Height * j / (j + 1) + offset / 8;
+				}
+
+				for (int j = i * 8; j > 0; j--) {
+					matrix.RotateAt(increase, new Point(bounds.X + bounds.Width / 2, bounds.Y + bounds.Height / 2));
+					matrix.Translate(0, -offset);
+					g.Transform = matrix;
+					DrawImage(g, Petal, bounds, color, false);
+					matrix.Translate(0, offset);
+				}
+				matrix.RotateAt(increase / 2, new Point(bounds.X + bounds.Width / 2, bounds.Y + bounds.Height / 2));
+			}
+
+			g.Restore(state);
+			using (SolidBrush brush = new SolidBrush(center)) {
+				g.FillEllipse(brush, bounds.X + bounds.Width / 2 - bounds.Width / 4, bounds.Y + bounds.Height / 2 - bounds.Height / 4, bounds.Width / 2, bounds.Height / 2);
+			}
+		}
+		private static void DrawDots(Graphics g, Rectangle bounds, int number, Color inside) {
+			int diameter = bounds.Width / 4 - 1;
 			diameter = diameter < 1 ? 1 : diameter;
 			int offset = diameter * 2 / 3;
 			switch (number) {
 				case 0:
-					DrawDot(g, (destination.Width - diameter) / 2 + destination.X, (destination.Height - diameter) / 2 + destination.Y, diameter, diameter, inside);
+					DrawDot(g, (bounds.Width - diameter) / 2 + bounds.X, (bounds.Height - diameter) / 2 + bounds.Y, diameter, diameter, inside);
 					break;
 				case 1:
-					DrawDot(g, (destination.Width - diameter) / 2 + destination.X, destination.Height / 2 - diameter - offset + destination.Y, diameter, diameter, inside);
-					DrawDot(g, (destination.Width - diameter) / 2 + destination.X, destination.Height / 2 + offset + destination.Y, diameter, diameter, inside);
+					DrawDot(g, (bounds.Width - diameter) / 2 + bounds.X, bounds.Height / 2 - diameter - offset + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, (bounds.Width - diameter) / 2 + bounds.X, bounds.Height / 2 + offset + bounds.Y, diameter, diameter, inside);
 					break;
 				case 2:
-					DrawDot(g, (destination.Width - diameter) / 2 + destination.X, destination.Height / 2 - diameter - offset + destination.Y, diameter, diameter, inside);
-					DrawDot(g, destination.Width / 2 - diameter - offset + destination.X, destination.Height / 2 + offset + destination.Y, diameter, diameter, inside);
-					DrawDot(g, destination.Width / 2 + offset + destination.X, destination.Height / 2 + offset + destination.Y, diameter, diameter, inside);
+					DrawDot(g, (bounds.Width - diameter) / 2 + bounds.X, bounds.Height / 2 - diameter - offset + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, bounds.Width / 2 - diameter - offset + bounds.X, bounds.Height / 2 + offset + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, bounds.Width / 2 + offset + bounds.X, bounds.Height / 2 + offset + bounds.Y, diameter, diameter, inside);
 					break;
 				case 3:
-					DrawDot(g, destination.Width / 2 - diameter - offset + destination.X, destination.Height / 2 - diameter - offset + destination.Y, diameter, diameter, inside);
-					DrawDot(g, destination.Width / 2 + offset + destination.X, destination.Height / 2 - diameter - offset + destination.Y, diameter, diameter, inside);
-					DrawDot(g, destination.Width / 2 - diameter - offset + destination.X, destination.Height / 2 + offset + destination.Y, diameter, diameter, inside);
-					DrawDot(g, destination.Width / 2 + offset + destination.X, destination.Height / 2 + offset + destination.Y, diameter, diameter, inside);
+					DrawDot(g, bounds.Width / 2 - diameter - offset + bounds.X, bounds.Height / 2 - diameter - offset + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, bounds.Width / 2 + offset + bounds.X, bounds.Height / 2 - diameter - offset + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, bounds.Width / 2 - diameter - offset + bounds.X, bounds.Height / 2 + offset + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, bounds.Width / 2 + offset + bounds.X, bounds.Height / 2 + offset + bounds.Y, diameter, diameter, inside);
 					break;
 				case 4:
-					DrawDot(g, destination.Width / 2 - diameter - offset + destination.X, destination.Height / 2 - diameter - offset + destination.Y, diameter, diameter, inside);
-					DrawDot(g, destination.Width / 2 + offset + destination.X, destination.Height / 2 - diameter - offset + destination.Y, diameter, diameter, inside);
-					DrawDot(g, destination.Width / 2 - diameter - offset + destination.X, destination.Height / 2 + offset + destination.Y, diameter, diameter, inside);
-					DrawDot(g, destination.Width / 2 + offset + destination.X, destination.Height / 2 + offset + destination.Y, diameter, diameter, inside);
-					DrawDot(g, (destination.Width - diameter) / 2 + destination.X, (destination.Height - diameter) / 2 + destination.Y, diameter, diameter, inside);
+					DrawDot(g, bounds.Width / 2 - diameter - offset + bounds.X, bounds.Height / 2 - diameter - offset + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, bounds.Width / 2 + offset + bounds.X, bounds.Height / 2 - diameter - offset + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, bounds.Width / 2 - diameter - offset + bounds.X, bounds.Height / 2 + offset + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, bounds.Width / 2 + offset + bounds.X, bounds.Height / 2 + offset + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, (bounds.Width - diameter) / 2 + bounds.X, (bounds.Height - diameter) / 2 + bounds.Y, diameter, diameter, inside);
 					break;
 				case 5:
-					DrawDot(g, destination.Width / 2 - diameter - offset + destination.X, destination.Height / 2 - diameter - offset + destination.Y, diameter, diameter, inside);
-					DrawDot(g, destination.Width / 2 + offset + destination.X, destination.Height / 2 - diameter - offset + destination.Y, diameter, diameter, inside);
-					DrawDot(g, destination.Width / 2 - diameter - offset + destination.X, (destination.Height - diameter) / 2 + destination.Y, diameter, diameter, inside);
-					DrawDot(g, destination.Width / 2 + offset + destination.X, (destination.Height - diameter) / 2 + destination.Y, diameter, diameter, inside);
-					DrawDot(g, destination.Width / 2 - diameter - offset + destination.X, destination.Height / 2 + offset + destination.Y, diameter, diameter, inside);
-					DrawDot(g, destination.Width / 2 + offset + destination.X, destination.Height / 2 + offset + destination.Y, diameter, diameter, inside);
+					DrawDot(g, bounds.Width / 2 - diameter - offset + bounds.X, bounds.Height / 2 - diameter - offset + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, bounds.Width / 2 + offset + bounds.X, bounds.Height / 2 - diameter - offset + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, bounds.Width / 2 - diameter - offset + bounds.X, (bounds.Height - diameter) / 2 + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, bounds.Width / 2 + offset + bounds.X, (bounds.Height - diameter) / 2 + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, bounds.Width / 2 - diameter - offset + bounds.X, bounds.Height / 2 + offset + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, bounds.Width / 2 + offset + bounds.X, bounds.Height / 2 + offset + bounds.Y, diameter, diameter, inside);
 					break;
 				case 6:
-					DrawDot(g, destination.Width / 2 - diameter - offset + destination.X, destination.Height / 2 - diameter - offset + destination.Y, diameter, diameter, inside);
-					DrawDot(g, destination.Width / 2 + offset + destination.X, destination.Height / 2 - diameter - offset + destination.Y, diameter, diameter, inside);
-					DrawDot(g, destination.Width / 2 - diameter - offset + destination.X, destination.Height / 2 + offset + destination.Y, diameter, diameter, inside);
-					DrawDot(g, destination.Width / 2 + offset + destination.X, destination.Height / 2 + offset + destination.Y, diameter, diameter, inside);
-					DrawDot(g, destination.Width / 2 - diameter - offset + destination.X, (destination.Height - diameter) / 2 + destination.Y, diameter, diameter, inside);
-					DrawDot(g, destination.Width / 2 + offset + destination.X, (destination.Height - diameter) / 2 + destination.Y, diameter, diameter, inside);
-					DrawDot(g, (destination.Width - diameter) / 2 + destination.X, (destination.Height - diameter) / 2 + destination.Y, diameter, diameter, inside);
+					DrawDot(g, bounds.Width / 2 - diameter - offset + bounds.X, bounds.Height / 2 - diameter - offset + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, bounds.Width / 2 + offset + bounds.X, bounds.Height / 2 - diameter - offset + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, bounds.Width / 2 - diameter - offset + bounds.X, bounds.Height / 2 + offset + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, bounds.Width / 2 + offset + bounds.X, bounds.Height / 2 + offset + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, bounds.Width / 2 - diameter - offset + bounds.X, (bounds.Height - diameter) / 2 + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, bounds.Width / 2 + offset + bounds.X, (bounds.Height - diameter) / 2 + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, (bounds.Width - diameter) / 2 + bounds.X, (bounds.Height - diameter) / 2 + bounds.Y, diameter, diameter, inside);
 					break;
 				case 7:
-					DrawDot(g, destination.Width / 2 - diameter - offset + destination.X, destination.Height / 2 - diameter - offset + destination.Y, diameter, diameter, inside);
-					DrawDot(g, destination.Width / 2 + offset + destination.X, destination.Height / 2 - diameter - offset + destination.Y, diameter, diameter, inside);
-					DrawDot(g, (destination.Width - diameter) / 2 + destination.X, destination.Height / 2 - diameter - offset + destination.Y, diameter, diameter, inside);
-					DrawDot(g, (destination.Width - diameter) / 2 + destination.X, destination.Height / 2 + offset + destination.Y, diameter, diameter, inside);
-					DrawDot(g, destination.Width / 2 - diameter - offset + destination.X, destination.Height / 2 + offset + destination.Y, diameter, diameter, inside);
-					DrawDot(g, destination.Width / 2 + offset + destination.X, destination.Height / 2 + offset + destination.Y, diameter, diameter, inside);
-					DrawDot(g, destination.Width / 2 - diameter - offset + destination.X, (destination.Height - diameter) / 2 + destination.Y, diameter, diameter, inside);
-					DrawDot(g, destination.Width / 2 + offset + destination.X, (destination.Height - diameter) / 2 + destination.Y, diameter, diameter, inside);
+					DrawDot(g, bounds.Width / 2 - diameter - offset + bounds.X, bounds.Height / 2 - diameter - offset + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, bounds.Width / 2 + offset + bounds.X, bounds.Height / 2 - diameter - offset + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, (bounds.Width - diameter) / 2 + bounds.X, bounds.Height / 2 - diameter - offset + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, (bounds.Width - diameter) / 2 + bounds.X, bounds.Height / 2 + offset + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, bounds.Width / 2 - diameter - offset + bounds.X, bounds.Height / 2 + offset + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, bounds.Width / 2 + offset + bounds.X, bounds.Height / 2 + offset + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, bounds.Width / 2 - diameter - offset + bounds.X, (bounds.Height - diameter) / 2 + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, bounds.Width / 2 + offset + bounds.X, (bounds.Height - diameter) / 2 + bounds.Y, diameter, diameter, inside);
 					break;
 				case 8:
-					DrawDot(g, destination.Width / 2 - diameter - offset + destination.X, destination.Height / 2 - diameter - offset + destination.Y, diameter, diameter, inside);
-					DrawDot(g, destination.Width / 2 + offset + destination.X, destination.Height / 2 - diameter - offset + destination.Y, diameter, diameter, inside);
-					DrawDot(g, (destination.Width - diameter) / 2 + destination.X, destination.Height / 2 - diameter - offset + destination.Y, diameter, diameter, inside);
-					DrawDot(g, (destination.Width - diameter) / 2 + destination.X, destination.Height / 2 + offset + destination.Y, diameter, diameter, inside);
-					DrawDot(g, destination.Width / 2 - diameter - offset + destination.X, destination.Height / 2 + offset + destination.Y, diameter, diameter, inside);
-					DrawDot(g, destination.Width / 2 + offset + destination.X, destination.Height / 2 + offset + destination.Y, diameter, diameter, inside);
-					DrawDot(g, destination.Width / 2 - diameter - offset + destination.X, (destination.Height - diameter) / 2 + destination.Y, diameter, diameter, inside);
-					DrawDot(g, destination.Width / 2 + offset + destination.X, (destination.Height - diameter) / 2 + destination.Y, diameter, diameter, inside);
-					DrawDot(g, (destination.Width - diameter) / 2 + destination.X, (destination.Height - diameter) / 2 + destination.Y, diameter, diameter, inside);
+					DrawDot(g, bounds.Width / 2 - diameter - offset + bounds.X, bounds.Height / 2 - diameter - offset + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, bounds.Width / 2 + offset + bounds.X, bounds.Height / 2 - diameter - offset + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, (bounds.Width - diameter) / 2 + bounds.X, bounds.Height / 2 - diameter - offset + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, (bounds.Width - diameter) / 2 + bounds.X, bounds.Height / 2 + offset + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, bounds.Width / 2 - diameter - offset + bounds.X, bounds.Height / 2 + offset + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, bounds.Width / 2 + offset + bounds.X, bounds.Height / 2 + offset + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, bounds.Width / 2 - diameter - offset + bounds.X, (bounds.Height - diameter) / 2 + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, bounds.Width / 2 + offset + bounds.X, (bounds.Height - diameter) / 2 + bounds.Y, diameter, diameter, inside);
+					DrawDot(g, (bounds.Width - diameter) / 2 + bounds.X, (bounds.Height - diameter) / 2 + bounds.Y, diameter, diameter, inside);
 					break;
 				default:
-					DrawDot(g, destination.Width / 2 - diameter + destination.X, destination.Height / 2 - diameter + destination.Y, diameter * 2, diameter * 2, inside);
+					DrawDot(g, bounds.Width / 2 - diameter + bounds.X, bounds.Height / 2 - diameter + bounds.Y, diameter * 2, diameter * 2, inside);
 					break;
 			}
 		}
@@ -400,16 +491,19 @@ namespace BabaIsYou.Map {
 			path.CloseFigure();
 			return path;
 		}
-		private static void DrawImage(Graphics g, Image image, Rectangle destination, Color color) {
+		private static void DrawImage(Graphics g, Image image, Rectangle bounds, Color color, bool drawTransparent) {
 			ColorMatrix matrix = new ColorMatrix();
 			matrix.Matrix00 = color.R / 255f;
 			matrix.Matrix11 = color.G / 255f;
 			matrix.Matrix22 = color.B / 255f;
+			if (drawTransparent) {
+				matrix.Matrix33 = 0.5f;
+			}
 			ImageAttributes attributes = new ImageAttributes();
 			attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
 			g.InterpolationMode = InterpolationMode.NearestNeighbor;
 			g.PixelOffsetMode = PixelOffsetMode.Half;
-			g.DrawImage(image, destination, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, attributes);
+			g.DrawImage(image, bounds, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, attributes);
 		}
 		private static bool IsEdge(Grid grid, int position) {
 			int mod = position % grid.Width;

@@ -74,21 +74,12 @@ namespace BabaIsYou.Map {
 			Cells = newCells;
 			Resized?.Invoke(this);
 		}
-		public int LevelCount() {
+		public int CountOfType<T>() {
 			int count = 0;
 			int size = Cells.Count;
 			for (int i = 0; i < size; i++) {
 				Cell cell = Cells[i];
-				count += cell.LevelCount();
-			}
-			return count;
-		}
-		public int PathCount() {
-			int count = 0;
-			int size = Cells.Count;
-			for (int i = 0; i < size; i++) {
-				Cell cell = Cells[i];
-				count += cell.PathCount();
+				count += cell.CountOfType<T>();
 			}
 			return count;
 		}
@@ -104,13 +95,15 @@ namespace BabaIsYou.Map {
 			}
 			return layerCount;
 		}
-		public void UpdateLevelsAndPaths() {
+		public void UpdateExtraObjects() {
 			Info.RemoveSection("Levels");
 			Info.RemoveSection("Paths");
 			Info.RemoveSection("Icons");
+			Info.RemoveSection("Specials");
 
 			int levelID = 0;
 			int pathID = 0;
+			int specialID = 0;
 			int iconID = 0;
 			int size = Cells.Count;
 			for (int i = 0; i < size; i++) {
@@ -138,16 +131,22 @@ namespace BabaIsYou.Map {
 							iconID++;
 						}
 						levelID++;
-					} else if (item is Line line) {
-						Info["Paths", $"{pathID}object"] = line.Object;
-						Info["Paths", $"{pathID}style"] = line.Style.ToString();
-						Info["Paths", $"{pathID}gate"] = line.Gate.ToString();
-						Info["Paths", $"{pathID}requirement"] = line.Requirement.ToString();
+					} else if (item is LevelPath path) {
+						Info["Paths", $"{pathID}object"] = path.Object;
+						Info["Paths", $"{pathID}style"] = path.Style.ToString();
+						Info["Paths", $"{pathID}gate"] = path.Gate.ToString();
+						Info["Paths", $"{pathID}requirement"] = path.Requirement.ToString();
 						Info["Paths", $"{pathID}X"] = location.X.ToString();
 						Info["Paths", $"{pathID}Y"] = location.Y.ToString();
 						Info["Paths", $"{pathID}Z"] = "0";
-						Info["Paths", $"{pathID}dir"] = line.Direction.ToString();
+						Info["Paths", $"{pathID}dir"] = path.Direction.ToString();
 						pathID++;
+					} else if (item is Special special) {
+						Info["Specials", $"{specialID}data"] = special.Object;
+						Info["Specials", $"{specialID}X"] = location.X.ToString();
+						Info["Specials", $"{specialID}Y"] = location.Y.ToString();
+						Info["Specials", $"{specialID}Z"] = "0";
+						specialID++;
 					}
 				}
 			}
@@ -162,12 +161,29 @@ namespace BabaIsYou.Map {
 			sb.Append("changed=");
 			StringBuilder tiles = new StringBuilder();
 			foreach (ItemChange change in Changes.Values) {
-				sb.Append(change.ObjectName).Append(',');
-				tiles.Append(change.Serialize());
+				string objectChange = change.Serialize();
+				if (!string.IsNullOrEmpty(objectChange)) {
+					sb.Append(change.ObjectName).Append(',');
+					tiles.Append(objectChange);
+				}
 			}
 			sb.AppendLine().Append(tiles.ToString());
 
 			return sb.ToString();
+		}
+		public bool UpdateChanges(Item item) {
+			Item defaultItem = Reader.DefaultsByID[item.ID];
+			bool hasChanges = true;
+			hasChanges = UpdateChanges(item.ID, "activecolour", defaultItem.ActiveColor != item.ActiveColor ? Reader.ShortToCoordinate(item.ActiveColor) : null);
+			hasChanges = UpdateChanges(item.ID, "colour", defaultItem.Color != item.Color ? Reader.ShortToCoordinate(item.Color) : null);
+			hasChanges = UpdateChanges(item.ID, "layer", defaultItem.Layer != item.Layer ? item.Layer.ToString() : null);
+			hasChanges = UpdateChanges(item.ID, "type", defaultItem.Type != item.Type ? item.Type.ToString() : null);
+			hasChanges = UpdateChanges(item.ID, "tiling", defaultItem.Tiling != item.Tiling ? (item.Tiling == 255 ? -1 : (int)item.Tiling).ToString() : null);
+			hasChanges = UpdateChanges(item.ID, "name", defaultItem.Name != item.Name ? item.Name : null);
+			hasChanges = UpdateChanges(item.ID, "image", defaultItem.Sprite != item.Sprite ? item.Sprite : null);
+			hasChanges = UpdateChanges(item.ID, "unittype", defaultItem.IsObject != item.IsObject ? item.IsObject ? "object" : "text" : null);
+			hasChanges = UpdateChanges(item.ID, "root", defaultItem.SpriteInRoot != item.SpriteInRoot ? item.SpriteInRoot ? "1" : "0" : null);
+			return hasChanges;
 		}
 		public bool UpdateChanges(short id, string property, string value) {
 			ItemChange temp;

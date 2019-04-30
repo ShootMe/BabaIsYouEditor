@@ -51,7 +51,7 @@ namespace BabaIsYou.Map {
 		}
 		public string Serialize() {
 			List<string> data = new List<string>();
-			Item item = Reader.DefaultsByName[ObjectName];
+			Item item = Reader.DefaultsByObject[ObjectName];
 			foreach (KeyValuePair<string, string> pair in changes) {
 				bool changed = false;
 				switch (pair.Key) {

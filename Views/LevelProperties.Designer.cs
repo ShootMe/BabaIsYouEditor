@@ -373,7 +373,7 @@
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Level Properties";
-			this.Shown += new System.EventHandler(this.LevelProperties_Shown);
+			this.Load += new System.EventHandler(this.LevelProperties_Load);
 			((System.ComponentModel.ISupportInitialize)(this.gridOther)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.numWidth)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.numHeight)).EndInit();

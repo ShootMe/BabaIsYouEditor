@@ -1,25 +1,25 @@
 ﻿namespace BabaIsYou.Map {
-	public enum LineGate : byte {
+	public enum PathGate : byte {
 		None,
 		LevelClears,
 		MapClears
 	}
-	public enum LineStyle : byte {
+	public enum PathStyle : byte {
 		Hidden,
 		Visible
 	}
-	public class Line : Item {
+	public class LevelPath : Item {
 		public byte X;
 		public byte Y;
 		public byte Style;
 		public byte Gate;
 		public byte Requirement;
 
-		public Line() {
+		public LevelPath() {
 			Object = "object117";
 		}
-		public void UpdateLine() {
-			Item item = Reader.DefaultsByName[Object];
+		public void UpdatePath() {
+			Item item = Reader.DefaultsByObject[Object];
 			ID = item.ID;
 			Sprite = item.Sprite;
 			Name = item.Name;
@@ -33,7 +33,7 @@
 		}
 
 		public override Item Copy() {
-			return new Line() {
+			return new LevelPath() {
 				ID = ID,
 				Position = Position,
 				Object = Object,

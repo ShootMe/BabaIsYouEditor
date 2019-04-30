@@ -7,7 +7,7 @@ using System.Windows.Forms;
 namespace BabaIsYou.Views {
 	public partial class ObjectEditor : Form {
 		public Palette Palette { get; set; }
-		public Item Sprite { get; set; }
+		public Item Edit { get; set; }
 		public Grid Map { get; set; }
 		private Item DefaultItem;
 		public ObjectEditor() {
@@ -21,7 +21,7 @@ namespace BabaIsYou.Views {
 		}
 
 		private void ObjectEditor_Shown(object sender, EventArgs e) {
-			DefaultItem = Reader.DefaultsByID[Sprite.ID].Copy();
+			DefaultItem = Reader.DefaultsByID[Edit.ID].Copy();
 			Text = $"Edit - {DefaultItem.Object} - {DefaultItem.Name}";
 
 			imgOriginal.Image = Renderer.DrawSprite(DefaultItem, imgOriginal.Width, Palette);
@@ -29,11 +29,11 @@ namespace BabaIsYou.Views {
 			UpdateImages();
 		}
 		private void numLayer_ValueChanged(object sender, EventArgs e) {
-			Sprite.Layer = (byte)numLayer.Value;
+			Edit.Layer = (byte)numLayer.Value;
 		}
 		private void cboTiling_SelectedIndexChanged(object sender, EventArgs e) {
 			if (cboTiling.SelectedIndex >= 0) {
-				Sprite.Tiling = (byte)(Tiling)cboTiling.Items[cboTiling.SelectedIndex];
+				Edit.Tiling = (byte)(Tiling)cboTiling.Items[cboTiling.SelectedIndex];
 			} else {
 				cboTiling.SelectedItem = (Tiling)DefaultItem.Tiling;
 			}
@@ -45,7 +45,7 @@ namespace BabaIsYou.Views {
 		}
 		private void cboTextType_SelectedIndexChanged(object sender, EventArgs e) {
 			if (cboTextType.SelectedIndex >= 0) {
-				Sprite.Type = (byte)(TextType)cboTextType.Items[cboTextType.SelectedIndex];
+				Edit.Type = (byte)(TextType)cboTextType.Items[cboTextType.SelectedIndex];
 			} else {
 				cboTextType.SelectedItem = (TextType)DefaultItem.Type;
 			}
@@ -59,7 +59,7 @@ namespace BabaIsYou.Views {
 			using (ObjectSelector selector = new ObjectSelector()) {
 				int imgSize = 36;
 				Rectangle rect = new Rectangle(0, 0, imgSize, imgSize);
-				Color color = Palette.Colors[Sprite.ActiveColor >= 0 ? Sprite.ActiveColor : Sprite.Color];
+				Color color = Palette.Colors[Edit.ActiveColor >= 0 ? Edit.ActiveColor : Edit.Color];
 				int spriteCount = 0;
 				foreach (Sprite sprite in Reader.Sprites.Values) {
 					if (sprite.Name.IndexOf("img_") == 0 || sprite.Name.IndexOf("icon_") == 0) { continue; }
@@ -77,7 +77,7 @@ namespace BabaIsYou.Views {
 					}
 					ListItem item = new ListItem(sprite, name, img);
 					item.BackColor = Palette.Background;
-					selector.AddItem(item, false);
+					selector.AddItem(item, sender == imgObject ? Edit.Name.Equals(sprite.Name, StringComparison.OrdinalIgnoreCase) : Edit.Sprite.Equals(sprite.Name, StringComparison.OrdinalIgnoreCase));
 				}
 
 				selector.SortItems();
@@ -99,33 +99,33 @@ namespace BabaIsYou.Views {
 				DialogResult result = selector.ShowDialog(this);
 				if (result == DialogResult.OK) {
 					Sprite sprite = (Sprite)selector.SelectedItem;
-					Sprite.Name = sender == imgImage ? Sprite.Name : sprite.Name;
-					Sprite.Sprite = sender == imgImage ? sprite.Name : Sprite.Sprite;
-					Sprite.SpriteInRoot = sender == imgImage ? sprite.IsRoot : Sprite.SpriteInRoot;
-					Sprite.IsObject = Sprite.Name.IndexOf("text_") < 0;
-					if (Sprite.IsObject) {
-						Sprite.ActiveColor = -1;
+					Edit.Name = sender == imgImage ? Edit.Name : sprite.Name;
+					Edit.Sprite = sender == imgImage ? sprite.Name : Edit.Sprite;
+					Edit.SpriteInRoot = sender == imgImage ? sprite.IsRoot : Edit.SpriteInRoot;
+					Edit.IsObject = Edit.Name.IndexOf("text_") < 0;
+					if (Edit.IsObject) {
+						Edit.ActiveColor = -1;
 					}
 
 					Item item;
-					if (Reader.DefaultsByName.TryGetValue(Sprite.Name, out item)) {
-						Sprite.Type = item.Type;
-						if (!Sprite.IsObject && Sprite.ActiveColor == -1) {
-							Sprite.ActiveColor = item.ActiveColor;
+					if (Reader.DefaultsByObject.TryGetValue(Edit.Name, out item)) {
+						Edit.Type = item.Type;
+						if (!Edit.IsObject && Edit.ActiveColor == -1) {
+							Edit.ActiveColor = item.ActiveColor;
 						}
 					} else {
-						Sprite.Type = 0;
+						Edit.Type = 0;
 					}
-					if (Reader.DefaultsByName.TryGetValue(Sprite.Sprite, out item)) {
-						Sprite.Tiling = item.Tiling;
+					if (Reader.DefaultsByObject.TryGetValue(Edit.Sprite, out item)) {
+						Edit.Tiling = item.Tiling;
 					} else {
 						switch (sprite.MaxIndex) {
-							case 31: Sprite.Tiling = (byte)Tiling.Character; break;
-							case 27: Sprite.Tiling = (byte)Tiling.Animated; break;
-							case 24: Sprite.Tiling = (byte)Tiling.Directional; break;
-							case 15: Sprite.Tiling = (byte)Tiling.Tiled; break;
-							case 3: Sprite.Tiling = (byte)Tiling.SingleAnimated; break;
-							default: Sprite.Tiling = (byte)Tiling.None; break;
+							case 31: Edit.Tiling = (byte)Tiling.Character; break;
+							case 27: Edit.Tiling = (byte)Tiling.Animated; break;
+							case 24: Edit.Tiling = (byte)Tiling.Directional; break;
+							case 15: Edit.Tiling = (byte)Tiling.Tiled; break;
+							case 3: Edit.Tiling = (byte)Tiling.SingleAnimated; break;
+							default: Edit.Tiling = (byte)Tiling.None; break;
 						}
 					}
 
@@ -148,7 +148,7 @@ namespace BabaIsYou.Views {
 						}
 					}
 					ListItem item = new ListItem(new KeyValuePair<short, Color>(pair.Key, pair.Value), pair.Key.ToString("00000"), img);
-					selector.AddItem(item, pair.Key == (isActive ? Sprite.ActiveColor : Sprite.Color));
+					selector.AddItem(item, pair.Key == (isActive ? Edit.ActiveColor : Edit.Color));
 				}
 
 				selector.SortItems();
@@ -158,9 +158,9 @@ namespace BabaIsYou.Views {
 				if (result == DialogResult.OK) {
 					KeyValuePair<short, Color> pair = (KeyValuePair<short, Color>)selector.SelectedItem;
 					if (isActive) {
-						Sprite.ActiveColor = pair.Key;
+						Edit.ActiveColor = pair.Key;
 					} else {
-						Sprite.Color = pair.Key;
+						Edit.Color = pair.Key;
 					}
 
 					UpdateImages();
@@ -168,57 +168,54 @@ namespace BabaIsYou.Views {
 			}
 		}
 		private void UpdateImages() {
-			Sprite.Active = false;
+			Edit.Active = false;
 			DrawImage(imgNormal);
-			Sprite.Active = true;
+			Edit.Active = true;
 
-			imgActive.Visible = !Sprite.IsObject;
-			lblActiveColor.Visible = !Sprite.IsObject;
-			lblTextType.Visible = !Sprite.IsObject;
-			cboTextType.Visible = !Sprite.IsObject;
-			if (!Sprite.IsObject) {
+			imgActive.Visible = !Edit.IsObject;
+			lblActiveColor.Visible = !Edit.IsObject;
+			lblTextType.Visible = !Edit.IsObject;
+			cboTextType.Visible = !Edit.IsObject;
+			if (!Edit.IsObject) {
 				DrawImage(imgActive);
 			}
 
-			DrawImage(imgCurrent, true);
+			toolTips.SetToolTip(imgObject, Edit.Name);
+			DrawImage(imgObject, true);
+			toolTips.SetToolTip(imgImage, Edit.Sprite);
 			DrawImage(imgImage);
 
-			numLayer.Value = Sprite.Layer;
-			cboTextType.SelectedItem = (TextType)Sprite.Type;
-			cboTiling.SelectedItem = (Tiling)Sprite.Tiling;
+			numLayer.Value = Edit.Layer;
+			cboTextType.SelectedItem = (TextType)Edit.Type;
+			cboTiling.SelectedItem = (Tiling)Edit.Tiling;
 		}
 		private void DrawImage(PictureBox img, bool useNameOnly = false) {
 			if (img.Image != null) {
 				img.Image.Dispose();
 			}
 			if (useNameOnly) {
-				string image = Sprite.Sprite;
-				Sprite.Sprite = Sprite.Name;
-				img.Image = Renderer.DrawSprite(Sprite, img.Width, Palette);
-				Sprite.Sprite = image;
+				if (!Reader.Sprites.ContainsKey(Edit.Name)) {
+					img.Image = null;
+				} else {
+					string image = Edit.Sprite;
+					Edit.Sprite = Edit.Name;
+					img.Image = Renderer.DrawSprite(Edit, img.Width, Palette);
+					Edit.Sprite = image;
+				}
 			} else {
-				img.Image = Renderer.DrawSprite(Sprite, img.Width, Palette);
+				img.Image = Renderer.DrawSprite(Edit, img.Width, Palette);
 			}
 		}
 		private void btnReset_Click(object sender, EventArgs e) {
-			Sprite = DefaultItem.Copy();
+			Edit = DefaultItem.Copy();
 			numLayer.Value = DefaultItem.Layer;
 			cboTextType.SelectedValue = (TextType)DefaultItem.Type;
 			cboTiling.SelectedValue = (Tiling)DefaultItem.Tiling;
 			UpdateImages();
 		}
 		private void btnSave_Click(object sender, EventArgs e) {
-			bool hasChanges = true;
-			hasChanges = Map.UpdateChanges(Sprite.ID, "activecolour", DefaultItem.ActiveColor != Sprite.ActiveColor ? Reader.ShortToCoordinate(Sprite.ActiveColor) : null);
-			hasChanges = Map.UpdateChanges(Sprite.ID, "colour", DefaultItem.Color != Sprite.Color ? Reader.ShortToCoordinate(Sprite.Color) : null);
-			hasChanges = Map.UpdateChanges(Sprite.ID, "layer", DefaultItem.Layer != Sprite.Layer ? Sprite.Layer.ToString() : null);
-			hasChanges = Map.UpdateChanges(Sprite.ID, "type", DefaultItem.Type != Sprite.Type ? Sprite.Type.ToString() : null);
-			hasChanges = Map.UpdateChanges(Sprite.ID, "tiling", DefaultItem.Tiling != Sprite.Tiling ? (Sprite.Tiling == 255 ? -1 : (int)Sprite.Tiling).ToString() : null);
-			hasChanges = Map.UpdateChanges(Sprite.ID, "name", DefaultItem.Name != Sprite.Name ? Sprite.Name : null);
-			hasChanges = Map.UpdateChanges(Sprite.ID, "image", DefaultItem.Sprite != Sprite.Sprite ? Sprite.Sprite : null);
-			hasChanges = Map.UpdateChanges(Sprite.ID, "unittype", DefaultItem.IsObject != Sprite.IsObject ? Sprite.IsObject ? "object" : "text" : null);
-			hasChanges = Map.UpdateChanges(Sprite.ID, "root", DefaultItem.SpriteInRoot != Sprite.SpriteInRoot ? Sprite.SpriteInRoot ? "1" : "0" : null);
-			Sprite.Changed = hasChanges;
+			bool hasChanges = Map.UpdateChanges(Edit);
+			Edit.Changed = hasChanges;
 			Map.ApplyChanges();
 			this.DialogResult = DialogResult.OK;
 			this.Close();

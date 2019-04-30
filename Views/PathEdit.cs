@@ -6,52 +6,52 @@ using System.Windows.Forms;
 namespace BabaIsYou.Views {
 	public partial class PathEdit : Form {
 		public Palette Palette { get; set; }
-		public Line Line { get; set; }
+		public LevelPath Edit { get; set; }
 		public Grid Map { get; set; }
-		private Line lineCopy;
+		private LevelPath pathCopy;
 		public PathEdit() {
 			InitializeComponent();
 		}
 
 		private void PathEdit_Shown(object sender, EventArgs e) {
-			lineCopy = (Line)Line.Copy();
-			numRequirement.Value = lineCopy.Requirement;
-			switch ((LineGate)lineCopy.Gate) {
-				case LineGate.LevelClears: chkLevelClears.Checked = true; break;
-				case LineGate.MapClears: chkMapClears.Checked = true; break;
+			pathCopy = (LevelPath)Edit.Copy();
+			numRequirement.Value = pathCopy.Requirement;
+			switch ((PathGate)pathCopy.Gate) {
+				case PathGate.LevelClears: chkLevelClears.Checked = true; break;
+				case PathGate.MapClears: chkMapClears.Checked = true; break;
 				default: chkNope.Checked = true; break;
 			}
-			switch ((LineStyle)lineCopy.Style) {
-				case LineStyle.Visible: chkVisible.Checked = true; break;
+			switch ((PathStyle)pathCopy.Style) {
+				case PathStyle.Visible: chkVisible.Checked = true; break;
 				default: chkHidden.Checked = true; break;
 			}
 			UpdateObject();
 		}
 
 		private void chkStyle_CheckedChanged(object sender, EventArgs e) {
-			if (lineCopy == null) { return; }
+			if (pathCopy == null) { return; }
 
-			lineCopy.Style = chkVisible.Checked ? (byte)LineStyle.Visible : lineCopy.Style;
-			lineCopy.Style = chkHidden.Checked ? (byte)LineStyle.Hidden : lineCopy.Style;
+			pathCopy.Style = chkVisible.Checked ? (byte)PathStyle.Visible : pathCopy.Style;
+			pathCopy.Style = chkHidden.Checked ? (byte)PathStyle.Hidden : pathCopy.Style;
 		}
 		private void chkGate_CheckedChanged(object sender, EventArgs e) {
-			if (lineCopy == null) { return; }
+			if (pathCopy == null) { return; }
 
-			lineCopy.Gate = chkNope.Checked ? (byte)LineGate.None : lineCopy.Gate;
-			lineCopy.Gate = chkLevelClears.Checked ? (byte)LineGate.LevelClears : lineCopy.Gate;
-			lineCopy.Gate = chkMapClears.Checked ? (byte)LineGate.MapClears : lineCopy.Gate;
+			pathCopy.Gate = chkNope.Checked ? (byte)PathGate.None : pathCopy.Gate;
+			pathCopy.Gate = chkLevelClears.Checked ? (byte)PathGate.LevelClears : pathCopy.Gate;
+			pathCopy.Gate = chkMapClears.Checked ? (byte)PathGate.MapClears : pathCopy.Gate;
 		}
 		private void numRequirement_ValueChanged(object sender, EventArgs e) {
-			if (lineCopy == null) { return; }
+			if (pathCopy == null) { return; }
 
-			lineCopy.Requirement = (byte)numRequirement.Value;
+			pathCopy.Requirement = (byte)numRequirement.Value;
 		}
 		private void imgObject_Click(object sender, EventArgs e) {
 			using (ObjectSelector selector = new ObjectSelector()) {
 				int imgSize = 36;
 				Rectangle rect = new Rectangle(0, 0, imgSize, imgSize);
-				int spriteCount = Reader.DefaultsByName.Count;
-				foreach (Item spriteItem in Reader.DefaultsByName.Values) {
+				int spriteCount = Reader.DefaultsByObject.Count;
+				foreach (Item spriteItem in Reader.DefaultsByObject.Values) {
 					if (spriteItem.ID <= 0 || string.IsNullOrEmpty(spriteItem.Sprite)) { continue; }
 
 					ItemChange change;
@@ -95,7 +95,7 @@ namespace BabaIsYou.Views {
 				DialogResult result = selector.ShowDialog(this);
 				if (result == DialogResult.OK) {
 					Item item = (Item)selector.SelectedItem;
-					lineCopy.Object = item.Object;
+					pathCopy.Object = item.Object;
 					UpdateObject();
 				}
 			}
@@ -106,21 +106,21 @@ namespace BabaIsYou.Views {
 			}
 
 			ItemChange change;
-			Item copy = Reader.DefaultsByName[lineCopy.Object].Copy();
+			Item copy = Reader.DefaultsByObject[pathCopy.Object].Copy();
 			if (Map.Changes.TryGetValue(copy.ID, out change)) {
 				change.Apply(copy);
 			}
 			imgObject.Image = Renderer.DrawSprite(copy, imgObject.Width, Palette);
 		}
 		private void btnSave_Click(object sender, EventArgs e) {
-			Line.Style = lineCopy.Style;
-			Line.Gate = lineCopy.Gate;
-			Line.Requirement = lineCopy.Requirement;
-			Line.Object = lineCopy.Object;
-			Line.UpdateLine();
+			Edit.Style = pathCopy.Style;
+			Edit.Gate = pathCopy.Gate;
+			Edit.Requirement = pathCopy.Requirement;
+			Edit.Object = pathCopy.Object;
+			Edit.UpdatePath();
 			ItemChange change;
-			if (Map.Changes.TryGetValue(Line.ID, out change)) {
-				change.Apply(Line);
+			if (Map.Changes.TryGetValue(Edit.ID, out change)) {
+				change.Apply(Edit);
 			}
 			this.DialogResult = DialogResult.OK;
 			this.Close();

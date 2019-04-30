@@ -8,7 +8,7 @@ namespace BabaIsYou.Map {
 		public const long ACHTUNG = 0x21474e5554484341;
 		public const int MAP = 0x2050414d;
 		public const int LAYR = 0x5259414c;
-		public static Dictionary<string, Item> DefaultsByName = new Dictionary<string, Item>(StringComparer.OrdinalIgnoreCase);
+		public static Dictionary<string, Item> DefaultsByObject = new Dictionary<string, Item>(StringComparer.OrdinalIgnoreCase);
 		public static Dictionary<short, Item> DefaultsByID = new Dictionary<short, Item>();
 		public static Dictionary<string, Palette> Palettes = new Dictionary<string, Palette>(StringComparer.OrdinalIgnoreCase);
 		public static Dictionary<string, Sprite> Sprites = new Dictionary<string, Sprite>();
@@ -16,7 +16,21 @@ namespace BabaIsYou.Map {
 		public static void Initialize(string path, string world) {
 			DataPath = path;
 
-			DefaultsByName.Clear();
+			Sprites.Clear();
+			string[] files = Directory.GetFiles(Path.Combine(DataPath, "Sprites"), "*.png", SearchOption.TopDirectoryOnly);
+			AddSprites(files);
+			string imgPath = Path.Combine(DataPath, "Worlds", world, "Sprites");
+			if (Directory.Exists(imgPath)) {
+				files = Directory.GetFiles(imgPath, "*.png", SearchOption.TopDirectoryOnly);
+				AddSprites(files, false);
+			}
+			imgPath = Path.Combine(DataPath, "Worlds", world, "Images");
+			if (Directory.Exists(imgPath)) {
+				files = Directory.GetFiles(imgPath, "*.png", SearchOption.TopDirectoryOnly);
+				AddSprites(files, false, false);
+			}
+
+			DefaultsByObject.Clear();
 			DefaultsByID.Clear();
 			int maxID = 0;
 			using (StreamReader reader = new StreamReader(Path.Combine(DataPath, "values.lua"))) {
@@ -35,24 +49,10 @@ namespace BabaIsYou.Map {
 			}
 
 			Palettes.Clear();
-			string[] files = Directory.GetFiles(Path.Combine(DataPath, "Palettes"), "*.png", SearchOption.TopDirectoryOnly);
+			files = Directory.GetFiles(Path.Combine(DataPath, "Palettes"), "*.png", SearchOption.TopDirectoryOnly);
 			for (int i = 0; i < files.Length; i++) {
 				string file = files[i];
 				Palettes.Add(Path.GetFileName(file), new Palette(file));
-			}
-
-			Sprites.Clear();
-			files = Directory.GetFiles(Path.Combine(DataPath, "Sprites"), "*.png", SearchOption.TopDirectoryOnly);
-			AddSprites(files);
-			string imgPath = Path.Combine(DataPath, "Worlds", world, "Sprites");
-			if (Directory.Exists(imgPath)) {
-				files = Directory.GetFiles(imgPath, "*.png", SearchOption.TopDirectoryOnly);
-				AddSprites(files, false);
-			}
-			imgPath = Path.Combine(DataPath, "Worlds", world, "Images");
-			if (Directory.Exists(imgPath)) {
-				files = Directory.GetFiles(imgPath, "*.png", SearchOption.TopDirectoryOnly);
-				AddSprites(files, false, false);
 			}
 		}
 		private static void AddSprites(string[] files, bool isRoot = true, bool isSprite = true) {
@@ -142,11 +142,11 @@ namespace BabaIsYou.Map {
 					SetItemValue(item, obj, value);
 				}
 
-				DefaultsByName.Add(title, item);
+				DefaultsByObject.Add(title, item);
 				DefaultsByID.Add(item.ID, item);
 			}
 
-			DefaultsByName.Add(Item.EMPTY.Name, Item.EMPTY);
+			DefaultsByObject.Add(Item.EMPTY.Name, Item.EMPTY);
 			DefaultsByID.Add(Item.EMPTY.ID, Item.EMPTY);
 
 			return maxID;
@@ -184,10 +184,10 @@ namespace BabaIsYou.Map {
 					item.Object = existing.Object;
 					maxID--;
 					DefaultsByID[item.ID] = item;
-					DefaultsByName[item.Object] = item;
+					DefaultsByObject[item.Object] = item;
 				} else {
 					DefaultsByID.Add(item.ID, item);
-					DefaultsByName.Add(item.Object, item);
+					DefaultsByObject.Add(item.Object, item);
 				}
 			}
 		}
@@ -266,6 +266,7 @@ namespace BabaIsYou.Map {
 			ApplyChanges(grid);
 			AddLevels(grid);
 			AddImages(grid);
+			AddSpecials(grid);
 
 			return grid;
 		}
@@ -355,13 +356,13 @@ namespace BabaIsYou.Map {
 
 			Dictionary<short, ItemChange> itemChanges = grid.Changes;
 			itemChanges.Clear();
-			Dictionary<short, string> names = new Dictionary<short, string>();
 			foreach (KeyValuePair<string, string> pair in changes) {
 				if (pair.Key.IndexOf("object") == 0) {
 					int index = pair.Key.IndexOf('_');
 					string name = pair.Key.Substring(0, index);
 					ItemChange item;
-					short id = DefaultsByName[name].ID;
+					Item defaultItem = DefaultsByObject[name];
+					short id = defaultItem.ID;
 					if (!itemChanges.TryGetValue(id, out item)) {
 						item = new ItemChange(name);
 						itemChanges.Add(id, item);
@@ -370,28 +371,67 @@ namespace BabaIsYou.Map {
 					string property = pair.Key.Substring(index + 1).ToLower();
 					item[property] = pair.Value;
 
-					if (property == "image" && !names.ContainsKey(id)) {
-						names.Add(id, pair.Value);
+					if (property == "image" && !Sprites.ContainsKey(pair.Value)) {
+						item["image"] = defaultItem.Sprite;
 					}
-				}
-			}
-
-			foreach (KeyValuePair<short, string> pair in names) {
-				if (!Sprites.ContainsKey(pair.Value)) {
-					itemChanges.Remove(pair.Key);
 				}
 			}
 
 			grid.ApplyChanges();
 		}
+		private static void AddSpecials(Grid grid) {
+			Dictionary<string, string> specialInfo = grid.Info["specials"];
+			if (specialInfo == null) { return; }
+			int specialCount = 0;
+			int.TryParse(grid.Info["general", "specials"], out specialCount);
+
+			Dictionary<byte, Special> specials = new Dictionary<byte, Special>();
+			foreach (KeyValuePair<string, string> pair in specialInfo) {
+				byte id = 0;
+				int index = 0;
+				while (char.IsDigit(pair.Key[index])) {
+					id = (byte)(id * 10 + (pair.Key[index++] ^ 0x30));
+				}
+				if (id >= specialCount) { continue; }
+
+				string property = pair.Key.Substring(index).ToLower();
+
+				Special special;
+				if (!specials.TryGetValue(id, out special)) {
+					special = new Special();
+					specials.Add(id, special);
+				}
+
+				switch (property) {
+					case "data": special.Object = pair.Value; break;
+					case "x": special.X = ParseByte(pair.Value); break;
+					case "y": special.Y = ParseByte(pair.Value); break;
+				}
+			}
+
+			foreach (Special special in specials.Values) {
+				special.Position = (short)(special.Y * grid.Width + special.X);
+				if (special.Position < 0 || special.Position >= grid.Cells.Count) { continue; }
+
+				specialCount = -1;
+				string type = ParseStringToComma(special.Object, ref specialCount, "Unknown");
+				SpecialType specialType;
+				if (!Enum.TryParse<SpecialType>(type, true, out specialType)) {
+					specialType = SpecialType.Unknown;
+				}
+				special.Type = (byte)specialType;
+
+				grid.Cells[special.Position].Objects.Add(special);
+			}
+		}
 		private static void AddPaths(Grid grid) {
-			Dictionary<string, string> paths = grid.Info["paths"];
-			if (paths == null) { return; }
+			Dictionary<string, string> pathInfo = grid.Info["paths"];
+			if (pathInfo == null) { return; }
 			int pathCount = 0;
 			int.TryParse(grid.Info["general", "paths"], out pathCount);
 
-			Dictionary<byte, Line> lines = new Dictionary<byte, Line>();
-			foreach (KeyValuePair<string, string> pair in paths) {
+			Dictionary<byte, LevelPath> paths = new Dictionary<byte, LevelPath>();
+			foreach (KeyValuePair<string, string> pair in pathInfo) {
 				byte id = 0;
 				int index = 0;
 				while (char.IsDigit(pair.Key[index])) {
@@ -401,29 +441,29 @@ namespace BabaIsYou.Map {
 
 				string property = pair.Key.Substring(index).ToLower();
 
-				Line line;
-				if (!lines.TryGetValue(id, out line)) {
-					line = new Line();
-					lines.Add(id, line);
+				LevelPath path;
+				if (!paths.TryGetValue(id, out path)) {
+					path = new LevelPath();
+					paths.Add(id, path);
 				}
 
 				switch (property) {
-					case "object": line.Object = pair.Value; break;
-					case "x": line.X = ParseByte(pair.Value); break;
-					case "y": line.Y = ParseByte(pair.Value); break;
-					case "style": line.Style = ParseByte(pair.Value); break;
-					case "gate": line.Gate = ParseByte(pair.Value); break;
-					case "dir": line.Direction = ParseByte(pair.Value); break;
-					case "requirement": line.Requirement = ParseByte(pair.Value); break;
+					case "object": path.Object = pair.Value; break;
+					case "x": path.X = ParseByte(pair.Value); break;
+					case "y": path.Y = ParseByte(pair.Value); break;
+					case "style": path.Style = ParseByte(pair.Value); break;
+					case "gate": path.Gate = ParseByte(pair.Value); break;
+					case "dir": path.Direction = ParseByte(pair.Value); break;
+					case "requirement": path.Requirement = ParseByte(pair.Value); break;
 				}
 			}
 
-			foreach (Line line in lines.Values) {
-				line.UpdateLine();
-				line.Position = (short)(line.Y * grid.Width + line.X);
-				if (line.Position < 0 || line.Position >= grid.Cells.Count) { continue; }
+			foreach (LevelPath path in paths.Values) {
+				path.UpdatePath();
+				path.Position = (short)(path.Y * grid.Width + path.X);
+				if (path.Position < 0 || path.Position >= grid.Cells.Count) { continue; }
 
-				grid.Cells[line.Position].Objects.Add(line);
+				grid.Cells[path.Position].Objects.Add(path);
 			}
 		}
 		private static void AddLevels(Grid grid) {
@@ -445,7 +485,7 @@ namespace BabaIsYou.Map {
 
 				Level level;
 				if (!maps.TryGetValue(id, out level)) {
-					level = (Level)Level.DEFAULT.Copy();
+					level = new Level();
 					level.Position = id;
 					maps.Add(id, level);
 				}
@@ -478,33 +518,40 @@ namespace BabaIsYou.Map {
 				grid.Cells[level.Position].Objects.Add(level);
 			}
 		}
-		private static bool ParseBool(string value) {
+		public static bool ParseBool(string value) {
 			bool temp;
 			if (bool.TryParse(value, out temp)) {
 				return temp;
 			}
 			return value != "0";
 		}
-		private static byte ParseByte(string value) {
+		public static byte ParseByte(string value, byte defaultValue = 0) {
 			short temp;
 			if (short.TryParse(value, out temp)) {
 				return (byte)temp;
 			}
-			return 0;
+			return defaultValue;
 		}
-		private static short ParseShort(string value) {
+		public static short ParseShort(string value, short defaultValue = 0) {
 			short temp;
 			if (short.TryParse(value, out temp)) {
 				return temp;
 			}
-			return 0;
+			return defaultValue;
 		}
-		private static int ParseInt(string value) {
+		public static int ParseInt(string value, int defaultValue = 0) {
 			int temp;
 			if (int.TryParse(value, out temp)) {
 				return temp;
 			}
-			return 0;
+			return defaultValue;
+		}
+		public static string ParseStringToComma(string value, ref int starting, string defaultValue) {
+			int ending = string.IsNullOrEmpty(value) || starting + 1 >= value.Length ? -1 : value.IndexOf(',', starting + 1);
+			ending = ending < 0 ? value.Length : ending;
+			string result = ending < starting + 1 ? defaultValue : value.Substring(starting + 1, ending - starting - 1).Trim();
+			starting = ending;
+			return result;
 		}
 		private static void AddImages(Grid grid) {
 			Dictionary<string, string> images = grid.Info["images"];

@@ -23,9 +23,10 @@
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
+			this.components = new System.ComponentModel.Container();
 			this.imgOriginal = new System.Windows.Forms.PictureBox();
 			this.lblSelected = new System.Windows.Forms.Label();
-			this.imgCurrent = new System.Windows.Forms.PictureBox();
+			this.imgObject = new System.Windows.Forms.PictureBox();
 			this.lblColor = new System.Windows.Forms.Label();
 			this.grpProperties = new System.Windows.Forms.GroupBox();
 			this.lblImage = new System.Windows.Forms.Label();
@@ -37,13 +38,14 @@
 			this.imgActive = new System.Windows.Forms.PictureBox();
 			this.imgNormal = new System.Windows.Forms.PictureBox();
 			this.lblLayerNote = new System.Windows.Forms.Label();
-			this.numLayer = new BabaIsYou.Controls.NumericBox();
 			this.lblLayer = new System.Windows.Forms.Label();
 			this.lblActiveColor = new System.Windows.Forms.Label();
 			this.btnReset = new System.Windows.Forms.Button();
 			this.btnSave = new System.Windows.Forms.Button();
+			this.numLayer = new BabaIsYou.Controls.NumericBox();
+			this.toolTips = new System.Windows.Forms.ToolTip(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.imgOriginal)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.imgCurrent)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.imgObject)).BeginInit();
 			this.grpProperties.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.imgImage)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.imgActive)).BeginInit();
@@ -69,16 +71,16 @@
 			this.lblSelected.TabIndex = 0;
 			this.lblSelected.Text = "Object";
 			// 
-			// imgCurrent
+			// imgObject
 			// 
-			this.imgCurrent.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.imgCurrent.Cursor = System.Windows.Forms.Cursors.Hand;
-			this.imgCurrent.Location = new System.Drawing.Point(21, 42);
-			this.imgCurrent.Name = "imgCurrent";
-			this.imgCurrent.Size = new System.Drawing.Size(48, 48);
-			this.imgCurrent.TabIndex = 2;
-			this.imgCurrent.TabStop = false;
-			this.imgCurrent.Click += new System.EventHandler(this.imgCurrent_Click);
+			this.imgObject.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.imgObject.Cursor = System.Windows.Forms.Cursors.Hand;
+			this.imgObject.Location = new System.Drawing.Point(21, 42);
+			this.imgObject.Name = "imgObject";
+			this.imgObject.Size = new System.Drawing.Size(48, 48);
+			this.imgObject.TabIndex = 2;
+			this.imgObject.TabStop = false;
+			this.imgObject.Click += new System.EventHandler(this.imgCurrent_Click);
 			// 
 			// lblColor
 			// 
@@ -108,7 +110,7 @@
 			this.grpProperties.Controls.Add(this.lblActiveColor);
 			this.grpProperties.Controls.Add(this.lblSelected);
 			this.grpProperties.Controls.Add(this.lblColor);
-			this.grpProperties.Controls.Add(this.imgCurrent);
+			this.grpProperties.Controls.Add(this.imgObject);
 			this.grpProperties.Location = new System.Drawing.Point(12, 66);
 			this.grpProperties.Name = "grpProperties";
 			this.grpProperties.Size = new System.Drawing.Size(306, 195);
@@ -208,26 +210,6 @@
 			this.lblLayerNote.TabIndex = 6;
 			this.lblLayerNote.Text = "Higher values will show overtop lower values";
 			// 
-			// numLayer
-			// 
-			this.numLayer.BackColor = System.Drawing.Color.White;
-			this.numLayer.ForeColor = System.Drawing.Color.Black;
-			this.numLayer.Location = new System.Drawing.Point(21, 116);
-			this.numLayer.Maximum = new decimal(new int[] {
-            99,
-            0,
-            0,
-            0});
-			this.numLayer.Name = "numLayer";
-			this.numLayer.Size = new System.Drawing.Size(48, 20);
-			this.numLayer.TabIndex = 5;
-			this.numLayer.Value = new decimal(new int[] {
-            20,
-            0,
-            0,
-            0});
-			this.numLayer.ValueChanged += new System.EventHandler(this.numLayer_ValueChanged);
-			// 
 			// lblLayer
 			// 
 			this.lblLayer.AutoSize = true;
@@ -266,6 +248,32 @@
 			this.btnSave.Text = "Save";
 			this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
 			// 
+			// numLayer
+			// 
+			this.numLayer.BackColor = System.Drawing.Color.White;
+			this.numLayer.ForeColor = System.Drawing.Color.Black;
+			this.numLayer.Location = new System.Drawing.Point(21, 116);
+			this.numLayer.Maximum = new decimal(new int[] {
+            99,
+            0,
+            0,
+            0});
+			this.numLayer.Name = "numLayer";
+			this.numLayer.Size = new System.Drawing.Size(48, 20);
+			this.numLayer.TabIndex = 5;
+			this.numLayer.Value = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
+			this.numLayer.ValueChanged += new System.EventHandler(this.numLayer_ValueChanged);
+			// 
+			// toolTips
+			// 
+			this.toolTips.AutoPopDelay = 5000;
+			this.toolTips.InitialDelay = 100;
+			this.toolTips.ReshowDelay = 100;
+			// 
 			// ObjectEditor
 			// 
 			this.AcceptButton = this.btnSave;
@@ -289,7 +297,7 @@
 			this.Text = "Edit - object051 - fungus";
 			this.Shown += new System.EventHandler(this.ObjectEditor_Shown);
 			((System.ComponentModel.ISupportInitialize)(this.imgOriginal)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.imgCurrent)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.imgObject)).EndInit();
 			this.grpProperties.ResumeLayout(false);
 			this.grpProperties.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.imgImage)).EndInit();
@@ -304,7 +312,7 @@
 
 		private System.Windows.Forms.PictureBox imgOriginal;
 		private System.Windows.Forms.Label lblSelected;
-		private System.Windows.Forms.PictureBox imgCurrent;
+		private System.Windows.Forms.PictureBox imgObject;
 		private System.Windows.Forms.Label lblColor;
 		private System.Windows.Forms.GroupBox grpProperties;
 		private System.Windows.Forms.Label lblActiveColor;
@@ -321,5 +329,6 @@
 		private System.Windows.Forms.ComboBox cboTiling;
 		private System.Windows.Forms.Label lblImage;
 		private System.Windows.Forms.PictureBox imgImage;
+		private System.Windows.Forms.ToolTip toolTips;
 	}
 }
