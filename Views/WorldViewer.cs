@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Text;
 using System.IO;
 using System.Reflection;
 using System.Threading;
@@ -37,6 +38,7 @@ namespace BabaIsYou.Views {
 			}
 #endif
 		}
+
 		private const int SpriteSize = 36;
 		private const int MaxLayerCount = 3;
 		private const int ExtraImageWidth = 200;
@@ -55,6 +57,8 @@ namespace BabaIsYou.Views {
 
 		public WorldViewer() {
 			InitializeComponent();
+
+			Renderer.SetFonts(this);
 
 			Text = TitleBarText;
 			using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("BabaIsYou.Images.baba.ico")) {
@@ -191,10 +195,7 @@ namespace BabaIsYou.Views {
 			thread.Start();
 		}
 		private void Solver_Resize(object sender, EventArgs e) {
-			listLevels.Invalidate();
 			ResizeListObjects();
-			listObjects.Invalidate();
-			mapViewer.Invalidate();
 		}
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
 			WorldViewer_KeyDown(null, new KeyEventArgs(keyData));
@@ -822,8 +823,8 @@ namespace BabaIsYou.Views {
 				listLevels.SelectedItem = currentLevel;
 				if (listLevels.SelectedItem == null) {
 					listLevels.SelectTopMostVisible();
+					listLevels.Invalidate();
 				}
-				listLevels.Invalidate();
 
 				Text = $"{TitleBarText} - {GameWorldName} - {listLevels.Count} Levels";
 				if (saved > 0 && deleted == 0) {
@@ -883,7 +884,7 @@ namespace BabaIsYou.Views {
 				ListItem levelItem = listLevels.SelectedItem;
 				levelsToBeRemoved.Add(levelItem);
 				listLevels.RemoveItem(levelItem);
-				listLevels.SelectTopMostVisible();
+				listLevels.ReselectCurrentIndex();
 				Text = $"{TitleBarText} - {GameWorldName} - {listLevels.Count} Levels";
 			}
 		}

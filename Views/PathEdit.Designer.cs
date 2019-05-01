@@ -27,16 +27,16 @@
 			this.lblObject = new System.Windows.Forms.Label();
 			this.lblGate = new System.Windows.Forms.Label();
 			this.grpGate = new System.Windows.Forms.GroupBox();
-			this.lblStyle = new System.Windows.Forms.Label();
-			this.grpStyle = new System.Windows.Forms.GroupBox();
-			this.btnSave = new System.Windows.Forms.Button();
-			this.lblRequirement = new System.Windows.Forms.Label();
-			this.numRequirement = new BabaIsYou.Controls.NumericBox();
 			this.chkNope = new BabaIsYou.Controls.ColorRadioButton();
 			this.chkLevelClears = new BabaIsYou.Controls.ColorRadioButton();
 			this.chkMapClears = new BabaIsYou.Controls.ColorRadioButton();
+			this.lblStyle = new System.Windows.Forms.Label();
+			this.grpStyle = new System.Windows.Forms.GroupBox();
 			this.chkHidden = new BabaIsYou.Controls.ColorRadioButton();
 			this.chkVisible = new BabaIsYou.Controls.ColorRadioButton();
+			this.btnSave = new System.Windows.Forms.Button();
+			this.lblRequirement = new System.Windows.Forms.Label();
+			this.numRequirement = new BabaIsYou.Controls.NumericBox();
 			((System.ComponentModel.ISupportInitialize)(this.imgObject)).BeginInit();
 			this.grpGate.SuspendLayout();
 			this.grpStyle.SuspendLayout();
@@ -58,9 +58,9 @@
 			// lblObject
 			// 
 			this.lblObject.AutoSize = true;
-			this.lblObject.Location = new System.Drawing.Point(23, 18);
+			this.lblObject.Location = new System.Drawing.Point(20, 18);
 			this.lblObject.Name = "lblObject";
-			this.lblObject.Size = new System.Drawing.Size(38, 13);
+			this.lblObject.Size = new System.Drawing.Size(43, 13);
 			this.lblObject.TabIndex = 0;
 			this.lblObject.Text = "Object";
 			// 
@@ -80,16 +80,61 @@
 			this.grpGate.Controls.Add(this.chkMapClears);
 			this.grpGate.Location = new System.Drawing.Point(151, 38);
 			this.grpGate.Name = "grpGate";
-			this.grpGate.Size = new System.Drawing.Size(234, 31);
+			this.grpGate.Size = new System.Drawing.Size(252, 31);
 			this.grpGate.TabIndex = 4;
 			this.grpGate.TabStop = false;
+			// 
+			// chkNope
+			// 
+			this.chkNope.AutoSize = true;
+			this.chkNope.BackColor = System.Drawing.Color.Transparent;
+			this.chkNope.Location = new System.Drawing.Point(6, 9);
+			this.chkNope.Name = "chkNope";
+			this.chkNope.OffColour = System.Drawing.Color.Empty;
+			this.chkNope.OnColor = System.Drawing.Color.Red;
+			this.chkNope.Size = new System.Drawing.Size(49, 17);
+			this.chkNope.TabIndex = 0;
+			this.chkNope.TabStop = true;
+			this.chkNope.Text = "Nope";
+			this.chkNope.UseVisualStyleBackColor = true;
+			this.chkNope.CheckedChanged += new System.EventHandler(this.chkGate_CheckedChanged);
+			// 
+			// chkLevelClears
+			// 
+			this.chkLevelClears.AutoSize = true;
+			this.chkLevelClears.BackColor = System.Drawing.Color.Transparent;
+			this.chkLevelClears.Location = new System.Drawing.Point(59, 9);
+			this.chkLevelClears.Name = "chkLevelClears";
+			this.chkLevelClears.OffColour = System.Drawing.Color.Empty;
+			this.chkLevelClears.OnColor = System.Drawing.Color.Red;
+			this.chkLevelClears.Size = new System.Drawing.Size(97, 17);
+			this.chkLevelClears.TabIndex = 1;
+			this.chkLevelClears.TabStop = true;
+			this.chkLevelClears.Text = "Level Clears";
+			this.chkLevelClears.UseVisualStyleBackColor = true;
+			this.chkLevelClears.CheckedChanged += new System.EventHandler(this.chkGate_CheckedChanged);
+			// 
+			// chkMapClears
+			// 
+			this.chkMapClears.AutoSize = true;
+			this.chkMapClears.BackColor = System.Drawing.Color.Transparent;
+			this.chkMapClears.Location = new System.Drawing.Point(159, 9);
+			this.chkMapClears.Name = "chkMapClears";
+			this.chkMapClears.OffColour = System.Drawing.Color.Empty;
+			this.chkMapClears.OnColor = System.Drawing.Color.Red;
+			this.chkMapClears.Size = new System.Drawing.Size(85, 17);
+			this.chkMapClears.TabIndex = 2;
+			this.chkMapClears.TabStop = true;
+			this.chkMapClears.Text = "Map Clears";
+			this.chkMapClears.UseVisualStyleBackColor = true;
+			this.chkMapClears.CheckedChanged += new System.EventHandler(this.chkGate_CheckedChanged);
 			// 
 			// lblStyle
 			// 
 			this.lblStyle.AutoSize = true;
-			this.lblStyle.Location = new System.Drawing.Point(115, 19);
+			this.lblStyle.Location = new System.Drawing.Point(108, 19);
 			this.lblStyle.Name = "lblStyle";
-			this.lblStyle.Size = new System.Drawing.Size(30, 13);
+			this.lblStyle.Size = new System.Drawing.Size(37, 13);
 			this.lblStyle.TabIndex = 1;
 			this.lblStyle.Text = "Style";
 			// 
@@ -99,15 +144,45 @@
 			this.grpStyle.Controls.Add(this.chkVisible);
 			this.grpStyle.Location = new System.Drawing.Point(151, 8);
 			this.grpStyle.Name = "grpStyle";
-			this.grpStyle.Size = new System.Drawing.Size(135, 31);
+			this.grpStyle.Size = new System.Drawing.Size(141, 31);
 			this.grpStyle.TabIndex = 2;
 			this.grpStyle.TabStop = false;
+			// 
+			// chkHidden
+			// 
+			this.chkHidden.AutoSize = true;
+			this.chkHidden.BackColor = System.Drawing.Color.Transparent;
+			this.chkHidden.Location = new System.Drawing.Point(6, 9);
+			this.chkHidden.Name = "chkHidden";
+			this.chkHidden.OffColour = System.Drawing.Color.Empty;
+			this.chkHidden.OnColor = System.Drawing.Color.Red;
+			this.chkHidden.Size = new System.Drawing.Size(61, 17);
+			this.chkHidden.TabIndex = 0;
+			this.chkHidden.TabStop = true;
+			this.chkHidden.Text = "Hidden";
+			this.chkHidden.UseVisualStyleBackColor = true;
+			this.chkHidden.CheckedChanged += new System.EventHandler(this.chkStyle_CheckedChanged);
+			// 
+			// chkVisible
+			// 
+			this.chkVisible.AutoSize = true;
+			this.chkVisible.BackColor = System.Drawing.Color.Transparent;
+			this.chkVisible.Location = new System.Drawing.Point(71, 9);
+			this.chkVisible.Name = "chkVisible";
+			this.chkVisible.OffColour = System.Drawing.Color.Empty;
+			this.chkVisible.OnColor = System.Drawing.Color.Red;
+			this.chkVisible.Size = new System.Drawing.Size(67, 17);
+			this.chkVisible.TabIndex = 1;
+			this.chkVisible.TabStop = true;
+			this.chkVisible.Text = "Visible";
+			this.chkVisible.UseVisualStyleBackColor = true;
+			this.chkVisible.CheckedChanged += new System.EventHandler(this.chkStyle_CheckedChanged);
 			// 
 			// btnSave
 			// 
 			this.btnSave.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
 			this.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnSave.Location = new System.Drawing.Point(175, 117);
+			this.btnSave.Location = new System.Drawing.Point(184, 117);
 			this.btnSave.Name = "btnSave";
 			this.btnSave.Size = new System.Drawing.Size(51, 23);
 			this.btnSave.TabIndex = 7;
@@ -117,9 +192,9 @@
 			// lblRequirement
 			// 
 			this.lblRequirement.AutoSize = true;
-			this.lblRequirement.Location = new System.Drawing.Point(78, 77);
+			this.lblRequirement.Location = new System.Drawing.Point(72, 77);
 			this.lblRequirement.Name = "lblRequirement";
-			this.lblRequirement.Size = new System.Drawing.Size(67, 13);
+			this.lblRequirement.Size = new System.Drawing.Size(73, 13);
 			this.lblRequirement.TabIndex = 5;
 			this.lblRequirement.Text = "Requirement";
 			// 
@@ -138,88 +213,12 @@
 			this.numRequirement.TabIndex = 6;
 			this.numRequirement.ValueChanged += new System.EventHandler(this.numRequirement_ValueChanged);
 			// 
-			// chkNope
-			// 
-			this.chkNope.AutoSize = true;
-			this.chkNope.BackColor = System.Drawing.Color.Transparent;
-			this.chkNope.Location = new System.Drawing.Point(6, 9);
-			this.chkNope.Name = "chkNope";
-			this.chkNope.OffColour = System.Drawing.Color.Empty;
-			this.chkNope.OnColor = System.Drawing.Color.Red;
-			this.chkNope.Size = new System.Drawing.Size(51, 17);
-			this.chkNope.TabIndex = 0;
-			this.chkNope.TabStop = true;
-			this.chkNope.Text = "Nope";
-			this.chkNope.UseVisualStyleBackColor = true;
-			this.chkNope.CheckedChanged += new System.EventHandler(this.chkGate_CheckedChanged);
-			// 
-			// chkLevelClears
-			// 
-			this.chkLevelClears.AutoSize = true;
-			this.chkLevelClears.BackColor = System.Drawing.Color.Transparent;
-			this.chkLevelClears.Location = new System.Drawing.Point(63, 9);
-			this.chkLevelClears.Name = "chkLevelClears";
-			this.chkLevelClears.OffColour = System.Drawing.Color.Empty;
-			this.chkLevelClears.OnColor = System.Drawing.Color.Red;
-			this.chkLevelClears.Size = new System.Drawing.Size(83, 17);
-			this.chkLevelClears.TabIndex = 1;
-			this.chkLevelClears.TabStop = true;
-			this.chkLevelClears.Text = "Level Clears";
-			this.chkLevelClears.UseVisualStyleBackColor = true;
-			this.chkLevelClears.CheckedChanged += new System.EventHandler(this.chkGate_CheckedChanged);
-			// 
-			// chkMapClears
-			// 
-			this.chkMapClears.AutoSize = true;
-			this.chkMapClears.BackColor = System.Drawing.Color.Transparent;
-			this.chkMapClears.Location = new System.Drawing.Point(152, 9);
-			this.chkMapClears.Name = "chkMapClears";
-			this.chkMapClears.OffColour = System.Drawing.Color.Empty;
-			this.chkMapClears.OnColor = System.Drawing.Color.Red;
-			this.chkMapClears.Size = new System.Drawing.Size(78, 17);
-			this.chkMapClears.TabIndex = 2;
-			this.chkMapClears.TabStop = true;
-			this.chkMapClears.Text = "Map Clears";
-			this.chkMapClears.UseVisualStyleBackColor = true;
-			this.chkMapClears.CheckedChanged += new System.EventHandler(this.chkGate_CheckedChanged);
-			// 
-			// chkHidden
-			// 
-			this.chkHidden.AutoSize = true;
-			this.chkHidden.BackColor = System.Drawing.Color.Transparent;
-			this.chkHidden.Location = new System.Drawing.Point(6, 9);
-			this.chkHidden.Name = "chkHidden";
-			this.chkHidden.OffColour = System.Drawing.Color.Empty;
-			this.chkHidden.OnColor = System.Drawing.Color.Red;
-			this.chkHidden.Size = new System.Drawing.Size(59, 17);
-			this.chkHidden.TabIndex = 0;
-			this.chkHidden.TabStop = true;
-			this.chkHidden.Text = "Hidden";
-			this.chkHidden.UseVisualStyleBackColor = true;
-			this.chkHidden.CheckedChanged += new System.EventHandler(this.chkStyle_CheckedChanged);
-			// 
-			// chkVisible
-			// 
-			this.chkVisible.AutoSize = true;
-			this.chkVisible.BackColor = System.Drawing.Color.Transparent;
-			this.chkVisible.Location = new System.Drawing.Point(71, 9);
-			this.chkVisible.Name = "chkVisible";
-			this.chkVisible.OffColour = System.Drawing.Color.Empty;
-			this.chkVisible.OnColor = System.Drawing.Color.Red;
-			this.chkVisible.Size = new System.Drawing.Size(55, 17);
-			this.chkVisible.TabIndex = 1;
-			this.chkVisible.TabStop = true;
-			this.chkVisible.Text = "Visible";
-			this.chkVisible.UseVisualStyleBackColor = true;
-			this.chkVisible.CheckedChanged += new System.EventHandler(this.chkStyle_CheckedChanged);
-			// 
 			// PathEdit
 			// 
 			this.AcceptButton = this.btnSave;
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.Black;
-			this.ClientSize = new System.Drawing.Size(400, 152);
+			this.ClientSize = new System.Drawing.Size(419, 152);
 			this.Controls.Add(this.lblRequirement);
 			this.Controls.Add(this.numRequirement);
 			this.Controls.Add(this.btnSave);
@@ -229,6 +228,7 @@
 			this.Controls.Add(this.grpStyle);
 			this.Controls.Add(this.imgObject);
 			this.Controls.Add(this.lblObject);
+			this.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.ForeColor = System.Drawing.Color.White;
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.MaximizeBox = false;

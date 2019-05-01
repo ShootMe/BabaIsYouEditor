@@ -315,7 +315,7 @@ namespace BabaIsYou.Map {
 			}
 		}
 		public override string ToString() {
-			return $"{FileName} [{Width}, {Height}]";
+			return $"{FileName}";
 		}
 	}
 }

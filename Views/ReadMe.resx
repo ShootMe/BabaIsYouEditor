@@ -117,7 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="lblReadme.Text" xml:space="preserve">
+  <data name="textBox1.Text" xml:space="preserve">
     <value>Controls For Map
    - Left Mouse
        When current sprite is not under mouse it will place that sprite, and dragging the mouse will continue to place that sprite
@@ -128,9 +128,19 @@
   - Right Mouse
       Will replace your currently selected sprite with the one under the mouse.
       If there are multiple sprites under your mouse it will toggle through them on each click
+      + Holding CTRL will 'Pick Up' the currently selected sprite under your mouse, if it doesn't exist will grab the top one
 
   - Middle Mouse or Space on Keyboard
       Will bring up window to edit info if the cell contains a level object or a path object
+
+  - Shift + E
+      Will go 'Into' the current Level object under your mouse if one exists
+
+  - Shift + R
+      Will return to the previous Level you came from if you used Shift + E
+
+  - Shift + (W/S/A/D)
+      Will move the entire map in the direction specified. Object will wrap if they encounter an edge
 
   - Mouse Wheel
       Will change the direction of the top most sprite under the mouse or

@@ -1,10 +1,12 @@
 ﻿using BabaIsYou.Controls;
+using BabaIsYou.Map;
 using System.Windows.Forms;
 namespace BabaIsYou.Views {
 	public partial class ObjectSelector : Form {
 		public object SelectedItem { get; set; }
 		public ObjectSelector() {
 			InitializeComponent();
+			Renderer.SetFonts(this);
 		}
 		public void AddItem(ListItem item, bool select) {
 			listSelector.AddItem(item);

@@ -59,9 +59,9 @@
 			// lblName
 			// 
 			this.lblName.AutoSize = true;
-			this.lblName.Location = new System.Drawing.Point(19, 15);
+			this.lblName.Location = new System.Drawing.Point(23, 15);
 			this.lblName.Name = "lblName";
-			this.lblName.Size = new System.Drawing.Size(35, 13);
+			this.lblName.Size = new System.Drawing.Size(31, 13);
 			this.lblName.TabIndex = 0;
 			this.lblName.Text = "Name";
 			// 
@@ -86,16 +86,16 @@
 			this.txtFile.Location = new System.Drawing.Point(60, 38);
 			this.txtFile.Name = "txtFile";
 			this.txtFile.ReadOnly = true;
-			this.txtFile.Size = new System.Drawing.Size(171, 20);
+			this.txtFile.Size = new System.Drawing.Size(166, 20);
 			this.txtFile.TabIndex = 3;
 			this.txtFile.TabStop = false;
 			// 
 			// lblFile
 			// 
 			this.lblFile.AutoSize = true;
-			this.lblFile.Location = new System.Drawing.Point(31, 41);
+			this.lblFile.Location = new System.Drawing.Point(23, 41);
 			this.lblFile.Name = "lblFile";
-			this.lblFile.Size = new System.Drawing.Size(23, 13);
+			this.lblFile.Size = new System.Drawing.Size(31, 13);
 			this.lblFile.TabIndex = 2;
 			this.lblFile.Text = "File";
 			// 
@@ -124,18 +124,18 @@
 			// lblClearColor
 			// 
 			this.lblClearColor.AutoSize = true;
-			this.lblClearColor.Location = new System.Drawing.Point(128, 150);
+			this.lblClearColor.Location = new System.Drawing.Point(122, 150);
 			this.lblClearColor.Name = "lblClearColor";
-			this.lblClearColor.Size = new System.Drawing.Size(58, 13);
+			this.lblClearColor.Size = new System.Drawing.Size(73, 13);
 			this.lblClearColor.TabIndex = 12;
 			this.lblClearColor.Text = "Clear Color";
 			// 
 			// lblColor
 			// 
 			this.lblColor.AutoSize = true;
-			this.lblColor.Location = new System.Drawing.Point(70, 150);
+			this.lblColor.Location = new System.Drawing.Point(67, 150);
 			this.lblColor.Name = "lblColor";
-			this.lblColor.Size = new System.Drawing.Size(31, 13);
+			this.lblColor.Size = new System.Drawing.Size(37, 13);
 			this.lblColor.TabIndex = 11;
 			this.lblColor.Text = "Color";
 			// 
@@ -157,9 +157,9 @@
 			// lblNumber
 			// 
 			this.lblNumber.AutoSize = true;
-			this.lblNumber.Location = new System.Drawing.Point(10, 66);
+			this.lblNumber.Location = new System.Drawing.Point(11, 66);
 			this.lblNumber.Name = "lblNumber";
-			this.lblNumber.Size = new System.Drawing.Size(44, 13);
+			this.lblNumber.Size = new System.Drawing.Size(43, 13);
 			this.lblNumber.TabIndex = 5;
 			this.lblNumber.Text = "Number";
 			// 
@@ -171,7 +171,7 @@
 			this.chkNumber.Name = "chkNumber";
 			this.chkNumber.OffColour = System.Drawing.Color.Empty;
 			this.chkNumber.OnColor = System.Drawing.Color.Red;
-			this.chkNumber.Size = new System.Drawing.Size(62, 17);
+			this.chkNumber.Size = new System.Drawing.Size(61, 17);
 			this.chkNumber.TabIndex = 0;
 			this.chkNumber.TabStop = true;
 			this.chkNumber.Text = "Number";
@@ -182,11 +182,11 @@
 			// 
 			this.chkLetter.AutoSize = true;
 			this.chkLetter.BackColor = System.Drawing.Color.Transparent;
-			this.chkLetter.Location = new System.Drawing.Point(78, 9);
+			this.chkLetter.Location = new System.Drawing.Point(74, 9);
 			this.chkLetter.Name = "chkLetter";
 			this.chkLetter.OffColour = System.Drawing.Color.Empty;
 			this.chkLetter.OnColor = System.Drawing.Color.Red;
-			this.chkLetter.Size = new System.Drawing.Size(52, 17);
+			this.chkLetter.Size = new System.Drawing.Size(61, 17);
 			this.chkLetter.TabIndex = 1;
 			this.chkLetter.TabStop = true;
 			this.chkLetter.Text = "Letter";
@@ -197,11 +197,11 @@
 			// 
 			this.chkDot.AutoSize = true;
 			this.chkDot.BackColor = System.Drawing.Color.Transparent;
-			this.chkDot.Location = new System.Drawing.Point(140, 9);
+			this.chkDot.Location = new System.Drawing.Point(142, 9);
 			this.chkDot.Name = "chkDot";
 			this.chkDot.OffColour = System.Drawing.Color.Empty;
 			this.chkDot.OnColor = System.Drawing.Color.Red;
-			this.chkDot.Size = new System.Drawing.Size(42, 17);
+			this.chkDot.Size = new System.Drawing.Size(43, 17);
 			this.chkDot.TabIndex = 2;
 			this.chkDot.TabStop = true;
 			this.chkDot.Text = "Dot";
@@ -216,7 +216,7 @@
 			this.chkIcon.Name = "chkIcon";
 			this.chkIcon.OffColour = System.Drawing.Color.Empty;
 			this.chkIcon.OnColor = System.Drawing.Color.Red;
-			this.chkIcon.Size = new System.Drawing.Size(46, 17);
+			this.chkIcon.Size = new System.Drawing.Size(49, 17);
 			this.chkIcon.TabIndex = 3;
 			this.chkIcon.TabStop = true;
 			this.chkIcon.Text = "Icon";
@@ -238,9 +238,9 @@
 			// lblIcon
 			// 
 			this.lblIcon.AutoSize = true;
-			this.lblIcon.Location = new System.Drawing.Point(212, 150);
+			this.lblIcon.Location = new System.Drawing.Point(211, 150);
 			this.lblIcon.Name = "lblIcon";
-			this.lblIcon.Size = new System.Drawing.Size(28, 13);
+			this.lblIcon.Size = new System.Drawing.Size(31, 13);
 			this.lblIcon.TabIndex = 13;
 			this.lblIcon.Text = "Icon";
 			// 
@@ -259,18 +259,18 @@
 			// lblStyle
 			// 
 			this.lblStyle.AutoSize = true;
-			this.lblStyle.Location = new System.Drawing.Point(24, 95);
+			this.lblStyle.Location = new System.Drawing.Point(17, 95);
 			this.lblStyle.Name = "lblStyle";
-			this.lblStyle.Size = new System.Drawing.Size(30, 13);
+			this.lblStyle.Size = new System.Drawing.Size(37, 13);
 			this.lblStyle.TabIndex = 7;
 			this.lblStyle.Text = "Style";
 			// 
 			// lblState
 			// 
 			this.lblState.AutoSize = true;
-			this.lblState.Location = new System.Drawing.Point(22, 125);
+			this.lblState.Location = new System.Drawing.Point(17, 125);
 			this.lblState.Name = "lblState";
-			this.lblState.Size = new System.Drawing.Size(32, 13);
+			this.lblState.Size = new System.Drawing.Size(37, 13);
 			this.lblState.TabIndex = 9;
 			this.lblState.Text = "State";
 			// 
@@ -293,7 +293,7 @@
 			this.chkHidden.Name = "chkHidden";
 			this.chkHidden.OffColour = System.Drawing.Color.Empty;
 			this.chkHidden.OnColor = System.Drawing.Color.Red;
-			this.chkHidden.Size = new System.Drawing.Size(59, 17);
+			this.chkHidden.Size = new System.Drawing.Size(61, 17);
 			this.chkHidden.TabIndex = 0;
 			this.chkHidden.TabStop = true;
 			this.chkHidden.Text = "Hidden";
@@ -308,7 +308,7 @@
 			this.chkNormal.Name = "chkNormal";
 			this.chkNormal.OffColour = System.Drawing.Color.Empty;
 			this.chkNormal.OnColor = System.Drawing.Color.Red;
-			this.chkNormal.Size = new System.Drawing.Size(58, 17);
+			this.chkNormal.Size = new System.Drawing.Size(61, 17);
 			this.chkNormal.TabIndex = 1;
 			this.chkNormal.TabStop = true;
 			this.chkNormal.Text = "Normal";
@@ -323,7 +323,7 @@
 			this.chkOpened.Name = "chkOpened";
 			this.chkOpened.OffColour = System.Drawing.Color.Empty;
 			this.chkOpened.OnColor = System.Drawing.Color.Red;
-			this.chkOpened.Size = new System.Drawing.Size(63, 17);
+			this.chkOpened.Size = new System.Drawing.Size(61, 17);
 			this.chkOpened.TabIndex = 2;
 			this.chkOpened.TabStop = true;
 			this.chkOpened.Text = "Opened";
@@ -333,9 +333,9 @@
 			// btnSetLevel
 			// 
 			this.btnSetLevel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnSetLevel.Location = new System.Drawing.Point(237, 36);
+			this.btnSetLevel.Location = new System.Drawing.Point(232, 37);
 			this.btnSetLevel.Name = "btnSetLevel";
-			this.btnSetLevel.Size = new System.Drawing.Size(68, 23);
+			this.btnSetLevel.Size = new System.Drawing.Size(73, 23);
 			this.btnSetLevel.TabIndex = 4;
 			this.btnSetLevel.TabStop = false;
 			this.btnSetLevel.Text = "Set Level";
@@ -355,8 +355,7 @@
 			// LevelEdit
 			// 
 			this.AcceptButton = this.btnSave;
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.Black;
 			this.ClientSize = new System.Drawing.Size(321, 262);
 			this.Controls.Add(this.btnSave);
@@ -377,6 +376,7 @@
 			this.Controls.Add(this.lblFile);
 			this.Controls.Add(this.txtName);
 			this.Controls.Add(this.lblName);
+			this.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.ForeColor = System.Drawing.Color.White;
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.MaximizeBox = false;

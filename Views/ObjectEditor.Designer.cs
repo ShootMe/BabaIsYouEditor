@@ -38,11 +38,11 @@
 			this.imgActive = new System.Windows.Forms.PictureBox();
 			this.imgNormal = new System.Windows.Forms.PictureBox();
 			this.lblLayerNote = new System.Windows.Forms.Label();
+			this.numLayer = new BabaIsYou.Controls.NumericBox();
 			this.lblLayer = new System.Windows.Forms.Label();
 			this.lblActiveColor = new System.Windows.Forms.Label();
 			this.btnReset = new System.Windows.Forms.Button();
 			this.btnSave = new System.Windows.Forms.Button();
-			this.numLayer = new BabaIsYou.Controls.NumericBox();
 			this.toolTips = new System.Windows.Forms.ToolTip(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.imgOriginal)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.imgObject)).BeginInit();
@@ -65,9 +65,9 @@
 			// lblSelected
 			// 
 			this.lblSelected.AutoSize = true;
-			this.lblSelected.Location = new System.Drawing.Point(26, 22);
+			this.lblSelected.Location = new System.Drawing.Point(24, 22);
 			this.lblSelected.Name = "lblSelected";
-			this.lblSelected.Size = new System.Drawing.Size(38, 13);
+			this.lblSelected.Size = new System.Drawing.Size(43, 13);
 			this.lblSelected.TabIndex = 0;
 			this.lblSelected.Text = "Object";
 			// 
@@ -85,9 +85,9 @@
 			// lblColor
 			// 
 			this.lblColor.AutoSize = true;
-			this.lblColor.Location = new System.Drawing.Point(175, 22);
+			this.lblColor.Location = new System.Drawing.Point(172, 22);
 			this.lblColor.Name = "lblColor";
-			this.lblColor.Size = new System.Drawing.Size(31, 13);
+			this.lblColor.Size = new System.Drawing.Size(37, 13);
 			this.lblColor.TabIndex = 2;
 			this.lblColor.Text = "Color";
 			// 
@@ -122,7 +122,7 @@
 			this.lblImage.AutoSize = true;
 			this.lblImage.Location = new System.Drawing.Point(99, 22);
 			this.lblImage.Name = "lblImage";
-			this.lblImage.Size = new System.Drawing.Size(36, 13);
+			this.lblImage.Size = new System.Drawing.Size(37, 13);
 			this.lblImage.TabIndex = 1;
 			this.lblImage.Text = "Image";
 			// 
@@ -164,18 +164,18 @@
 			// lblTiling
 			// 
 			this.lblTiling.AutoSize = true;
-			this.lblTiling.Location = new System.Drawing.Point(48, 147);
+			this.lblTiling.Location = new System.Drawing.Point(42, 147);
 			this.lblTiling.Name = "lblTiling";
-			this.lblTiling.Size = new System.Drawing.Size(32, 13);
+			this.lblTiling.Size = new System.Drawing.Size(43, 13);
 			this.lblTiling.TabIndex = 7;
 			this.lblTiling.Text = "Tiling";
 			// 
 			// lblTextType
 			// 
 			this.lblTextType.AutoSize = true;
-			this.lblTextType.Location = new System.Drawing.Point(155, 147);
+			this.lblTextType.Location = new System.Drawing.Point(152, 147);
 			this.lblTextType.Name = "lblTextType";
-			this.lblTextType.Size = new System.Drawing.Size(55, 13);
+			this.lblTextType.Size = new System.Drawing.Size(61, 13);
 			this.lblTextType.TabIndex = 9;
 			this.lblTextType.Text = "Text Type";
 			// 
@@ -203,28 +203,47 @@
 			// 
 			// lblLayerNote
 			// 
-			this.lblLayerNote.AutoSize = true;
-			this.lblLayerNote.Location = new System.Drawing.Point(74, 118);
+			this.lblLayerNote.Location = new System.Drawing.Point(74, 113);
 			this.lblLayerNote.Name = "lblLayerNote";
-			this.lblLayerNote.Size = new System.Drawing.Size(218, 13);
+			this.lblLayerNote.Size = new System.Drawing.Size(148, 27);
 			this.lblLayerNote.TabIndex = 6;
 			this.lblLayerNote.Text = "Higher values will show overtop lower values";
+			// 
+			// numLayer
+			// 
+			this.numLayer.BackColor = System.Drawing.Color.White;
+			this.numLayer.ForeColor = System.Drawing.Color.Black;
+			this.numLayer.Location = new System.Drawing.Point(21, 116);
+			this.numLayer.Maximum = new decimal(new int[] {
+            99,
+            0,
+            0,
+            0});
+			this.numLayer.Name = "numLayer";
+			this.numLayer.Size = new System.Drawing.Size(48, 20);
+			this.numLayer.TabIndex = 5;
+			this.numLayer.Value = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
+			this.numLayer.ValueChanged += new System.EventHandler(this.numLayer_ValueChanged);
 			// 
 			// lblLayer
 			// 
 			this.lblLayer.AutoSize = true;
-			this.lblLayer.Location = new System.Drawing.Point(26, 96);
+			this.lblLayer.Location = new System.Drawing.Point(25, 96);
 			this.lblLayer.Name = "lblLayer";
-			this.lblLayer.Size = new System.Drawing.Size(33, 13);
+			this.lblLayer.Size = new System.Drawing.Size(37, 13);
 			this.lblLayer.TabIndex = 4;
 			this.lblLayer.Text = "Layer";
 			// 
 			// lblActiveColor
 			// 
 			this.lblActiveColor.AutoSize = true;
-			this.lblActiveColor.Location = new System.Drawing.Point(229, 22);
+			this.lblActiveColor.Location = new System.Drawing.Point(222, 22);
 			this.lblActiveColor.Name = "lblActiveColor";
-			this.lblActiveColor.Size = new System.Drawing.Size(64, 13);
+			this.lblActiveColor.Size = new System.Drawing.Size(79, 13);
 			this.lblActiveColor.TabIndex = 3;
 			this.lblActiveColor.Text = "Active Color";
 			// 
@@ -248,26 +267,6 @@
 			this.btnSave.Text = "Save";
 			this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
 			// 
-			// numLayer
-			// 
-			this.numLayer.BackColor = System.Drawing.Color.White;
-			this.numLayer.ForeColor = System.Drawing.Color.Black;
-			this.numLayer.Location = new System.Drawing.Point(21, 116);
-			this.numLayer.Maximum = new decimal(new int[] {
-            99,
-            0,
-            0,
-            0});
-			this.numLayer.Name = "numLayer";
-			this.numLayer.Size = new System.Drawing.Size(48, 20);
-			this.numLayer.TabIndex = 5;
-			this.numLayer.Value = new decimal(new int[] {
-            20,
-            0,
-            0,
-            0});
-			this.numLayer.ValueChanged += new System.EventHandler(this.numLayer_ValueChanged);
-			// 
 			// toolTips
 			// 
 			this.toolTips.AutoPopDelay = 5000;
@@ -277,8 +276,7 @@
 			// ObjectEditor
 			// 
 			this.AcceptButton = this.btnSave;
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.Black;
 			this.ClientSize = new System.Drawing.Size(330, 273);
 			this.Controls.Add(this.btnSave);
@@ -286,6 +284,7 @@
 			this.Controls.Add(this.grpProperties);
 			this.Controls.Add(this.imgOriginal);
 			this.DoubleBuffered = true;
+			this.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.ForeColor = System.Drawing.Color.White;
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.MaximizeBox = false;

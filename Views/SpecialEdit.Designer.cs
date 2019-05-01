@@ -44,7 +44,7 @@
 			// lblType
 			// 
 			this.lblType.AutoSize = true;
-			this.lblType.Location = new System.Drawing.Point(23, 23);
+			this.lblType.Location = new System.Drawing.Point(26, 23);
 			this.lblType.Name = "lblType";
 			this.lblType.Size = new System.Drawing.Size(31, 13);
 			this.lblType.TabIndex = 0;
@@ -55,9 +55,9 @@
 			this.grpType.Controls.Add(this.chkControls);
 			this.grpType.Controls.Add(this.chkFlower);
 			this.grpType.Controls.Add(this.chkLevel);
-			this.grpType.Location = new System.Drawing.Point(60, 12);
+			this.grpType.Location = new System.Drawing.Point(63, 12);
 			this.grpType.Name = "grpType";
-			this.grpType.Size = new System.Drawing.Size(191, 31);
+			this.grpType.Size = new System.Drawing.Size(220, 31);
 			this.grpType.TabIndex = 1;
 			this.grpType.TabStop = false;
 			// 
@@ -69,7 +69,7 @@
 			this.chkControls.Name = "chkControls";
 			this.chkControls.OffColour = System.Drawing.Color.Empty;
 			this.chkControls.OnColor = System.Drawing.Color.Red;
-			this.chkControls.Size = new System.Drawing.Size(63, 17);
+			this.chkControls.Size = new System.Drawing.Size(73, 17);
 			this.chkControls.TabIndex = 0;
 			this.chkControls.TabStop = true;
 			this.chkControls.Text = "Controls";
@@ -80,11 +80,11 @@
 			// 
 			this.chkFlower.AutoSize = true;
 			this.chkFlower.BackColor = System.Drawing.Color.Transparent;
-			this.chkFlower.Location = new System.Drawing.Point(75, 9);
+			this.chkFlower.Location = new System.Drawing.Point(89, 9);
 			this.chkFlower.Name = "chkFlower";
 			this.chkFlower.OffColour = System.Drawing.Color.Empty;
 			this.chkFlower.OnColor = System.Drawing.Color.Red;
-			this.chkFlower.Size = new System.Drawing.Size(56, 17);
+			this.chkFlower.Size = new System.Drawing.Size(61, 17);
 			this.chkFlower.TabIndex = 1;
 			this.chkFlower.TabStop = true;
 			this.chkFlower.Text = "Flower";
@@ -95,11 +95,11 @@
 			// 
 			this.chkLevel.AutoSize = true;
 			this.chkLevel.BackColor = System.Drawing.Color.Transparent;
-			this.chkLevel.Location = new System.Drawing.Point(137, 9);
+			this.chkLevel.Location = new System.Drawing.Point(160, 9);
 			this.chkLevel.Name = "chkLevel";
 			this.chkLevel.OffColour = System.Drawing.Color.Empty;
 			this.chkLevel.OnColor = System.Drawing.Color.Red;
-			this.chkLevel.Size = new System.Drawing.Size(51, 17);
+			this.chkLevel.Size = new System.Drawing.Size(55, 17);
 			this.chkLevel.TabIndex = 2;
 			this.chkLevel.TabStop = true;
 			this.chkLevel.Text = "Level";
@@ -111,7 +111,7 @@
 			this.lblRadius.AutoSize = true;
 			this.lblRadius.Location = new System.Drawing.Point(14, 57);
 			this.lblRadius.Name = "lblRadius";
-			this.lblRadius.Size = new System.Drawing.Size(40, 13);
+			this.lblRadius.Size = new System.Drawing.Size(43, 13);
 			this.lblRadius.TabIndex = 5;
 			this.lblRadius.Text = "Radius";
 			this.lblRadius.Visible = false;
@@ -119,9 +119,9 @@
 			// lblControl
 			// 
 			this.lblControl.AutoSize = true;
-			this.lblControl.Location = new System.Drawing.Point(14, 57);
+			this.lblControl.Location = new System.Drawing.Point(8, 57);
 			this.lblControl.Name = "lblControl";
-			this.lblControl.Size = new System.Drawing.Size(40, 13);
+			this.lblControl.Size = new System.Drawing.Size(49, 13);
 			this.lblControl.TabIndex = 3;
 			this.lblControl.Text = "Control";
 			this.lblControl.Visible = false;
@@ -131,7 +131,7 @@
 			this.cboControls.BackColor = System.Drawing.Color.White;
 			this.cboControls.ForeColor = System.Drawing.Color.Black;
 			this.cboControls.FormattingEnabled = true;
-			this.cboControls.Location = new System.Drawing.Point(60, 54);
+			this.cboControls.Location = new System.Drawing.Point(63, 54);
 			this.cboControls.Name = "cboControls";
 			this.cboControls.Size = new System.Drawing.Size(95, 21);
 			this.cboControls.TabIndex = 4;
@@ -161,7 +161,7 @@
 			// 
 			this.imgColor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.imgColor.Cursor = System.Windows.Forms.Cursors.Hand;
-			this.imgColor.Location = new System.Drawing.Point(60, 81);
+			this.imgColor.Location = new System.Drawing.Point(63, 81);
 			this.imgColor.Name = "imgColor";
 			this.imgColor.Size = new System.Drawing.Size(48, 48);
 			this.imgColor.TabIndex = 25;
@@ -171,9 +171,9 @@
 			// lblColor
 			// 
 			this.lblColor.AutoSize = true;
-			this.lblColor.Location = new System.Drawing.Point(23, 97);
+			this.lblColor.Location = new System.Drawing.Point(20, 97);
 			this.lblColor.Name = "lblColor";
-			this.lblColor.Size = new System.Drawing.Size(31, 13);
+			this.lblColor.Size = new System.Drawing.Size(37, 13);
 			this.lblColor.TabIndex = 7;
 			this.lblColor.Text = "Color";
 			// 
@@ -181,7 +181,7 @@
 			// 
 			this.numRadius.BackColor = System.Drawing.Color.White;
 			this.numRadius.ForeColor = System.Drawing.Color.Black;
-			this.numRadius.Location = new System.Drawing.Point(60, 55);
+			this.numRadius.Location = new System.Drawing.Point(63, 55);
 			this.numRadius.Maximum = new decimal(new int[] {
             20,
             0,
@@ -196,20 +196,20 @@
 			// SpecialEdit
 			// 
 			this.AcceptButton = this.btnSave;
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.Black;
 			this.ClientSize = new System.Drawing.Size(321, 314);
+			this.Controls.Add(this.lblControl);
 			this.Controls.Add(this.imgColor);
 			this.Controls.Add(this.lblColor);
 			this.Controls.Add(this.btnSave);
-			this.Controls.Add(this.lblControl);
 			this.Controls.Add(this.lblRadius);
 			this.Controls.Add(this.numRadius);
 			this.Controls.Add(this.lblType);
 			this.Controls.Add(this.grpType);
 			this.Controls.Add(this.cboControls);
 			this.Controls.Add(this.panelLevelEdit);
+			this.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.ForeColor = System.Drawing.Color.White;
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.MaximizeBox = false;

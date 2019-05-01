@@ -37,9 +37,9 @@
 			// lblName
 			// 
 			this.lblName.AutoSize = true;
-			this.lblName.Location = new System.Drawing.Point(13, 17);
+			this.lblName.Location = new System.Drawing.Point(12, 17);
 			this.lblName.Name = "lblName";
-			this.lblName.Size = new System.Drawing.Size(66, 13);
+			this.lblName.Size = new System.Drawing.Size(67, 13);
 			this.lblName.TabIndex = 0;
 			this.lblName.Text = "World Name";
 			// 
@@ -67,9 +67,9 @@
 			// lblStart
 			// 
 			this.lblStart.AutoSize = true;
-			this.lblStart.Location = new System.Drawing.Point(21, 43);
+			this.lblStart.Location = new System.Drawing.Point(6, 43);
 			this.lblStart.Name = "lblStart";
-			this.lblStart.Size = new System.Drawing.Size(58, 13);
+			this.lblStart.Size = new System.Drawing.Size(73, 13);
 			this.lblStart.TabIndex = 2;
 			this.lblStart.Text = "Start Level";
 			// 
@@ -87,16 +87,16 @@
 			// lblFirst
 			// 
 			this.lblFirst.AutoSize = true;
-			this.lblFirst.Location = new System.Drawing.Point(24, 69);
+			this.lblFirst.Location = new System.Drawing.Point(6, 69);
 			this.lblFirst.Name = "lblFirst";
-			this.lblFirst.Size = new System.Drawing.Size(55, 13);
+			this.lblFirst.Size = new System.Drawing.Size(73, 13);
 			this.lblFirst.TabIndex = 5;
 			this.lblFirst.Text = "First Level";
 			// 
 			// btnSave
 			// 
 			this.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnSave.Location = new System.Drawing.Point(169, 100);
+			this.btnSave.Location = new System.Drawing.Point(186, 100);
 			this.btnSave.Name = "btnSave";
 			this.btnSave.Size = new System.Drawing.Size(51, 23);
 			this.btnSave.TabIndex = 8;
@@ -108,7 +108,7 @@
 			this.btnSetFirst.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.btnSetFirst.Location = new System.Drawing.Point(334, 64);
 			this.btnSetFirst.Name = "btnSetFirst";
-			this.btnSetFirst.Size = new System.Drawing.Size(68, 23);
+			this.btnSetFirst.Size = new System.Drawing.Size(72, 23);
 			this.btnSetFirst.TabIndex = 7;
 			this.btnSetFirst.TabStop = false;
 			this.btnSetFirst.Text = "Set Level";
@@ -119,7 +119,7 @@
 			this.btnSetStart.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.btnSetStart.Location = new System.Drawing.Point(334, 38);
 			this.btnSetStart.Name = "btnSetStart";
-			this.btnSetStart.Size = new System.Drawing.Size(68, 23);
+			this.btnSetStart.Size = new System.Drawing.Size(72, 23);
 			this.btnSetStart.TabIndex = 4;
 			this.btnSetStart.TabStop = false;
 			this.btnSetStart.Text = "Set Level";
@@ -128,10 +128,9 @@
 			// WorldProperties
 			// 
 			this.AcceptButton = this.btnSave;
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.Black;
-			this.ClientSize = new System.Drawing.Size(414, 136);
+			this.ClientSize = new System.Drawing.Size(427, 136);
 			this.Controls.Add(this.btnSetStart);
 			this.Controls.Add(this.btnSetFirst);
 			this.Controls.Add(this.btnSave);
@@ -141,6 +140,7 @@
 			this.Controls.Add(this.lblStart);
 			this.Controls.Add(this.txtName);
 			this.Controls.Add(this.lblName);
+			this.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.ForeColor = System.Drawing.Color.White;
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.MaximizeBox = false;

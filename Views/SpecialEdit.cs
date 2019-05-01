@@ -17,6 +17,7 @@ namespace BabaIsYou.Views {
 		private LevelEdit levelEdit;
 		public SpecialEdit() {
 			InitializeComponent();
+			Renderer.SetFonts(this);
 		}
 
 		private void SpecialEdit_Load(object sender, EventArgs e) {

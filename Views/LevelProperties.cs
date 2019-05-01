@@ -14,6 +14,7 @@ namespace BabaIsYou.Views {
 		private bool loading = true;
 		public LevelProperties() {
 			InitializeComponent();
+			Renderer.SetFonts(this);
 
 			foreach (Music type in Enum.GetValues(typeof(Music))) {
 				cboMusic.Items.Add(type);
@@ -110,7 +111,6 @@ namespace BabaIsYou.Views {
 				}
 
 				selector.BackColor = this.BackColor;
-				selector.SortItems();
 				selector.Icon = this.Icon;
 
 				if (addedCount == 0) {
@@ -137,6 +137,7 @@ namespace BabaIsYou.Views {
 					sizeY--;
 				}
 				selector.ClientSize = new Size(imgWidth * sizeX, imgHeight * sizeY);
+				selector.SortItems();
 
 				DialogResult result = selector.ShowDialog(this);
 				if (result == DialogResult.OK) {

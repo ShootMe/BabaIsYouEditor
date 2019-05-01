@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BabaIsYou.Map;
+using System;
 using System.Text;
 using System.Windows.Forms;
 namespace BabaIsYou.Views {
@@ -7,6 +8,7 @@ namespace BabaIsYou.Views {
 		public string InputLabel { get; set; }
 		public AddDialog() {
 			InitializeComponent();
+			Renderer.SetFonts(this);
 		}
 
 		private void btnSave_Click(object sender, EventArgs e) {

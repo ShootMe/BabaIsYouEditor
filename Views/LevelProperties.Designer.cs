@@ -57,9 +57,9 @@
 			// lblName
 			// 
 			this.lblName.AutoSize = true;
-			this.lblName.Location = new System.Drawing.Point(56, 15);
+			this.lblName.Location = new System.Drawing.Point(60, 15);
 			this.lblName.Name = "lblName";
-			this.lblName.Size = new System.Drawing.Size(35, 13);
+			this.lblName.Size = new System.Drawing.Size(31, 13);
 			this.lblName.TabIndex = 0;
 			this.lblName.Text = "Name";
 			// 
@@ -88,9 +88,9 @@
 			// lblSubtitle
 			// 
 			this.lblSubtitle.AutoSize = true;
-			this.lblSubtitle.Location = new System.Drawing.Point(49, 41);
+			this.lblSubtitle.Location = new System.Drawing.Point(36, 41);
 			this.lblSubtitle.Name = "lblSubtitle";
-			this.lblSubtitle.Size = new System.Drawing.Size(42, 13);
+			this.lblSubtitle.Size = new System.Drawing.Size(55, 13);
 			this.lblSubtitle.TabIndex = 2;
 			this.lblSubtitle.Text = "Subtitle";
 			// 
@@ -107,18 +107,18 @@
 			// lblParticles
 			// 
 			this.lblParticles.AutoSize = true;
-			this.lblParticles.Location = new System.Drawing.Point(44, 67);
+			this.lblParticles.Location = new System.Drawing.Point(30, 67);
 			this.lblParticles.Name = "lblParticles";
-			this.lblParticles.Size = new System.Drawing.Size(47, 13);
+			this.lblParticles.Size = new System.Drawing.Size(61, 13);
 			this.lblParticles.TabIndex = 4;
 			this.lblParticles.Text = "Particles";
 			// 
 			// lblMusic
 			// 
 			this.lblMusic.AutoSize = true;
-			this.lblMusic.Location = new System.Drawing.Point(56, 94);
+			this.lblMusic.Location = new System.Drawing.Point(54, 94);
 			this.lblMusic.Name = "lblMusic";
-			this.lblMusic.Size = new System.Drawing.Size(35, 13);
+			this.lblMusic.Size = new System.Drawing.Size(37, 13);
 			this.lblMusic.TabIndex = 6;
 			this.lblMusic.Text = "Music";
 			// 
@@ -146,9 +146,9 @@
 			// lblOther
 			// 
 			this.lblOther.AutoSize = true;
-			this.lblOther.Location = new System.Drawing.Point(16, 168);
+			this.lblOther.Location = new System.Drawing.Point(16, 166);
 			this.lblOther.Name = "lblOther";
-			this.lblOther.Size = new System.Drawing.Size(33, 13);
+			this.lblOther.Size = new System.Drawing.Size(37, 13);
 			this.lblOther.TabIndex = 18;
 			this.lblOther.Text = "Other";
 			// 
@@ -164,7 +164,7 @@
 			this.gridOther.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
 			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
 			dataGridViewCellStyle1.BackColor = System.Drawing.Color.White;
-			dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle1.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			dataGridViewCellStyle1.ForeColor = System.Drawing.Color.Black;
 			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.Gray;
 			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.White;
@@ -173,7 +173,7 @@
 			this.gridOther.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
 			dataGridViewCellStyle2.BackColor = System.Drawing.Color.White;
-			dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle2.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			dataGridViewCellStyle2.ForeColor = System.Drawing.Color.White;
 			dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.Gray;
 			dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.White;
@@ -185,7 +185,7 @@
 			this.gridOther.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
 			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
 			dataGridViewCellStyle3.BackColor = System.Drawing.Color.White;
-			dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle3.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			dataGridViewCellStyle3.ForeColor = System.Drawing.Color.Black;
 			dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.Gray;
 			dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.White;
@@ -232,18 +232,18 @@
 			// lblWidth
 			// 
 			this.lblWidth.AutoSize = true;
-			this.lblWidth.Location = new System.Drawing.Point(280, 67);
+			this.lblWidth.Location = new System.Drawing.Point(276, 67);
 			this.lblWidth.Name = "lblWidth";
-			this.lblWidth.Size = new System.Drawing.Size(35, 13);
+			this.lblWidth.Size = new System.Drawing.Size(37, 13);
 			this.lblWidth.TabIndex = 8;
 			this.lblWidth.Text = "Width";
 			// 
 			// lblHeight
 			// 
 			this.lblHeight.AutoSize = true;
-			this.lblHeight.Location = new System.Drawing.Point(277, 94);
+			this.lblHeight.Location = new System.Drawing.Point(273, 94);
 			this.lblHeight.Name = "lblHeight";
-			this.lblHeight.Size = new System.Drawing.Size(38, 13);
+			this.lblHeight.Size = new System.Drawing.Size(43, 13);
 			this.lblHeight.TabIndex = 10;
 			this.lblHeight.Text = "Height";
 			// 
@@ -274,9 +274,9 @@
 			// lblUnlockCount
 			// 
 			this.lblUnlockCount.AutoSize = true;
-			this.lblUnlockCount.Location = new System.Drawing.Point(19, 120);
+			this.lblUnlockCount.Location = new System.Drawing.Point(12, 120);
 			this.lblUnlockCount.Name = "lblUnlockCount";
-			this.lblUnlockCount.Size = new System.Drawing.Size(72, 13);
+			this.lblUnlockCount.Size = new System.Drawing.Size(79, 13);
 			this.lblUnlockCount.TabIndex = 12;
 			this.lblUnlockCount.Text = "Unlock Count";
 			// 
@@ -304,18 +304,18 @@
 			// lblCustomParent
 			// 
 			this.lblCustomParent.AutoSize = true;
-			this.lblCustomParent.Location = new System.Drawing.Point(15, 147);
+			this.lblCustomParent.Location = new System.Drawing.Point(6, 147);
 			this.lblCustomParent.Name = "lblCustomParent";
-			this.lblCustomParent.Size = new System.Drawing.Size(76, 13);
+			this.lblCustomParent.Size = new System.Drawing.Size(85, 13);
 			this.lblCustomParent.TabIndex = 14;
 			this.lblCustomParent.Text = "Custom Parent";
 			// 
 			// btnSetLevel
 			// 
 			this.btnSetLevel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnSetLevel.Location = new System.Drawing.Point(358, 142);
+			this.btnSetLevel.Location = new System.Drawing.Point(345, 142);
 			this.btnSetLevel.Name = "btnSetLevel";
-			this.btnSetLevel.Size = new System.Drawing.Size(68, 23);
+			this.btnSetLevel.Size = new System.Drawing.Size(81, 23);
 			this.btnSetLevel.TabIndex = 17;
 			this.btnSetLevel.TabStop = false;
 			this.btnSetLevel.Text = "Set Level";
@@ -329,18 +329,17 @@
 			this.chkCallingParent.Name = "chkCallingParent";
 			this.chkCallingParent.OffColour = System.Drawing.Color.Empty;
 			this.chkCallingParent.OnColor = System.Drawing.Color.Red;
-			this.chkCallingParent.Size = new System.Drawing.Size(85, 17);
+			this.chkCallingParent.Size = new System.Drawing.Size(61, 17);
 			this.chkCallingParent.TabIndex = 16;
 			this.chkCallingParent.TabStop = true;
-			this.chkCallingParent.Text = "Parent Level";
+			this.chkCallingParent.Text = "Parent";
 			this.chkCallingParent.UseVisualStyleBackColor = true;
 			this.chkCallingParent.CheckedChanged += new System.EventHandler(this.chkCallingParent_CheckedChanged);
 			// 
 			// LevelProperties
 			// 
 			this.AcceptButton = this.btnSave;
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.Black;
 			this.ClientSize = new System.Drawing.Size(440, 366);
 			this.Controls.Add(this.chkCallingParent);
@@ -364,6 +363,7 @@
 			this.Controls.Add(this.lblSubtitle);
 			this.Controls.Add(this.txtName);
 			this.Controls.Add(this.lblName);
+			this.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.ForeColor = System.Drawing.Color.White;
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.MaximizeBox = false;

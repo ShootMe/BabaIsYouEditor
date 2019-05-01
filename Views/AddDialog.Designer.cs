@@ -31,9 +31,9 @@
 			// lblInput
 			// 
 			this.lblInput.AutoSize = true;
-			this.lblInput.Location = new System.Drawing.Point(12, 22);
+			this.lblInput.Location = new System.Drawing.Point(16, 22);
 			this.lblInput.Name = "lblInput";
-			this.lblInput.Size = new System.Drawing.Size(35, 13);
+			this.lblInput.Size = new System.Drawing.Size(31, 13);
 			this.lblInput.TabIndex = 0;
 			this.lblInput.Text = "Name";
 			// 
@@ -54,7 +54,7 @@
 			// 
 			this.btnSave.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
 			this.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnSave.Location = new System.Drawing.Point(126, 45);
+			this.btnSave.Location = new System.Drawing.Point(126, 48);
 			this.btnSave.Name = "btnSave";
 			this.btnSave.Size = new System.Drawing.Size(51, 23);
 			this.btnSave.TabIndex = 2;
@@ -64,13 +64,13 @@
 			// AddDialog
 			// 
 			this.AcceptButton = this.btnSave;
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.Black;
 			this.ClientSize = new System.Drawing.Size(312, 84);
 			this.Controls.Add(this.btnSave);
 			this.Controls.Add(this.txtInput);
 			this.Controls.Add(this.lblInput);
+			this.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.ForeColor = System.Drawing.Color.White;
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.MaximizeBox = false;

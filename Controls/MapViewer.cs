@@ -53,6 +53,9 @@ namespace BabaIsYou.Controls {
 			CellMouseOver?.Invoke(currentMap, null, null);
 			Invalidate();
 		}
+		protected override void OnResize(EventArgs e) {
+			Invalidate();
+		}
 		protected override void OnMouseDown(MouseEventArgs e) {
 			if (currentMap != null && currentCell != null) {
 				CellMouseDown?.Invoke(currentMap, currentCell, e);

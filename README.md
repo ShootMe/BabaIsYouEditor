@@ -6,12 +6,21 @@ Simple Level Editor for the game Baba Is You
   - Run and enjoy
 
 ## Change Log
+  - 1.1.6
+    - Changes
+	  - Changed the default program font to be a bit more readable and make things more consistent
+	  - Updated the Read Me screen to have the updated controls
+	  - Made the level name filter show results in a more user firendly manner
+	- Fixes
+	  - Fixed a scroll wheel issue introduced in 1.1.5
+	  - Fixed how background images were rendered
+
   - 1.1.5
     - Features
       - Added 'Sort Levels by File' to World menu to sort the level list by file name instead of level name
 	  - Added Shift + E when mouse is over a 'Level Object' to go into that level directly
 	  - Added Shift + R to then return to the level that you came from
-	  - Arrow keys on keybaord will allow you to change the direction of the current cell in the map
+	  - Arrow keys on keyboard will allow you to change the direction of the current cell in the map
 	  - Changed Sprite List selection to move with Ctrl + Arrow Keys instead
 	  - Added ability to move whole map with Shift + (W/A/S/D)
 	  - Added ability on Ctrl + Right Mouse click to 'Pick Up' the currently selected item under your mouse if one exists otherwise it will do it to the top object

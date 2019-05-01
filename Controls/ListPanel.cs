@@ -63,24 +63,25 @@ namespace BabaIsYou.Controls {
 			get { return selectedIndex; }
 			set {
 				int newIndex = Items.Count == 0 ? -1 : value < 0 ? -1 : value >= Items.Count ? Items.Count - 1 : value;
+
+				//Get first visible or top of list
+				SetTopToVisible(true);
+				int maxIndex = RemoveEmptySpace();
+
+				//Scroll up if selected is higher
 				if (topIndex >= newIndex) {
 					if (newIndex >= 0) {
 						topIndex = newIndex;
+						SetTopToVisible(true);
 					}
 				} else {
-					int maxIndex = MaxIndex(true);
-					if (newIndex > maxIndex) {
-						topIndex = newIndex;
-						do {
-							topIndex--;
-							maxIndex = MaxIndex(true);
-						} while (maxIndex >= newIndex);
-
-						if (maxIndex < newIndex) {
-							topIndex++;
-						}
+					//Scroll down if selected is lower
+					while (maxIndex < newIndex) {
+						SetTopToVisible(false);
+						maxIndex = MaxIndex(true);
 					}
 				}
+
 				if (newIndex != selectedIndex) {
 					selectedIndex = newIndex;
 					IndexChanged?.Invoke(newIndex, newIndex < 0 ? null : Items[newIndex]);
@@ -88,12 +89,45 @@ namespace BabaIsYou.Controls {
 				}
 			}
 		}
+		private int RemoveEmptySpace() {
+			int maxIndex = MaxIndex(true);
+			bool removeExtraSpace = maxIndex + 1 == Items.Count;
+			while (topIndex > 0 && maxIndex + 1 == Items.Count) {
+				topIndex--;
+				SetTopToVisible(true);
+				maxIndex = MaxIndex(true);
+			}
+			if (removeExtraSpace && maxIndex + 1 < Items.Count) {
+				SetTopToVisible(false);
+				maxIndex = Items.Count;
+			}
+			return maxIndex;
+		}
+		private void SetTopToVisible(bool up) {
+			if (up) {
+				while (topIndex > 0 && !Items[topIndex].Visible) {
+					topIndex--;
+				}
+			} else {
+				int currentTop = topIndex;
+				do {
+					topIndex++;
+				} while (topIndex < Items.Count && !Items[topIndex].Visible);
+				if (topIndex >= Items.Count) {
+					topIndex = currentTop;
+				}
+			}
+		}
+		public void ReselectCurrentIndex() {
+			int current = selectedIndex;
+			selectedIndex = -1;
+			SelectedIndex = current;
+		}
 
 		private List<ListItem> Items = new List<ListItem>();
 		private int topIndex = 0;
 		private StringBuilder typedString;
 		private DateTime lastTyped;
-		private Keys lastKeyData;
 		public ListPanel() : base() {
 			DrawText = true;
 			SortByText = true;
@@ -131,55 +165,58 @@ namespace BabaIsYou.Controls {
 		public ListItem this[int index] {
 			get { return Items[index]; }
 		}
-		private int MaxIndex(bool contains = false, bool nextLine = false) {
-			int pos = 0;
-			int i = topIndex;
-			int compareTo = vertical ? Height : Width;
-			int compareToExt = vertical ? Width : Height;
-			int maxVal = 0;
-			int line = 0;
-			int added = 0;
-			while (i < Items.Count) {
-				ListItem item = Items[i++];
+		protected override void OnResize(EventArgs e) {
+			ReselectCurrentIndex();
+		}
+		private int RowLength() {
+			if (Items.Count == 0) { return -1; }
+
+			int result = 0;
+			if (vertical) {
+				int width = Items[0].Size.Width;
+				result = Width / width;
+				if (result == 0) {
+					result = 1;
+				}
+			} else {
+				int height = Items[0].Size.Height;
+				result = Height / height;
+				if (result == 0) {
+					result = 1;
+				}
+			}
+			return result;
+		}
+		private int MaxIndex(bool contains = false, bool stopAtRow = false) {
+			int endHeight = vertical ? Height : Width;
+			int endWidth = vertical ? Width : Height;
+			int rowLength = RowLength();
+			int maxSize = 0;
+			int currentHeight = 0;
+			int rowSize = 0;
+			for (int i = topIndex; i < Items.Count; i++) {
+				ListItem item = Items[i];
 				if (!item.Visible) { continue; }
 
 				Size size = item.Size;
-				int val = vertical ? size.Height : size.Width;
-				int ext = vertical ? size.Width : size.Height;
-				line += ext;
-
-				if (!nextLine && pos + val > compareTo) {
-					i--;
-					break;
+				int height = vertical ? size.Height : size.Width;
+				if (height > maxSize) {
+					maxSize = height;
 				}
+				rowSize++;
 
-				if (line >= compareToExt) {
-					bool toAdd = line == compareToExt || added == 0;
-					if (toAdd && val > maxVal) {
-						maxVal = val;
-					}
-
-					pos += maxVal;
-					line = 0;
-					added = 0;
-					maxVal = 0;
-
-					if (!toAdd) {
-						line = ext;
-						maxVal = val;
-					}
-
-					if (nextLine) {
-						return toAdd ? i : i - 1;
-					}
-				} else {
-					added++;
-					if (val > maxVal) {
-						maxVal = val;
+				if (contains && height + currentHeight > endHeight) {
+					return i - 1;
+				} else if (rowSize == rowLength) {
+					currentHeight += maxSize;
+					maxSize = 0;
+					rowSize = 0;
+					if (stopAtRow || currentHeight >= endHeight) {
+						return stopAtRow ? i + 1 : i;
 					}
 				}
 			}
-			return !contains || nextLine ? i : i - 1 < topIndex ? topIndex : i - 1;
+			return Items.Count - 1;
 		}
 		public bool SelectTopMostVisible() {
 			bool selected = false;
@@ -210,24 +247,19 @@ namespace BabaIsYou.Controls {
 			}
 			return false;
 		}
-		protected override bool IsInputKey(Keys keyData) {
-			if (keyData == lastKeyData) {
-				lastKeyData = Keys.None;
-				return false;
-			}
-			lastKeyData = keyData;
-
-			if ((keyData & Keys.Up) == Keys.Up || (keyData & Keys.Down) == Keys.Down || (keyData & Keys.Right) == Keys.Right || (keyData & Keys.Left) == Keys.Left) {
-				if (!UseControlMovement || (keyData & Keys.Control) == Keys.Control) {
-					keyData &= ~Keys.Control;
-					OnKeyDown(new KeyEventArgs(keyData));
-				}
-			}
-			return false;
+		protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
+			KeyDownLogic(new KeyEventArgs(keyData));
+			return base.ProcessCmdKey(ref msg, keyData);
 		}
-		protected override void OnKeyDown(KeyEventArgs e) {
-			if (e.Alt || e.Control || e.Shift) { return; }
+		private void KeyDownLogic(KeyEventArgs e) {
+			bool stopLogic = e.Alt || e.Control || e.Shift;
+			if (e.KeyCode == Keys.Up || e.KeyCode == Keys.Down || e.KeyCode == Keys.Right || e.KeyCode == Keys.Left) {
+				stopLogic = e.Alt || e.Shift || (UseControlMovement ^ e.Control);
+			}
+			if (stopLogic) { return; }
 
+			int starting = selectedIndex;
+			bool overflowed = false;
 			switch (e.KeyCode) {
 				case Keys.Home: {
 					if (topIndex != 0) {
@@ -252,15 +284,63 @@ namespace BabaIsYou.Controls {
 					break;
 				}
 				case Keys.Left:
+					for (int i = vertical ? 1 : RowLength(); i > 0; i--) {
+						while (starting > 0 && !Items[starting--].Visible) { }
+						if (starting == 0 && i > 1) {
+							overflowed = true;
+							break;
+						}
+					}
+					if (selectedIndex != starting && !overflowed) {
+						if (!vertical && starting < topIndex) {
+							MoveList(false, false);
+						}
+						SelectedIndex = starting;
+					}
+					break;
 				case Keys.Up:
-					if (SelectedIndex > 0) {
-						SelectedIndex--;
+					for (int i = vertical ? RowLength() : 1; i > 0; i--) {
+						while (starting > 0 && !Items[starting--].Visible) { }
+						if (starting == 0 && i > 1) {
+							overflowed = true;
+							break;
+						}
+					}
+					if (selectedIndex != starting && !overflowed) {
+						if (vertical && starting < topIndex) {
+							MoveList(false, false);
+						}
+						SelectedIndex = starting;
 					}
 					break;
 				case Keys.Right:
+					for (int i = vertical ? 1 : RowLength(); i > 0; i--) {
+						while (starting + 1 < Items.Count && !Items[starting++].Visible) { }
+						if (starting + 1 >= Items.Count && i > 1) {
+							overflowed = true;
+							break;
+						}
+					}
+					if (selectedIndex != starting && !overflowed) {
+						if (!vertical && starting > MaxIndex()) {
+							MoveList(true, false);
+						}
+						SelectedIndex = starting;
+					}
+					break;
 				case Keys.Down:
-					if (SelectedIndex + 1 < Items.Count) {
-						SelectedIndex++;
+					for (int i = vertical ? RowLength() : 1; i > 0; i--) {
+						while (starting + 1 < Items.Count && !Items[starting++].Visible) { }
+						if (starting + 1 >= Items.Count && i > 1) {
+							overflowed = true;
+							break;
+						}
+					}
+					if (selectedIndex != starting && !overflowed) {
+						if (vertical && starting > MaxIndex()) {
+							MoveList(true, false);
+						}
+						SelectedIndex = starting;
 					}
 					break;
 				case Keys.PageDown:
@@ -301,41 +381,44 @@ namespace BabaIsYou.Controls {
 			}
 		}
 		private void MoveList(bool down, bool page) {
+			int rowLength = RowLength();
 			if (down) {
-				if (page) {
-					int maxTopIndex = MaxIndex();
-					if (topIndex != maxTopIndex && maxTopIndex < Items.Count - 1) {
-						topIndex = maxTopIndex;
-						Invalidate();
-					}
-				} else {
-					int maxIndex = MaxIndex(true);
-					if (maxIndex < Items.Count - 1) {
-						topIndex = MaxIndex(false, true);
-						Invalidate();
-					}
-				}
-			} else if (page) {
-				if (topIndex > 0) {
+				int maxTopIndex = MaxIndex();
+				if (topIndex != maxTopIndex && maxTopIndex < Items.Count - 1) {
 					int currentTop = topIndex;
-					int maxIndex;
-					do {
-						topIndex--;
-						maxIndex = MaxIndex();
-					} while (maxIndex != currentTop && topIndex > 0);
-
-					if (topIndex != currentTop) {
+					if (page) {
+						topIndex = maxTopIndex;
+						SetTopToVisible(false);
+						RemoveEmptySpace();
+					} else {
+						while (rowLength > 0) {
+							SetTopToVisible(false);
+							rowLength--;
+						}
+					}
+					if (currentTop != topIndex) {
 						Invalidate();
 					}
 				}
 			} else {
-				if (topIndex > 0) {
-					int currentTop = topIndex;
-					int maxIndex;
-					do {
+				int currentTop = topIndex;
+				if (page) {
+					if (topIndex > 0) {
+						int maxIndex;
+						do {
+							topIndex--;
+							SetTopToVisible(true);
+							maxIndex = MaxIndex();
+						} while (maxIndex >= currentTop && topIndex > 0);
+					}
+				} else {
+					while (topIndex > 0 && rowLength > 0) {
 						topIndex--;
-						maxIndex = MaxIndex(false, true);
-					} while (maxIndex != currentTop && topIndex > 0);
+						SetTopToVisible(true);
+						rowLength--;
+					}
+				}
+				if (topIndex != currentTop) {
 					Invalidate();
 				}
 			}
@@ -343,54 +426,42 @@ namespace BabaIsYou.Controls {
 		protected override void OnMouseClick(MouseEventArgs e) {
 			if (!Focused && Focusable) { Focus(); }
 
-			int pos = 0;
-			int compareTo = vertical ? Height : Width;
-			int compareToExt = vertical ? Width : Height;
-			int maxVal = 0;
-			int line = 0;
-			int added = 0;
+			int endHeight = vertical ? Height : Width;
+			int endWidth = vertical ? Width : Height;
+			int rowLength = RowLength();
+			int maxSize = 0;
+			int currentHeight = 0;
+			int currentWidth = 0;
+			int rowSize = 0;
 			for (int i = topIndex; i < Items.Count; i++) {
 				ListItem item = Items[i];
 				if (!item.Visible) { continue; }
 
 				Size size = item.Size;
-				int val = vertical ? size.Height : size.Width;
-				int ext = vertical ? size.Width : size.Height;
-
-				int lineToCheck = line;
-				int posToCheck = pos;
-				line += ext;
-
-				if (line >= compareToExt) {
-					bool toAdd = line == compareToExt || added == 0;
-					if (toAdd && val > maxVal) {
-						maxVal = val;
-					}
-
-					pos += maxVal;
-					line = 0;
-					added = 0;
-					maxVal = 0;
-
-					if (!toAdd) {
-						line = ext;
-						lineToCheck = 0;
-						posToCheck = pos;
-						maxVal = val;
-					}
-				} else {
-					added++;
-					if (val > maxVal) {
-						maxVal = val;
-					}
+				int height = vertical ? size.Height : size.Width;
+				int width = vertical ? size.Width : size.Height;
+				if (height > maxSize) {
+					maxSize = height;
 				}
+				rowSize++;
 
-				if (CheckBounds(e.Location, vertical ? lineToCheck : posToCheck, vertical ? posToCheck : lineToCheck, size.Width, size.Height)) {
+				if (CheckBounds(e.Location, vertical ? currentWidth : currentHeight, vertical ? currentHeight : currentWidth, size.Width, size.Height)) {
 					if (e.Button == MouseButtons.Left) {
 						SelectedIndex = i;
 					}
 					ItemClicked?.Invoke(item, e.Button);
 					break;
+				}
+				currentWidth += width;
+
+				if (rowSize == rowLength) {
+					currentHeight += maxSize;
+					currentWidth = 0;
+					maxSize = 0;
+					rowSize = 0;
+					if (currentHeight >= endHeight) {
+						break;
+					}
 				}
 			}
 		}
@@ -398,52 +469,36 @@ namespace BabaIsYou.Controls {
 			return location.X >= x && location.X < x + w && location.Y >= y && location.Y < y + h;
 		}
 		protected override void OnPaint(PaintEventArgs e) {
-			int pos = 0;
-			int compareTo = vertical ? Height : Width;
-			int compareToExt = vertical ? Width : Height;
-			int maxVal = 0;
-			int line = 0;
-			int added = 0;
+			int endHeight = vertical ? Height : Width;
+			int endWidth = vertical ? Width : Height;
+			int rowLength = RowLength();
+			int maxSize = 0;
+			int currentHeight = 0;
+			int currentWidth = 0;
+			int rowSize = 0;
 			for (int i = topIndex; i < Items.Count; i++) {
 				ListItem item = Items[i];
 				if (!item.Visible) { continue; }
 
 				Size size = item.Size;
-				int val = vertical ? size.Height : size.Width;
-				int ext = vertical ? size.Width : size.Height;
-
-				int lineToDraw = line;
-				int posToDraw = pos;
-				line += ext;
-
-				if (line >= compareToExt) {
-					bool toAdd = line == compareToExt || added == 0;
-					if (toAdd && val > maxVal) {
-						maxVal = val;
-					}
-
-					pos += maxVal;
-					line = 0;
-					added = 0;
-					maxVal = 0;
-
-					if (!toAdd) {
-						line = ext;
-						lineToDraw = 0;
-						posToDraw = pos;
-						maxVal = val;
-					}
-				} else {
-					added++;
-					if (val > maxVal) {
-						maxVal = val;
-					}
+				int height = vertical ? size.Height : size.Width;
+				int width = vertical ? size.Width : size.Height;
+				if (height > maxSize) {
+					maxSize = height;
 				}
+				rowSize++;
 
-				item.Render(this, e.Graphics, selectedIndex == i, vertical ? lineToDraw : posToDraw, vertical ? posToDraw : lineToDraw, DrawText);
+				item.Render(this, e.Graphics, selectedIndex == i, vertical ? currentWidth : currentHeight, vertical ? currentHeight : currentWidth, DrawText);
+				currentWidth += width;
 
-				if (pos >= compareTo) {
-					break;
+				if (rowSize == rowLength) {
+					currentHeight += maxSize;
+					currentWidth = 0;
+					maxSize = 0;
+					rowSize = 0;
+					if (currentHeight >= endHeight) {
+						break;
+					}
 				}
 			}
 		}

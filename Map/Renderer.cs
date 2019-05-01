@@ -2,14 +2,19 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Drawing.Text;
+using System.IO;
 using System.Reflection;
+using System.Windows.Forms;
 namespace BabaIsYou.Map {
 	public class Renderer {
+		public static PrivateFontCollection CustomFont;
+		private static Font GlobalFont;
 		private static Bitmap Selector;
 		private static Bitmap Petal;
 		private static Bitmap SpecialIcon, DownIcon, IdleIcon, LeftIcon, PauseIcon, RightIcon, UndoIcon, UpIcon;
 		static Renderer() {
-			Assembly assembly = Assembly.GetExecutingAssembly();
+			Assembly assembly = typeof(Renderer).Assembly;
 			Selector = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.grid.png"));
 			Petal = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.petal.png"));
 			SpecialIcon = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.special_icon.png"));
@@ -20,6 +25,25 @@ namespace BabaIsYou.Map {
 			RightIcon = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.right.png"));
 			UndoIcon = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.undo_icon.png"));
 			UpIcon = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.up.png"));
+			using (Stream fontStream = assembly.GetManifestResourceStream("BabaIsYou.Images.Consolas.ttf")) {
+				byte[] fontdata = new byte[fontStream.Length];
+				fontStream.Read(fontdata, 0, (int)fontStream.Length);
+				CustomFont = new PrivateFontCollection();
+				unsafe {
+					fixed (byte* pFontData = fontdata) {
+						CustomFont.AddMemoryFont((IntPtr)pFontData, fontdata.Length);
+					}
+				}
+			}
+			GlobalFont = new Font(CustomFont.Families[0], 8, FontStyle.Regular, GraphicsUnit.Point);
+		}
+		public static void SetFonts(Control control) {
+			foreach (Control ctr in control.Controls) {
+				ctr.Font = GlobalFont;
+				if (ctr.HasChildren) {
+					SetFonts(ctr);
+				}
+			}
 		}
 		public static Rectangle GetBounds(Grid grid, int totalWidth, int totalHeight) {
 			int tileWidth = totalWidth / grid.Width;
@@ -50,10 +74,16 @@ namespace BabaIsYou.Map {
 			using (SolidBrush brush = new SolidBrush(palette.Background)) {
 				g.FillRectangle(brush, mapBounds.X, mapBounds.Y, mapBounds.Width * grid.Width, mapBounds.Height * grid.Height);
 			}
+
+			g.Clip = new Region(new Rectangle(mapBounds.X, mapBounds.Y, mapBounds.Width * grid.Width, mapBounds.Height * grid.Height));
 			for (int i = 0; i < grid.Images.Count; i++) {
 				string image = grid.Images[i];
 				Bitmap img = Reader.Sprites[image][0, 1];
-				g.DrawImage(img, new Rectangle(mapBounds.X + mapBounds.Width, mapBounds.Y + mapBounds.Height, mapBounds.Width * (grid.Width - 2), mapBounds.Height * (grid.Height - 2)), 0, 0, img.Width, img.Height, GraphicsUnit.Pixel);
+				int width = img.Width * mapBounds.Width / 24;
+				if (width < 1) { width = 1; }
+				int height = img.Height * mapBounds.Height / 24;
+				if (height < 1) { height = 1; }
+				g.DrawImage(img, new Rectangle(mapBounds.X + mapBounds.Width, mapBounds.Y + mapBounds.Height, width, height), 0, 0, img.Width, img.Height, GraphicsUnit.Pixel);
 			}
 
 			int xOrig = mapBounds.X;
@@ -114,7 +144,6 @@ namespace BabaIsYou.Map {
 		private static void DrawSpecials(Graphics g, Grid grid, Rectangle bounds, int rowEnd, Palette palette, bool drawLevels) {
 			int xOrig = bounds.X;
 			int size = grid.Cells.Count;
-			g.Clip = new Region(new Rectangle(bounds.X, bounds.Y, bounds.Width * grid.Width, bounds.Height * grid.Height));
 			for (int i = 0; i < size; i++) {
 				Cell cell = grid.Cells[i];
 				int items = cell.Objects.Count;
@@ -317,7 +346,7 @@ namespace BabaIsYou.Map {
 				using (SolidBrush brush = new SolidBrush(Color.Red)) {
 					int fontWidth = destination.Width / 3;
 					if (fontWidth <= 0) { fontWidth = 1; }
-					using (Font font = new Font(FontFamily.GenericSansSerif, fontWidth, FontStyle.Bold, GraphicsUnit.Pixel)) {
+					using (Font font = new Font(CustomFont.Families[0], fontWidth, FontStyle.Bold, GraphicsUnit.Pixel)) {
 						string text = stackCount.ToString();
 						SizeF textSize = g.MeasureString(text, font, 9999999, StringFormat.GenericTypographic);
 						g.DrawString(text, font, brush, new Point(destination.X + 1, destination.Y - 2), StringFormat.GenericTypographic);
@@ -350,7 +379,7 @@ namespace BabaIsYou.Map {
 				using (SolidBrush brush = new SolidBrush(color)) {
 					int fontWidth = bounds.Width * 2 / 3;
 					if (fontWidth <= 0) { fontWidth = 1; }
-					using (Font font = new Font(FontFamily.GenericSansSerif, fontWidth, FontStyle.Bold, GraphicsUnit.Pixel)) {
+					using (Font font = new Font(CustomFont.Families[0], fontWidth, FontStyle.Bold, GraphicsUnit.Pixel)) {
 						int number = level.Number;
 						if (level.Style == (byte)LevelStyle.Number) {
 							number = number > 99 ? 99 : number;

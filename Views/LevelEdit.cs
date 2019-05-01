@@ -13,6 +13,7 @@ namespace BabaIsYou.Views {
 		private Level levelCopy;
 		public LevelEdit() {
 			InitializeComponent();
+			Renderer.SetFonts(this);
 		}
 
 		private void LevelEdit_Shown(object sender, EventArgs e) {
@@ -86,7 +87,6 @@ namespace BabaIsYou.Views {
 				}
 
 				selector.BackColor = this.BackColor;
-				selector.SortItems();
 				selector.Icon = this.Icon;
 
 				if (addedCount == 0) {
@@ -113,6 +113,7 @@ namespace BabaIsYou.Views {
 					sizeY--;
 				}
 				selector.ClientSize = new Size(imgWidth * sizeX, imgHeight * sizeY);
+				selector.SortItems();
 
 				DialogResult result = selector.ShowDialog(this);
 				if (result == DialogResult.OK) {
@@ -204,7 +205,6 @@ namespace BabaIsYou.Views {
 					selector.AddItem(item, levelCopy.Sprite == sprite.Name);
 				}
 
-				selector.SortItems();
 				selector.BackColor = Palette.Edge;
 				selector.Icon = this.Icon;
 				int sizeX = (int)Math.Sqrt(spriteCount);
@@ -220,6 +220,8 @@ namespace BabaIsYou.Views {
 					}
 				}
 				selector.ClientSize = new Size(imgSize * sizeX, imgSize * sizeY);
+				selector.SortItems();
+
 				DialogResult result = selector.ShowDialog(this);
 				if (result == DialogResult.OK) {
 					Sprite sprite = (Sprite)selector.SelectedItem;

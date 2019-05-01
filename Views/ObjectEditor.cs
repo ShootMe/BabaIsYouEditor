@@ -12,6 +12,8 @@ namespace BabaIsYou.Views {
 		private Item DefaultItem;
 		public ObjectEditor() {
 			InitializeComponent();
+			Renderer.SetFonts(this);
+
 			foreach (TextType type in Enum.GetValues(typeof(TextType))) {
 				cboTextType.Items.Add(type);
 			}
@@ -80,7 +82,6 @@ namespace BabaIsYou.Views {
 					selector.AddItem(item, sender == imgObject ? Edit.Name.Equals(sprite.Name, StringComparison.OrdinalIgnoreCase) : Edit.Sprite.Equals(sprite.Name, StringComparison.OrdinalIgnoreCase));
 				}
 
-				selector.SortItems();
 				selector.BackColor = Palette.Edge;
 				selector.Icon = this.Icon;
 				int sizeX = (int)Math.Sqrt(spriteCount);
@@ -96,6 +97,8 @@ namespace BabaIsYou.Views {
 					}
 				}
 				selector.ClientSize = new Size(imgSize * sizeX, imgSize * sizeY);
+				selector.SortItems();
+
 				DialogResult result = selector.ShowDialog(this);
 				if (result == DialogResult.OK) {
 					Sprite sprite = (Sprite)selector.SelectedItem;

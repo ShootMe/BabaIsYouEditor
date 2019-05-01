@@ -9,6 +9,7 @@ namespace BabaIsYou.Views {
 		public Info WorldInfo { get; set; }
 		public WorldProperties() {
 			InitializeComponent();
+			Renderer.SetFonts(this);
 		}
 
 		private void WorldProperties_Shown(object sender, EventArgs e) {
@@ -58,7 +59,6 @@ namespace BabaIsYou.Views {
 				}
 
 				selector.BackColor = this.BackColor;
-				selector.SortItems();
 				selector.Icon = this.Icon;
 
 				if (addedCount == 0) {
@@ -85,6 +85,7 @@ namespace BabaIsYou.Views {
 					sizeY--;
 				}
 				selector.ClientSize = new Size(imgWidth * sizeX, imgHeight * sizeY);
+				selector.SortItems();
 
 				DialogResult result = selector.ShowDialog(this);
 				if (result == DialogResult.OK) {
