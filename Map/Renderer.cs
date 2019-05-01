@@ -64,7 +64,11 @@ namespace BabaIsYou.Map {
 		public static void Render(Grid grid, Graphics g, int totalWidth, int totalHeight, bool showStacked = false, bool showDirections = false) {
 			Rectangle mapBounds = GetBounds(grid, totalWidth, totalHeight);
 			int rowEnd = mapBounds.X + mapBounds.Width * grid.Width;
-			Palette palette = Reader.Palettes[grid.Palette];
+
+			Palette palette;
+			if (!Reader.Palettes.TryGetValue(grid.Palette, out palette)) {
+				throw new Exception($"Failed to find palette {grid.Palette} for map {grid.FileName}");
+			}
 			g.InterpolationMode = InterpolationMode.NearestNeighbor;
 			g.PixelOffsetMode = PixelOffsetMode.Half;
 

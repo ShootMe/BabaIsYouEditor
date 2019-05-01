@@ -54,6 +54,14 @@ namespace BabaIsYou.Map {
 				string file = files[i];
 				Palettes.Add(Path.GetFileName(file), new Palette(file));
 			}
+			string palettesPath = Path.Combine(DataPath, "Worlds", world, "Palettes");
+			if (Directory.Exists(palettesPath)) {
+				files = Directory.GetFiles(palettesPath, "*.png", SearchOption.TopDirectoryOnly);
+				for (int i = 0; i < files.Length; i++) {
+					string file = files[i];
+					Palettes.Add(Path.GetFileName(file), new Palette(file));
+				}
+			}
 		}
 		private static void AddSprites(string[] files, bool isRoot = true, bool isSprite = true) {
 			for (int i = 0; i < files.Length; i++) {

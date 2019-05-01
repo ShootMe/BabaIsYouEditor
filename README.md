@@ -6,6 +6,10 @@ Simple Level Editor for the game Baba Is You
   - Run and enjoy
 
 ## Change Log
+  - 1.1.9
+    - Changes
+	  - Added ability to read custom world palettes
+
   - 1.1.8
     - Features
 	  - On Shift + R with multiple presses it will now search for any 'parent' level that opens your current level
