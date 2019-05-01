@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 namespace BabaIsYou.Controls {
-	public class MapViewer : Control {
+	public class MapViewer : MessageFilter {
 		public delegate void CellMouseEvent(Grid map, Cell cell, MouseEventArgs e);
 		public event CellMouseEvent CellMouseOver;
 		public event CellMouseEvent CellMouseDown;
@@ -41,7 +41,7 @@ namespace BabaIsYou.Controls {
 		public bool ShowDirections { get; set; }
 		[EditorBrowsable(EditorBrowsableState.Never), Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), ReadOnly(true)]
 		public bool AllowEdgePlacement { get; set; }
-		public MapViewer() {
+		public MapViewer() : base() {
 			DoubleBuffered = true;
 			ShowStacked = false;
 			ShowDirections = false;

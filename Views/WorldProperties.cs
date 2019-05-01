@@ -21,7 +21,7 @@ namespace BabaIsYou.Views {
 				txtName.Focus();
 				MessageBox.Show(this, "Please enter a name for the world.", "World Name");
 				return;
-			} else if (string.IsNullOrEmpty(txtStart.Text) && LevelList.Items.Count > 0) {
+			} else if (string.IsNullOrEmpty(txtStart.Text) && LevelList.Count > 0) {
 				txtStart.Focus();
 				MessageBox.Show(this, "Please enter a starting level.", "Starting Level");
 				return;
@@ -46,9 +46,9 @@ namespace BabaIsYou.Views {
 
 				int imgWidth = 0;
 				int imgHeight = 0;
-				int addedCount = LevelList.Items.Count;
+				int addedCount = LevelList.Count;
 				for (int i = 0; i < addedCount; i++) {
-					ListItem level = LevelList.Items[i];
+					ListItem level = LevelList[i];
 					Grid map = (Grid)level.Value;
 					imgWidth = level.Extra.Width;
 					imgHeight = level.Extra.Height;

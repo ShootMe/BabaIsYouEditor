@@ -49,6 +49,9 @@ namespace BabaIsYou.Views {
 		private bool? isAdding = null;
 		private bool holdingControl = false;
 		private string GameWorldName;
+		private int lastLevelWidth = 14;
+		private int lastLevelHeight = 8;
+		private ListItem parentLevel;
 
 		public WorldViewer() {
 			InitializeComponent();
@@ -70,6 +73,9 @@ namespace BabaIsYou.Views {
 
 			menuItemShowDirections.Checked = RegistryRead<int>("ShowDirections", 0) != 0;
 			menuItemShowStacked.Checked = RegistryRead<int>("ShowStacked", 0) != 0;
+			listLevels.SortByText = RegistryRead<int>("SortByFile", 0) == 0;
+			menuItemSortLevels.Checked = !listLevels.SortByText;
+
 			mapViewer.ShowStacked = menuItemShowStacked.Checked;
 			mapViewer.ShowDirections = menuItemShowDirections.Checked;
 			txtLevelFilter.Visible = false;
@@ -98,8 +104,8 @@ namespace BabaIsYou.Views {
 			statusLevel.Text = $"Loading world  \"{GameWorldName}\"  ...";
 			levelsToBeRemoved.Clear();
 			mapViewer.Map = null;
-			listLevels.Items.Clear();
-			listObjects.Items.Clear();
+			listLevels.ClearItems();
+			listObjects.ClearItems();
 
 			Thread thread = new Thread(delegate () {
 #if !DEBUG
@@ -134,9 +140,9 @@ namespace BabaIsYou.Views {
 					txtLevelFilter.Visible = true;
 
 					statusLevel.Text = "N/A";
-					listLevels.Items.AddRange(newItems);
+					listLevels.AddItems(newItems);
 
-					Text = $"{TitleBarText} - {GameWorldName} - {listLevels.Items.Count} Levels";
+					Text = $"{TitleBarText} - {GameWorldName} - {listLevels.Count} Levels";
 
 					menuPalette.DropDownItems.Clear();
 					foreach (string name in Reader.Palettes.Keys) {
@@ -147,8 +153,7 @@ namespace BabaIsYou.Views {
 						menuPalette.DropDownItems.Add(menuItem);
 					}
 
-					listLevels.Items.Sort();
-					listLevels.SelectedIndex = -1;
+					listLevels.SortItems();
 					listLevels.SelectTopMostVisible();
 
 					if (txtLevelFilter.ForeColor == Color.Black) {
@@ -191,6 +196,10 @@ namespace BabaIsYou.Views {
 			listObjects.Invalidate();
 			mapViewer.Invalidate();
 		}
+		protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
+			WorldViewer_KeyDown(null, new KeyEventArgs(keyData));
+			return base.ProcessCmdKey(ref msg, keyData);
+		}
 		private void WorldViewer_KeyDown(object sender, KeyEventArgs e) {
 			holdingControl = e.Control;
 			if (holdingControl) {
@@ -198,6 +207,61 @@ namespace BabaIsYou.Views {
 			}
 			if (e.KeyCode == Keys.Space && map != null && mapViewer.CurrentCell != null) {
 				mapViewer_CellMouseDown(map, mapViewer.CurrentCell, new MouseEventArgs(MouseButtons.Middle, 1, 0, 0, 0));
+			} else if (e.KeyCode == Keys.E && e.Shift && map != null && mapViewer.CurrentCell != null) {
+				Cell cell = mapViewer.CurrentCell;
+				Special special = cell.GetExtraObject<Special>();
+				Level level;
+				if (special != null && special.Type == (byte)SpecialType.Level) {
+					level = special.GetLevel();
+				} else {
+					level = cell.GetExtraObject<Level>();
+				}
+
+				if (level != null) {
+					int size = listLevels.Count;
+					for (int i = 0; i < size; i++) {
+						ListItem item = listLevels[i];
+						Grid grid = (Grid)item.Value;
+						if (grid.FileName == level.File) {
+							parentLevel = listLevels.SelectedItem;
+							listLevels.SelectedItem = item;
+							break;
+						}
+					}
+				}
+			} else if (e.KeyCode == Keys.R && e.Shift && parentLevel != null) {
+				listLevels.SelectedItem = parentLevel;
+				parentLevel = null;
+			} else if (map != null && mapViewer.CurrentCell != null) {
+				int direction = -1;
+				switch (e.KeyCode) {
+					case Keys.Right: direction = 0; break;
+					case Keys.Up: direction = 1; break;
+					case Keys.Left: direction = 2; break;
+					case Keys.Down: direction = 3; break;
+				}
+
+				if (direction >= 0) {
+					Cell cell = mapViewer.CurrentCell;
+					if (map.ChangeItemDirection(cell, currentObject, holdingControl || cell.Objects.Count == 0, false, direction)) {
+						UpdateCurrentLevel(listLevels.SelectedItem);
+					}
+				}
+			}
+
+			if (map != null && e.Shift) {
+				int direction = -1;
+				switch (e.KeyCode) {
+					case Keys.D: direction = 0; break;
+					case Keys.W: direction = 1; break;
+					case Keys.A: direction = 2; break;
+					case Keys.S: direction = 3; break;
+				}
+
+				if (direction >= 0) {
+					map.MoveObjects(direction);
+					UpdateCurrentLevel(listLevels.SelectedItem);
+				}
 			}
 		}
 		private void WorldViewer_KeyUp(object sender, KeyEventArgs e) {
@@ -209,6 +273,7 @@ namespace BabaIsYou.Views {
 		private void WorldViewer_FormClosing(object sender, FormClosingEventArgs e) {
 			RegistryWrite<int>("ShowStacked", menuItemShowStacked.Checked ? 1 : 0);
 			RegistryWrite<int>("ShowDirections", menuItemShowDirections.Checked ? 1 : 0);
+			RegistryWrite<int>("SortByFile", menuItemSortLevels.Checked ? 1 : 0);
 		}
 		private void WorldViewer_Deactivate(object sender, EventArgs e) {
 			holdingControl = false;
@@ -228,14 +293,16 @@ namespace BabaIsYou.Views {
 		}
 		private void txtLevelFilter_TextChanged(object sender, EventArgs e) {
 			if (txtLevelFilter.ForeColor == Color.Black) {
+				ListItem selected = listLevels.SelectedItem;
 				string searchText = txtLevelFilter.Text;
-				int size = listLevels.Items.Count;
+				int size = listLevels.Count;
 				for (int i = 0; i < size; i++) {
-					ListItem item = listLevels.Items[i];
+					ListItem item = listLevels[i];
 					string text = item.Text;
-					item.Visible = string.IsNullOrEmpty(searchText) || text.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0;
+					string value = item.Value == null ? string.Empty : item.Value.ToString();
+					item.Visible = string.IsNullOrEmpty(searchText) || text.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0 || value.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0;
 				}
-				listLevels.EnsureSelectedInView();
+				listLevels.SelectedItem = selected;
 			}
 		}
 		private static T RegistryRead<T>(string name, T defaultValue) {
@@ -260,9 +327,12 @@ namespace BabaIsYou.Views {
 				map = null;
 				mapViewer.Map = null;
 			} else {
-				if (mapViewer.Map == (Grid)item.Value) { return; }
-
 				map = (Grid)item.Value;
+				lastLevelWidth = map.Width;
+				lastLevelHeight = map.Height;
+
+				if (mapViewer.Map == map) { return; }
+
 				mapViewer.Map = map;
 				SelectPalette(map.Palette);
 			}
@@ -307,7 +377,7 @@ namespace BabaIsYou.Views {
 		private void AddSprites() {
 			string currentText = listObjects.SelectedItem?.Text;
 			listObjects.SelectedIndex = -1;
-			listObjects.Items.Clear();
+			listObjects.ClearItems();
 
 			currentObject = null;
 			string paletteName = map == null ? "default.png" : map.Palette;
@@ -335,10 +405,10 @@ namespace BabaIsYou.Views {
 				ListItem listItem = new ListItem(copy, name, img);
 				listItem.Changed = copy.Changed;
 				listItem.BackColor = palette.Background;
-				listObjects.Items.Add(listItem);
+				listObjects.AddItem(listItem);
 			}
 			ResizeListObjects();
-			listObjects.Items.Sort();
+			listObjects.SortItems();
 			listObjects.BackColor = palette.Edge;
 			if (!listObjects.SelectItemWithText(currentText)) {
 				listObjects.SelectedIndex = 0;
@@ -346,8 +416,8 @@ namespace BabaIsYou.Views {
 		}
 		private void ResizeListObjects() {
 			int rowSize = listObjects.Width / SpriteSize;
-			int rowCount = listObjects.Items.Count / rowSize;
-			if (rowCount * rowSize < listObjects.Items.Count) {
+			int rowCount = listObjects.Count / rowSize;
+			if (rowCount * rowSize < listObjects.Count) {
 				rowCount++;
 			}
 			splitObjectsLevel.SplitterDistance = SpriteSize * rowCount;
@@ -508,6 +578,13 @@ namespace BabaIsYou.Views {
 				}
 			} else if (e.Button == MouseButtons.Right) {
 				Item item = cell.GetNextObject(currentObject);
+				if (holdingControl) {
+					Item currentItem = cell.GetObject(currentObject);
+					if (currentItem != null) {
+						item = currentItem;
+					}
+				}
+
 				if (item != null) {
 					if (item is Level) {
 						statusAddLevel_ButtonClick(null, null);
@@ -516,10 +593,16 @@ namespace BabaIsYou.Views {
 					} else if (item is Special) {
 						statusAddSpecial_ButtonClick(null, null);
 					} else {
-						for (int i = 0; i < listObjects.Items.Count; i++) {
-							ListItem sprite = listObjects.Items[i];
+						int size = listObjects.Count;
+						for (int i = 0; i < size; i++) {
+							ListItem sprite = listObjects[i];
 							if (((Item)sprite.Value).ID == item.ID) {
-								listObjects.SelectedIndex = i;
+								listObjects.SelectedItem = sprite;
+								if (holdingControl) {
+									Item spriteItem = (Item)sprite.Value;
+									cell.Objects.Remove(item);
+									spriteItem.Direction = item.Direction;
+								}
 							}
 						}
 					}
@@ -584,34 +667,11 @@ namespace BabaIsYou.Views {
 		private void mapViewer_CellMouseWheel(Grid map, Cell cell, MouseEventArgs e) {
 			if (currentObject == null) { return; }
 
-			if (holdingControl || cell.Objects.Count == 0) {
-				ChangeItemDirection(currentObject, e.Delta < 0, false);
-			} else {
-				Item cellItem = cell.GetObject(currentObject);
-				if (cellItem == null) {
-					cellItem = cell.GetNextObject(null);
-				}
-				if (cellItem != null) {
-					ChangeItemDirection(cellItem, e.Delta < 0, true);
-				}
-			}
-		}
-		private void ChangeItemDirection(Item item, bool clockwise, bool updateMap) {
-			if (clockwise) {
-				item.Direction--;
-				if (item.Direction > 3) {
-					item.Direction = 3;
-				}
-			} else {
-				item.Direction++;
-				if (item.Direction > 3) {
-					item.Direction = 0;
-				}
-			}
-			if (updateMap) {
+			if (map.ChangeItemDirection(cell, currentObject, holdingControl || cell.Objects.Count == 0, e.Delta < 0)) {
 				UpdateCurrentLevel(listLevels.SelectedItem);
 			}
 		}
+
 		private void mapViewer_DrawCurrentCellStart(Graphics g, Grid map, Cell cell, Rectangle bounds) {
 			if (currentObject != null) {
 				bool containsType = cell.ContainsObject(currentObject);
@@ -740,8 +800,9 @@ namespace BabaIsYou.Views {
 				}
 				levelsToBeRemoved.Clear();
 
-				for (int i = 0; i < listLevels.Items.Count; i++) {
-					ListItem item = listLevels.Items[i];
+				int size = listLevels.Count;
+				for (int i = 0; i < size; i++) {
+					ListItem item = listLevels[i];
 					if (item.Changed) {
 						Grid mapToSave = (Grid)item.Value;
 						Writer.WriteMap(mapToSave, Path.Combine(GameDirectory, "Worlds", GameWorld));
@@ -764,7 +825,7 @@ namespace BabaIsYou.Views {
 				}
 				listLevels.Invalidate();
 
-				Text = $"{TitleBarText} - {GameWorldName} - {listLevels.Items.Count} Levels";
+				Text = $"{TitleBarText} - {GameWorldName} - {listLevels.Count} Levels";
 				if (saved > 0 && deleted == 0) {
 					MessageBox.Show(this, $"Saved {saved} modified level(s) in world.", "Saved World", MessageBoxButtons.OK);
 				} else if (saved == 0 && deleted > 0) {
@@ -788,13 +849,13 @@ namespace BabaIsYou.Views {
 					if (!string.IsNullOrEmpty(name)) {
 						string dirName = Path.Combine(GameDirectory, "Worlds", GameWorld);
 
-						int startID = listLevels.Items.Count;
-						while (File.Exists(Path.Combine(dirName, $"{startID}level.l"))) {
+						int startID = listLevels.Count;
+						while (File.Exists(Path.Combine(dirName, $"{startID:000}level.l"))) {
 							startID++;
 						}
-						Grid newMap = new Grid(Path.Combine(dirName, $"{startID}level.l"));
+						Grid newMap = new Grid(Path.Combine(dirName, $"{startID:000}level.l"));
 						newMap.Name = name;
-						newMap.Resize(14, 8);
+						newMap.Resize(lastLevelWidth, lastLevelHeight);
 						Writer.WriteMap(newMap, dirName);
 
 						int imgSize = listLevels.Width;
@@ -807,12 +868,12 @@ namespace BabaIsYou.Views {
 						using (Graphics g = Graphics.FromImage(imgExtra)) {
 							Renderer.Render(newMap, g, imgExtra.Width, imgExtra.Height);
 						}
+
 						ListItem item = new ListItem(newMap, newMap.Name, img);
 						item.Extra = imgExtra;
-						listLevels.Items.Add(item);
-						listLevels.Items.Sort();
+						listLevels.AddItem(item);
+						listLevels.SortItems();
 						listLevels.SelectedItem = item;
-						listLevels.EnsureSelectedInView();
 					}
 				}
 			}
@@ -821,9 +882,9 @@ namespace BabaIsYou.Views {
 			if (listLevels.SelectedItem != null && MessageBox.Show(this, "Are you sure you want to remove this level? It will only get deleted when you save the world.", "Remove Level", MessageBoxButtons.OKCancel) == DialogResult.OK) {
 				ListItem levelItem = listLevels.SelectedItem;
 				levelsToBeRemoved.Add(levelItem);
-				listLevels.Items.Remove(levelItem);
+				listLevels.RemoveItem(levelItem);
 				listLevels.SelectTopMostVisible();
-				Text = $"{TitleBarText} - {GameWorldName} - {listLevels.Items.Count} Levels";
+				Text = $"{TitleBarText} - {GameWorldName} - {listLevels.Count} Levels";
 			}
 		}
 		private void menuItemWorldProperties_Click(object sender, EventArgs e) {
@@ -841,7 +902,7 @@ namespace BabaIsYou.Views {
 				DialogResult result = properties.ShowDialog(this);
 				if (result == DialogResult.OK) {
 					GameWorldName = properties.WorldInfo["general", "name"];
-					Text = $"{TitleBarText} - {GameWorldName} - {listLevels.Items.Count} Levels";
+					Text = $"{TitleBarText} - {GameWorldName} - {listLevels.Count} Levels";
 					File.WriteAllText(properties.WorldInfo.FilePath, properties.WorldInfo.Serialize(true));
 				}
 			}
@@ -865,12 +926,12 @@ namespace BabaIsYou.Views {
 							Directory.CreateDirectory(Path.Combine(dirName, "Sprites"));
 							Info worldInfo = new Info(Path.Combine(dirName, "world_data.txt"), false);
 							worldInfo["general", "name"] = name;
-							worldInfo["general", "start"] = "0level";
-							worldInfo["general", "firstlevel"] = "0level";
+							worldInfo["general", "start"] = "000level";
+							worldInfo["general", "firstlevel"] = "000level";
 							File.WriteAllText(worldInfo.FilePath, worldInfo.Serialize(true));
-							Grid firstMap = new Grid(Path.Combine(dirName, "0level.l"));
+							Grid firstMap = new Grid(Path.Combine(dirName, "000level.l"));
 							firstMap.Name = "Empty";
-							firstMap.Resize(14, 8);
+							firstMap.Resize(lastLevelWidth, lastLevelHeight);
 							Writer.WriteMap(firstMap, dirName);
 							LoadWorld();
 						}
@@ -941,6 +1002,12 @@ namespace BabaIsYou.Views {
 		private void menuItemEdgePlacement_Click(object sender, EventArgs e) {
 			mapViewer.AllowEdgePlacement = menuItemEdgePlacement.Checked;
 			mapViewer.Invalidate();
+		}
+		private void menuItemSortLevels_Click(object sender, EventArgs e) {
+			listLevels.SortByText = !menuItemSortLevels.Checked;
+			ListItem selected = listLevels.SelectedItem;
+			listLevels.SortItems();
+			listLevels.SelectedItem = selected;
 		}
 		private void menuItemRevertChanges_Click(object sender, EventArgs e) {
 			if (map != null && MessageBox.Show(this, $"Are you sure you want to revert all changes to \"{map.Name}\" and reload it?", "Revert Changes", MessageBoxButtons.YesNo) == DialogResult.Yes) {

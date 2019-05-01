@@ -7,16 +7,15 @@ namespace BabaIsYou.Views {
 			InitializeComponent();
 		}
 		public void AddItem(ListItem item, bool select) {
-			listSelector.Items.Add(item);
+			listSelector.AddItem(item);
 			if (select) {
-				listSelector.SelectedIndex = listSelector.Items.Count - 1;
+				listSelector.SelectedIndex = listSelector.Count - 1;
 			}
 		}
 		public void SortItems() {
 			ListItem item = listSelector.SelectedItem;
-			listSelector.Items.Sort();
+			listSelector.SortItems();
 			listSelector.SelectedItem = item;
-			listSelector.EnsureSelectedInView();
 		}
 		public bool DrawText {
 			get { return listSelector.DrawText; }

@@ -6,16 +6,15 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 namespace BabaIsYou.Controls {
-	public class ListPanel : Control {
+	public class ListPanel : MessageFilter {
 		public delegate void SelectedIndexChangedEvent(int index, ListItem item);
 		public event SelectedIndexChangedEvent IndexChanged;
 		public delegate void ItemClickedEvent(ListItem item, MouseButtons buttons);
 		public event ItemClickedEvent ItemClicked;
 
-		[EditorBrowsable(EditorBrowsableState.Never), Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), ReadOnly(true)]
-		public List<ListItem> Items { get; }
 		[DefaultValue(true)]
 		public bool Focusable { get; set; }
+
 		private bool vertical = true;
 		[DefaultValue(true)]
 		public bool Vertical {
@@ -27,8 +26,14 @@ namespace BabaIsYou.Controls {
 				}
 			}
 		}
+
 		[DefaultValue(true)]
 		public bool DrawText { get; set; }
+		[DefaultValue(false)]
+		public bool UseControlMovement { get; set; }
+		[DefaultValue(true)]
+		public bool SortByText { get; set; }
+
 		[EditorBrowsable(EditorBrowsableState.Never), Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), ReadOnly(true)]
 		public ListItem SelectedItem {
 			get {
@@ -40,6 +45,9 @@ namespace BabaIsYou.Controls {
 				} else {
 					for (int i = 0; i < Items.Count; i++) {
 						if (Items[i] == value) {
+							if (SelectedIndex == i) {
+								selectedIndex = -1;
+							}
 							SelectedIndex = i;
 							return;
 						}
@@ -48,6 +56,7 @@ namespace BabaIsYou.Controls {
 				}
 			}
 		}
+
 		private int selectedIndex = -1;
 		[EditorBrowsable(EditorBrowsableState.Never), Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), ReadOnly(true)]
 		public int SelectedIndex {
@@ -79,20 +88,48 @@ namespace BabaIsYou.Controls {
 				}
 			}
 		}
+
+		private List<ListItem> Items = new List<ListItem>();
 		private int topIndex = 0;
 		private StringBuilder typedString;
 		private DateTime lastTyped;
-		public ListPanel() {
+		private Keys lastKeyData;
+		public ListPanel() : base() {
 			DrawText = true;
-			Items = new List<ListItem>();
+			SortByText = true;
 			DoubleBuffered = true;
+			UseControlMovement = false;
 			typedString = new StringBuilder();
 			lastTyped = DateTime.MinValue;
 			Focusable = true;
 		}
 
-		public void EnsureSelectedInView() {
-			Invalidate();
+		public void AddItem(ListItem item) {
+			if (item.Parent != null) {
+				throw new Exception($"This ListItem ({item.Text}) already has a parent ListPanel ({item.Parent.Name})");
+			}
+			item.Parent = this;
+			Items.Add(item);
+		}
+		public void AddItems(List<ListItem> items) {
+			int size = items.Count;
+			for (int i = 0; i < size; i++) {
+				ListItem item = items[i];
+				AddItem(item);
+			}
+		}
+		public bool RemoveItem(ListItem item) {
+			return Items.Remove(item);
+		}
+		public void ClearItems() {
+			Items.Clear();
+		}
+		public void SortItems() {
+			Items.Sort();
+		}
+		public int Count { get { return Items.Count; } }
+		public ListItem this[int index] {
+			get { return Items[index]; }
 		}
 		private int MaxIndex(bool contains = false, bool nextLine = false) {
 			int pos = 0;
@@ -151,6 +188,9 @@ namespace BabaIsYou.Controls {
 				if (!item.Visible) { continue; }
 
 				selected = true;
+				if (SelectedIndex == i) {
+					selectedIndex = -1;
+				}
 				SelectedIndex = i;
 				break;
 			}
@@ -171,8 +211,17 @@ namespace BabaIsYou.Controls {
 			return false;
 		}
 		protected override bool IsInputKey(Keys keyData) {
-			if (keyData == Keys.Up || keyData == Keys.Down || keyData == Keys.Right || keyData == Keys.Left) {
-				OnKeyDown(new KeyEventArgs(keyData));
+			if (keyData == lastKeyData) {
+				lastKeyData = Keys.None;
+				return false;
+			}
+			lastKeyData = keyData;
+
+			if ((keyData & Keys.Up) == Keys.Up || (keyData & Keys.Down) == Keys.Down || (keyData & Keys.Right) == Keys.Right || (keyData & Keys.Left) == Keys.Left) {
+				if (!UseControlMovement || (keyData & Keys.Control) == Keys.Control) {
+					keyData &= ~Keys.Control;
+					OnKeyDown(new KeyEventArgs(keyData));
+				}
 			}
 			return false;
 		}
@@ -400,6 +449,7 @@ namespace BabaIsYou.Controls {
 		}
 	}
 	public class ListItem : IComparable {
+		public ListPanel Parent { get; set; }
 		public string Text { get; set; }
 		public Bitmap Image { get; set; }
 		public Bitmap Extra { get; set; }
@@ -448,7 +498,11 @@ namespace BabaIsYou.Controls {
 		}
 		public int CompareTo(object obj) {
 			if (obj is ListItem item) {
-				return Text.CompareTo(item.Text);
+				if (Parent == null || Parent.SortByText) {
+					return Text.CompareTo(item.Text);
+				} else {
+					return (Value == null ? string.Empty : Value.ToString()).CompareTo(item.Value == null ? string.Empty : item.Value.ToString());
+				}
 			}
 			return -1;
 		}

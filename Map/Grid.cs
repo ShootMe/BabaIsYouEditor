@@ -95,6 +95,98 @@ namespace BabaIsYou.Map {
 			}
 			return layerCount;
 		}
+		public void MoveObjects(int direction) {
+			int moveX = 0;
+			int moveY = 0;
+			switch (direction) {
+				case 0: moveX = 1; break;
+				case 1: moveY = -1; break;
+				case 2: moveX = -1; break;
+				case 3: moveY = 1; break;
+			}
+			if (moveX == 0 && moveY == 0) { return; }
+
+			int selectorX = Reader.ParseInt(Info["general", "selectorX"], -1);
+			int selectorY = Reader.ParseInt(Info["general", "selectorY"], -1);
+			if (selectorX >= 0 && selectorY >= 0) {
+				Info["general", "selectorX"] = WrapValue(selectorX + moveX, Width).ToString();
+				Info["general", "selectorY"] = WrapValue(selectorY + moveY, Height).ToString();
+			}
+
+			int x = 0;
+			int y = 0;
+			int size = Cells.Count;
+			List<Cell> newCells = new List<Cell>(size);
+			for (int i = 0; i < size; i++) {
+				newCells.Add(null);
+			}
+			for (int i = 0; i < size; i++) {
+				Cell cell = Cells[i];
+
+				if (x > 0 && x + 1 < Width && y > 0 && y + 1 < Height) {
+					int newX = WrapValue(x + moveX, Width);
+					int newY = WrapValue(y + moveY, Height);
+					int newPos = newY * Width + newX;
+					newCells[newPos] = cell;
+				} else {
+					newCells[i] = cell;
+				}
+
+				x++;
+				if (x >= Width) {
+					x = 0;
+					y++;
+				}
+			}
+			for (int i = 0; i < size; i++) {
+				Cell cell = newCells[i];
+				cell.Position = (short)i;
+				int objects = cell.Objects.Count;
+				for (int j = 0; j < objects; j++) {
+					Item item = cell.Objects[j];
+					item.Position = (short)i;
+				}
+				Cells[i] = cell;
+			}
+		}
+		private int WrapValue(int value, int max) {
+			if (value + 1 >= max) {
+				value = 1;
+			} else if (value <= 0) {
+				value = max - 2;
+			}
+			return value;
+		}
+		public bool ChangeItemDirection(Cell cell, Item item, bool changeCurrent, bool clockwise, int specific = -1) {
+			if (changeCurrent) {
+				ChangeItemDirection(item, clockwise, specific);
+			} else {
+				Item cellItem = cell.GetObject(item);
+				if (cellItem == null) {
+					cellItem = cell.GetNextObject(null);
+				}
+				if (cellItem != null) {
+					ChangeItemDirection(cellItem, false, specific);
+					return true;
+				}
+			}
+			return false;
+		}
+		private void ChangeItemDirection(Item item, bool clockwise, int specific) {
+			if (specific >= 0) {
+				item.Direction = (byte)specific;
+			} else if (clockwise) {
+				item.Direction--;
+				if (item.Direction > 3) {
+					item.Direction = 3;
+				}
+			} else {
+				item.Direction++;
+				if (item.Direction > 3) {
+					item.Direction = 0;
+				}
+			}
+		}
 		public void UpdateExtraObjects() {
 			Info.RemoveSection("Levels");
 			Info.RemoveSection("Paths");

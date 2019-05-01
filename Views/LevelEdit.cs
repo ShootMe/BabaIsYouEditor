@@ -74,9 +74,9 @@ namespace BabaIsYou.Views {
 
 				int imgWidth = 0;
 				int imgHeight = 0;
-				int addedCount = LevelList.Items.Count;
+				int addedCount = LevelList.Count;
 				for (int i = 0; i < addedCount; i++) {
-					ListItem level = LevelList.Items[i];
+					ListItem level = LevelList[i];
 					Grid map = (Grid)level.Value;
 					imgWidth = level.Extra.Width;
 					imgHeight = level.Extra.Height;

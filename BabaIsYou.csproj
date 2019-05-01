@@ -26,6 +26,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -58,6 +59,9 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\MapViewer.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\MessageFilter.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\NumericBox.cs">

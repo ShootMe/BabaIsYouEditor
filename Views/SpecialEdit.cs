@@ -48,8 +48,9 @@ namespace BabaIsYou.Views {
 					break;
 				default:
 					level = specialCopy.GetLevel();
-					for (int i = 0; i < LevelList.Items.Count; i++) {
-						ListItem item = LevelList.Items[i];
+					int size = LevelList.Count;
+					for (int i = 0; i < size; i++) {
+						ListItem item = LevelList[i];
 						Grid map = (Grid)item.Value;
 						if (map.FileName == level.File) {
 							level.Name = map.Name;

@@ -86,16 +86,16 @@ namespace BabaIsYou.Map {
 				}
 			}
 
+			mapBounds.X = xOrig;
+			mapBounds.Y = yOrig;
+			DrawSpecials(g, grid, mapBounds, rowEnd, palette, false);
+
 			if (showDirections) {
 				mapBounds.X = xOrig;
 				mapBounds.Y = yOrig;
 
 				DrawDirections(g, grid, mapBounds, rowEnd);
 			}
-
-			mapBounds.X = xOrig;
-			mapBounds.Y = yOrig;
-			DrawSpecials(g, grid, mapBounds, rowEnd, palette, false);
 
 			int selectorX;
 			if (!int.TryParse(grid.Info["general", "selectorX"], out selectorX)) {
