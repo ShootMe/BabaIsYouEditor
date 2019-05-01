@@ -400,7 +400,7 @@ namespace BabaIsYou.Controls {
 		private void MoveList(bool down, bool page) {
 			int rowLength = RowLength();
 			if (down) {
-				int maxTopIndex = MaxIndex();
+				int maxTopIndex = MaxIndex(true);
 				if (topIndex != maxTopIndex && maxTopIndex < Items.Count - 1) {
 					int currentTop = topIndex;
 					if (page) {
