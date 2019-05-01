@@ -49,6 +49,9 @@ namespace BabaIsYou.Controls {
 		}
 
 		private void MapResized(Grid map) {
+			ClearCurrentCell();
+		}
+		public void ClearCurrentCell() {
 			currentCell = null;
 			CellMouseOver?.Invoke(currentMap, null, null);
 			Invalidate();

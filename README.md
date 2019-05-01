@@ -6,6 +6,12 @@ Simple Level Editor for the game Baba Is You
   - Run and enjoy
 
 ## Change Log
+  - 1.1.8
+    - Features
+	  - On Shift + R with multiple presses it will now search for any 'parent' level that opens your current level
+    - Changes
+	  - Improved performance when placing/removing sprites in a map
+	  
   - 1.1.7
     - Features
 	  - Added new option on the 'Add Level' screen to make a copy of the current level you are on

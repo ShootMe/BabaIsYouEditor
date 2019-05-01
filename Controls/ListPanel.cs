@@ -183,7 +183,7 @@ namespace BabaIsYou.Controls {
 			get { return Items[index]; }
 		}
 		protected override void OnResize(EventArgs e) {
-			ReselectCurrentIndex();
+			Invalidate();
 		}
 		private int RowLength() {
 			if (Items.Count == 0) { return -1; }

@@ -48,6 +48,7 @@ namespace BabaIsYou.Views {
 		private Item currentObject;
 		private List<ListItem> levelsToBeRemoved = new List<ListItem>();
 		private bool addedObject;
+		private bool hasChanged = false;
 		private bool? isAdding = null;
 		private bool holdingControl = false;
 		private string GameWorldName;
@@ -230,9 +231,34 @@ namespace BabaIsYou.Views {
 						}
 					}
 				}
-			} else if (e.KeyCode == Keys.R && e.Shift && parentLevel != null) {
-				listLevels.SelectedItem = parentLevel;
-				parentLevel = null;
+			} else if (e.KeyCode == Keys.R && e.Shift) {
+				if (parentLevel == null && map != null) {
+					int size = listLevels.Count;
+					for (int i = 0; i < size; i++) {
+						Grid grid = (Grid)listLevels[i].Value;
+						int cells = grid.Cells.Count;
+						for (int j = 0; j < cells; j++) {
+							Cell cell = grid.Cells[j];
+							Special special = cell.GetExtraObject<Special>();
+							Level level;
+							if (special != null && special.Type == (byte)SpecialType.Level) {
+								level = special.GetLevel();
+							} else {
+								level = cell.GetExtraObject<Level>();
+							}
+
+							if (level != null && level.File == map.FileName) {
+								parentLevel = listLevels[i];
+								break;
+							}
+						}
+					}
+				}
+
+				if (parentLevel != null) {
+					listLevels.SelectedItem = parentLevel;
+					parentLevel = null;
+				}
 			} else if (map != null && mapViewer.CurrentCell != null) {
 				int direction = -1;
 				switch (e.KeyCode) {
@@ -263,6 +289,7 @@ namespace BabaIsYou.Views {
 
 				if (direction >= 0) {
 					map.MoveObjects(direction);
+					mapViewer.ClearCurrentCell();
 					UpdateCurrentLevel(listLevels.SelectedItem);
 				}
 			}
@@ -542,6 +569,10 @@ namespace BabaIsYou.Views {
 		private void mapViewer_MouseUp(object sender, MouseEventArgs e) {
 			isAdding = null;
 			mapViewer.Invalidate();
+			if (hasChanged) {
+				UpdateCurrentLevel(listLevels.SelectedItem);
+				hasChanged = false;
+			}
 		}
 		private void mapViewer_CellMouseDown(Grid map, Cell cell, MouseEventArgs e) {
 			if (e.Button == MouseButtons.Left) {
@@ -565,18 +596,18 @@ namespace BabaIsYou.Views {
 						map.Info["general", "selectorY"] = "-1";
 					}
 
-					UpdateCurrentLevel(listLevels.SelectedItem);
+					hasChanged = true;
 				} else if (willAdd && (!hasObject || holdingControl) && isAdding.GetValueOrDefault(true)) {
 					isAdding = true;
 					Item item = currentObject.Copy();
 					item.Position = cell.Position;
 					cell.Objects.Add(item);
 					cell.Objects.Sort();
-					UpdateCurrentLevel(listLevels.SelectedItem);
+					hasChanged = true;
 				} else if (hasObject && !isAdding.GetValueOrDefault(false)) {
 					isAdding = false;
 					if (cell.RemoveObjectOfType(currentObject)) {
-						UpdateCurrentLevel(listLevels.SelectedItem);
+						hasChanged = true;
 					}
 				}
 			} else if (e.Button == MouseButtons.Right) {
