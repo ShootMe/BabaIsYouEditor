@@ -124,7 +124,7 @@ namespace BabaIsYou.Views {
 				for (int i = 0; i < files.Length; i++) {
 					string file = files[i];
 					map = Reader.ReadMap(files[i]);
-					if (map == null) { continue; }
+					if (map == null || map.Width <= 0 || map.Height <= 0) { continue; }
 
 					float widthRatio = imgSize / map.Width;
 					Bitmap img = new Bitmap(imgSize, (int)(widthRatio * map.Height) + listLevels.Font.Height * 2);
@@ -246,6 +246,8 @@ namespace BabaIsYou.Views {
 					Cell cell = mapViewer.CurrentCell;
 					if (map.ChangeItemDirection(cell, currentObject, holdingControl || cell.Objects.Count == 0, false, direction)) {
 						UpdateCurrentLevel(listLevels.SelectedItem);
+					} else {
+						mapViewer.Invalidate();
 					}
 				}
 			}
@@ -670,6 +672,8 @@ namespace BabaIsYou.Views {
 
 			if (map.ChangeItemDirection(cell, currentObject, holdingControl || cell.Objects.Count == 0, e.Delta < 0)) {
 				UpdateCurrentLevel(listLevels.SelectedItem);
+			} else {
+				mapViewer.Invalidate();
 			}
 		}
 
@@ -723,6 +727,8 @@ namespace BabaIsYou.Views {
 			using (AddDialog addTheme = new AddDialog()) {
 				addTheme.Text = "Add Theme";
 				addTheme.InputLabel = "Theme Name";
+				addTheme.OptionText = "Only Save Object Changes";
+				addTheme.OptionSetting = false;
 				addTheme.InputText = map.Name;
 				addTheme.Icon = this.Icon;
 				Palette palette = Reader.Palettes[map.Palette];
@@ -747,7 +753,7 @@ namespace BabaIsYou.Views {
 
 						Directory.CreateDirectory(themePath);
 						if (!File.Exists(themeFile) || MessageBox.Show(this, "Theme already exists. Do you want to overwrite it?", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK) {
-							string theme = map.SerializeChanges(name);
+							string theme = map.SerializeChanges(name, !addTheme.OptionSetting);
 							File.WriteAllText(themeFile, theme);
 						}
 					}
@@ -807,13 +813,7 @@ namespace BabaIsYou.Views {
 					if (item.Changed) {
 						Grid mapToSave = (Grid)item.Value;
 						Writer.WriteMap(mapToSave, Path.Combine(GameDirectory, "Worlds", GameWorld));
-
-						using (Bitmap imgExtra = new Bitmap(72, 72)) {
-							using (Graphics g = Graphics.FromImage(imgExtra)) {
-								Renderer.Render(mapToSave, g, imgExtra.Width, imgExtra.Height);
-							}
-							imgExtra.Save(Path.Combine(GameDirectory, "Worlds", GameWorld, $"{mapToSave.FileName}.png"));
-						}
+						SaveThumbnail(mapToSave);
 
 						item.Changed = false;
 						saved++;
@@ -838,10 +838,20 @@ namespace BabaIsYou.Views {
 				MessageBox.Show(this, ex.ToString(), "Error Saving World", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
+		private void SaveThumbnail(Grid mapToSave) {
+			using (Bitmap imgExtra = new Bitmap(72, 72)) {
+				using (Graphics g = Graphics.FromImage(imgExtra)) {
+					Renderer.Render(mapToSave, g, imgExtra.Width, imgExtra.Height);
+				}
+				imgExtra.Save(Path.Combine(GameDirectory, "Worlds", GameWorld, $"{mapToSave.FileName}.png"));
+			}
+		}
 		private void menuItemAddLevel_Click(object sender, EventArgs e) {
 			using (AddDialog addLevel = new AddDialog()) {
 				addLevel.Text = "Add Level";
 				addLevel.InputLabel = "Level Name";
+				addLevel.OptionSetting = false;
+				addLevel.OptionText = map != null ? "Make Copy Of Current Level" : string.Empty;
 				addLevel.Icon = this.Icon;
 				Palette palette = Reader.Palettes["default.png"];
 				addLevel.BackColor = palette.Edge;
@@ -854,10 +864,25 @@ namespace BabaIsYou.Views {
 						while (File.Exists(Path.Combine(dirName, $"{startID:000}level.l"))) {
 							startID++;
 						}
-						Grid newMap = new Grid(Path.Combine(dirName, $"{startID:000}level.l"));
+
+						Grid newMap = null;
+						string newMapFile = Path.Combine(dirName, $"{startID:000}level");
+						if (addLevel.OptionSetting) {
+							File.Delete($"{newMapFile}.l");
+							File.Copy(Path.Combine(dirName, $"{map.FileName}.l"), $"{newMapFile}.l");
+							File.Delete($"{newMapFile}.ld");
+							File.Copy(Path.Combine(dirName, $"{map.FileName}.ld"), $"{newMapFile}.ld");
+							newMap = Reader.ReadMap($"{newMapFile}.l");
+						} else {
+							newMap = new Grid($"{newMapFile}.l");
+						}
+
 						newMap.Name = name;
-						newMap.Resize(lastLevelWidth, lastLevelHeight);
+						if (!addLevel.OptionSetting) {
+							newMap.Resize(lastLevelWidth, lastLevelHeight);
+						}
 						Writer.WriteMap(newMap, dirName);
+						SaveThumbnail(newMap);
 
 						int imgSize = listLevels.Width;
 						float widthRatio = imgSize / newMap.Width;

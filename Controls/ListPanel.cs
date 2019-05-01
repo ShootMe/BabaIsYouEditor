@@ -120,7 +120,24 @@ namespace BabaIsYou.Controls {
 		}
 		public void ReselectCurrentIndex() {
 			int current = selectedIndex;
-			selectedIndex = -1;
+			if (current >= Items.Count) {
+				current = Items.Count - 1;
+			}
+			while (current >= 0 && !Items[current].Visible) {
+				current--;
+			}
+			if (current < 0 && Items.Count > 0) {
+				current = 0;
+				while (current < Items.Count && !Items[current].Visible) {
+					current++;
+				}
+			}
+			if (current >= Items.Count) {
+				current = -1;
+			}
+			if (selectedIndex == current) {
+				selectedIndex = -1;
+			}
 			SelectedIndex = current;
 		}
 
@@ -285,7 +302,7 @@ namespace BabaIsYou.Controls {
 				}
 				case Keys.Left:
 					for (int i = vertical ? 1 : RowLength(); i > 0; i--) {
-						while (starting > 0 && !Items[starting--].Visible) { }
+						while (starting > 0 && !Items[--starting].Visible) { }
 						if (starting == 0 && i > 1) {
 							overflowed = true;
 							break;
@@ -300,7 +317,7 @@ namespace BabaIsYou.Controls {
 					break;
 				case Keys.Up:
 					for (int i = vertical ? RowLength() : 1; i > 0; i--) {
-						while (starting > 0 && !Items[starting--].Visible) { }
+						while (starting > 0 && !Items[--starting].Visible) { }
 						if (starting == 0 && i > 1) {
 							overflowed = true;
 							break;
@@ -315,7 +332,7 @@ namespace BabaIsYou.Controls {
 					break;
 				case Keys.Right:
 					for (int i = vertical ? 1 : RowLength(); i > 0; i--) {
-						while (starting + 1 < Items.Count && !Items[starting++].Visible) { }
+						while (starting + 1 < Items.Count && !Items[++starting].Visible) { }
 						if (starting + 1 >= Items.Count && i > 1) {
 							overflowed = true;
 							break;
@@ -330,7 +347,7 @@ namespace BabaIsYou.Controls {
 					break;
 				case Keys.Down:
 					for (int i = vertical ? RowLength() : 1; i > 0; i--) {
-						while (starting + 1 < Items.Count && !Items[starting++].Visible) { }
+						while (starting + 1 < Items.Count && !Items[++starting].Visible) { }
 						if (starting + 1 >= Items.Count && i > 1) {
 							overflowed = true;
 							break;

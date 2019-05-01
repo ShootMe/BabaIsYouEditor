@@ -243,12 +243,14 @@ namespace BabaIsYou.Map {
 				}
 			}
 		}
-		public string SerializeChanges(string themeName) {
+		public string SerializeChanges(string themeName, bool includePalette) {
 			StringBuilder sb = new StringBuilder();
 			sb.AppendLine("[general]");
 			sb.AppendLine($"name={themeName}");
-			sb.AppendLine($"palette={Palette}");
-			sb.AppendLine($"paletteroot={Info["general", "paletteroot"]}");
+			if (includePalette) {
+				sb.AppendLine($"palette={Palette}");
+				sb.AppendLine($"paletteroot={Info["general", "paletteroot"]}");
+			}
 			sb.AppendLine("[tiles]");
 			sb.Append("changed=");
 			StringBuilder tiles = new StringBuilder();

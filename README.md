@@ -6,6 +6,15 @@ Simple Level Editor for the game Baba Is You
   - Run and enjoy
 
 ## Change Log
+  - 1.1.7
+    - Features
+	  - Added new option on the 'Add Level' screen to make a copy of the current level you are on
+	  - Added new option on the 'New Theme' screen to set if you want to only save the sprite changes and not include the palette
+	- Changes
+	  - Level lists in popups will now also sort based on the main level sort option (Name/File)
+    - Fixes
+	  - Fixed issue where when changing direction of currently selected sprite it wasnt updating the display right away
+
   - 1.1.6
     - Changes
 	  - Changed the default program font to be a bit more readable and make things more consistent

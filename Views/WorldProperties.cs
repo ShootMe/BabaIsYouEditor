@@ -85,6 +85,7 @@ namespace BabaIsYou.Views {
 					sizeY--;
 				}
 				selector.ClientSize = new Size(imgWidth * sizeX, imgHeight * sizeY);
+				selector.SortByText = LevelList.SortByText;
 				selector.SortItems();
 
 				DialogResult result = selector.ShowDialog(this);

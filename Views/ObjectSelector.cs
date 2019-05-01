@@ -14,6 +14,10 @@ namespace BabaIsYou.Views {
 				listSelector.SelectedIndex = listSelector.Count - 1;
 			}
 		}
+		public bool SortByText {
+			get { return listSelector.SortByText; }
+			set { listSelector.SortByText = value; }
+		}
 		public void SortItems() {
 			ListItem item = listSelector.SelectedItem;
 			listSelector.SortItems();

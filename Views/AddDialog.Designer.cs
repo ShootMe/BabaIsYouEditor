@@ -26,6 +26,7 @@
 			this.lblInput = new System.Windows.Forms.Label();
 			this.txtInput = new System.Windows.Forms.TextBox();
 			this.btnSave = new System.Windows.Forms.Button();
+			this.chkOption = new System.Windows.Forms.CheckBox();
 			this.SuspendLayout();
 			// 
 			// lblInput
@@ -57,9 +58,20 @@
 			this.btnSave.Location = new System.Drawing.Point(126, 48);
 			this.btnSave.Name = "btnSave";
 			this.btnSave.Size = new System.Drawing.Size(51, 23);
-			this.btnSave.TabIndex = 2;
+			this.btnSave.TabIndex = 3;
 			this.btnSave.Text = "Save";
 			this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+			// 
+			// chkOption
+			// 
+			this.chkOption.AutoSize = true;
+			this.chkOption.Location = new System.Drawing.Point(53, 48);
+			this.chkOption.Name = "chkOption";
+			this.chkOption.Size = new System.Drawing.Size(62, 17);
+			this.chkOption.TabIndex = 2;
+			this.chkOption.Text = "Option";
+			this.chkOption.UseVisualStyleBackColor = true;
+			this.chkOption.Visible = false;
 			// 
 			// AddDialog
 			// 
@@ -67,6 +79,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.Black;
 			this.ClientSize = new System.Drawing.Size(312, 84);
+			this.Controls.Add(this.chkOption);
 			this.Controls.Add(this.btnSave);
 			this.Controls.Add(this.txtInput);
 			this.Controls.Add(this.lblInput);
@@ -80,6 +93,7 @@
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Add";
+			this.Load += new System.EventHandler(this.AddDialog_Load);
 			this.Shown += new System.EventHandler(this.AddDialog_Shown);
 			this.ResumeLayout(false);
 			this.PerformLayout();
@@ -91,5 +105,6 @@
 		private System.Windows.Forms.Label lblInput;
 		private System.Windows.Forms.TextBox txtInput;
 		private System.Windows.Forms.Button btnSave;
+		private System.Windows.Forms.CheckBox chkOption;
 	}
 }
