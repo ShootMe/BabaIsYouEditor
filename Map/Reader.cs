@@ -146,7 +146,7 @@ namespace BabaIsYou.Map {
 					}
 
 					string value = obj.Substring(index + 1, obj.Length - index - 2).Trim();
-					obj = obj.Substring(0, index).Trim();
+					obj = obj.Substring(0, index).Trim().ToLower();
 					SetItemValue(item, obj, value);
 				}
 
@@ -211,6 +211,8 @@ namespace BabaIsYou.Map {
 				case "active": item.ActiveColor = CoordinateToShort(value); break;
 				case "tiling": item.Tiling = ParseByte(value); break;
 				case "tile": item.ID = CoordinateToShort(value); break;
+				case "operatortype": item.OperatorType = value.Substring(1, value.Length - 2); break;
+				case "argextra": item.ArgExtra = value; break;
 			}
 		}
 		public static short CoordinateToShort(string coordinate) {
@@ -419,7 +421,7 @@ namespace BabaIsYou.Map {
 
 			foreach (Special special in specials.Values) {
 				special.Position = (short)(special.Y * grid.Width + special.X);
-				if (special.Position < 0 || special.Position >= grid.Cells.Count) { continue; }
+				if (special.Position < 0 || special.Position >= grid.Cells.Count || string.IsNullOrEmpty(special.Object)) { continue; }
 
 				specialCount = -1;
 				string type = ParseStringToComma(special.Object, ref specialCount, "Unknown");

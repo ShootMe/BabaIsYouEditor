@@ -50,6 +50,8 @@
 				Direction = Direction,
 				Color = Color,
 				ActiveColor = ActiveColor,
+				OperatorType = OperatorType,
+				ArgExtra = ArgExtra,
 				X = X,
 				Y = Y,
 				Style = Style,

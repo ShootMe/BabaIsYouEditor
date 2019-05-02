@@ -22,7 +22,7 @@ namespace BabaIsYou.Views {
 			}
 		}
 
-		private void ObjectEditor_Shown(object sender, EventArgs e) {
+		private void ObjectEditor_Load(object sender, EventArgs e) {
 			DefaultItem = Reader.DefaultsByID[Edit.ID].Copy();
 			Text = $"Edit - {DefaultItem.Object} - {DefaultItem.Name}";
 
@@ -108,17 +108,24 @@ namespace BabaIsYou.Views {
 					Edit.IsObject = Edit.Name.IndexOf("text_") < 0;
 					if (Edit.IsObject) {
 						Edit.ActiveColor = -1;
+						Edit.OperatorType = null;
+						Edit.ArgExtra = null;
 					}
 
 					Item item;
 					if (Reader.DefaultsByObject.TryGetValue(Edit.Name, out item)) {
 						Edit.Type = item.Type;
-						if (!Edit.IsObject && Edit.ActiveColor == -1) {
-							Edit.ActiveColor = item.ActiveColor;
+						if (!Edit.IsObject) {
+							if (Edit.ActiveColor == -1) {
+								Edit.ActiveColor = item.ActiveColor;
+							}
+							Edit.OperatorType = item.OperatorType;
+							Edit.ArgExtra = item.ArgExtra;
 						}
 					} else {
 						Edit.Type = 0;
 					}
+
 					if (Reader.DefaultsByObject.TryGetValue(Edit.Sprite, out item)) {
 						Edit.Tiling = item.Tiling;
 					} else {
@@ -179,8 +186,15 @@ namespace BabaIsYou.Views {
 			lblActiveColor.Visible = !Edit.IsObject;
 			lblTextType.Visible = !Edit.IsObject;
 			cboTextType.Visible = !Edit.IsObject;
+			lblArgExtra.Visible = !Edit.IsObject;
+			txtArgExtra.Visible = !Edit.IsObject;
+			lblOperatorType.Visible = !Edit.IsObject;
+			txtOperatorType.Visible = !Edit.IsObject;
 			if (!Edit.IsObject) {
+				ClientSize = new Size(ClientSize.Width, 315);
 				DrawImage(imgActive);
+			} else {
+				ClientSize = new Size(ClientSize.Width, 274);
 			}
 
 			toolTips.SetToolTip(imgObject, Edit.Name);
@@ -191,6 +205,8 @@ namespace BabaIsYou.Views {
 			numLayer.Value = Edit.Layer;
 			cboTextType.SelectedItem = (TextType)Edit.Type;
 			cboTiling.SelectedItem = (Tiling)Edit.Tiling;
+			txtArgExtra.Text = Edit.ArgExtra;
+			txtOperatorType.Text = Edit.OperatorType;
 		}
 		private void DrawImage(PictureBox img, bool useNameOnly = false) {
 			if (img.Image != null) {
@@ -222,6 +238,12 @@ namespace BabaIsYou.Views {
 			Map.ApplyChanges();
 			this.DialogResult = DialogResult.OK;
 			this.Close();
+		}
+		private void txtOperatorType_TextChanged(object sender, EventArgs e) {
+			Edit.OperatorType = string.IsNullOrEmpty(txtOperatorType.Text) ? null : txtOperatorType.Text;
+		}
+		private void txtArgExtra_TextChanged(object sender, EventArgs e) {
+			Edit.ArgExtra = string.IsNullOrEmpty(txtArgExtra.Text) ? null : txtArgExtra.Text;
 		}
 	}
 }
