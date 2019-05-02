@@ -9,6 +9,7 @@ namespace BabaIsYou.Map {
 		public const int MAP = 0x2050414d;
 		public const int LAYR = 0x5259414c;
 		public static Dictionary<string, Item> DefaultsByObject = new Dictionary<string, Item>(StringComparer.OrdinalIgnoreCase);
+		public static Dictionary<string, Item> DefaultsByName = new Dictionary<string, Item>(StringComparer.OrdinalIgnoreCase);
 		public static Dictionary<short, Item> DefaultsByID = new Dictionary<short, Item>();
 		public static Dictionary<string, Palette> Palettes = new Dictionary<string, Palette>(StringComparer.OrdinalIgnoreCase);
 		public static Dictionary<string, Sprite> Sprites = new Dictionary<string, Sprite>();
@@ -31,6 +32,7 @@ namespace BabaIsYou.Map {
 			}
 
 			DefaultsByObject.Clear();
+			DefaultsByName.Clear();
 			DefaultsByID.Clear();
 			int maxID = 0;
 			using (StreamReader reader = new StreamReader(Path.Combine(DataPath, "values.lua"))) {
@@ -45,6 +47,13 @@ namespace BabaIsYou.Map {
 			if (File.Exists(options)) {
 				using (StreamReader reader = new StreamReader(options)) {
 					ReadExtraObjects(reader, maxID);
+				}
+			}
+
+			foreach (Item item in DefaultsByID.Values) {
+				if (!string.IsNullOrEmpty(item.Sprite) && item.Name != item.Sprite && !Sprites.ContainsKey(item.Name)) {
+					Sprite sprite = Sprites[item.Sprite];
+					Sprites.Add(item.Name, sprite.Copy(item.Name));
 				}
 			}
 
@@ -113,26 +122,26 @@ namespace BabaIsYou.Map {
 		private static int ReadObjects(StreamReader reader) {
 			int maxID = 0;
 			while (!reader.EndOfStream) {
-				string title = reader.ReadLine().Trim();
-				if (title == "}") {
+				string data = reader.ReadLine().Trim();
+				if (data == "}") {
 					break;
 				}
 
-				int index = title.IndexOf('=');
-				if (title.Length < 2 || index < 0) {
+				int index = data.IndexOf('=');
+				if (data.Length < 2 || index < 0) {
 					continue;
 				}
 
 				Item item = new Item();
-				title = title.Substring(0, index).Trim();
-				if (title.IndexOf("object") == 0) {
+				data = data.Substring(0, index).Trim();
+				if (data.IndexOf("object") == 0) {
 					int temp;
-					if (int.TryParse(title.Substring(6), out temp) && temp > maxID) {
+					if (int.TryParse(data.Substring(6), out temp) && temp > maxID) {
 						maxID = temp;
 					}
 				}
-				item.Object = title;
-				item.Name = title;
+				item.Object = data;
+				item.Name = data;
 
 				while (!reader.EndOfStream) {
 					string obj = reader.ReadLine().Trim();
@@ -150,11 +159,13 @@ namespace BabaIsYou.Map {
 					SetItemValue(item, obj, value);
 				}
 
-				DefaultsByObject.Add(title, item);
+				DefaultsByObject.Add(data, item);
+				DefaultsByName.Add(item.Name, item);
 				DefaultsByID.Add(item.ID, item);
 			}
 
-			DefaultsByObject.Add(Item.EMPTY.Name, Item.EMPTY);
+			DefaultsByObject.Add(Item.EMPTY.Object, Item.EMPTY);
+			DefaultsByName.Add(Item.EMPTY.Name, Item.EMPTY);
 			DefaultsByID.Add(Item.EMPTY.ID, Item.EMPTY);
 
 			return maxID;
@@ -193,9 +204,11 @@ namespace BabaIsYou.Map {
 					maxID--;
 					DefaultsByID[item.ID] = item;
 					DefaultsByObject[item.Object] = item;
+					DefaultsByName[item.Name] = item;
 				} else {
 					DefaultsByID.Add(item.ID, item);
 					DefaultsByObject.Add(item.Object, item);
+					DefaultsByName.Add(item.Name, item);
 				}
 			}
 		}
@@ -369,12 +382,12 @@ namespace BabaIsYou.Map {
 			foreach (KeyValuePair<string, string> pair in changes) {
 				if (pair.Key.IndexOf("object") == 0) {
 					int index = pair.Key.IndexOf('_');
-					string name = pair.Key.Substring(0, index);
+					string objectName = pair.Key.Substring(0, index);
 					ItemChange item;
-					Item defaultItem = DefaultsByObject[name];
+					Item defaultItem = DefaultsByObject[objectName];
 					short id = defaultItem.ID;
 					if (!itemChanges.TryGetValue(id, out item)) {
-						item = new ItemChange(name);
+						item = new ItemChange(objectName);
 						itemChanges.Add(id, item);
 					}
 

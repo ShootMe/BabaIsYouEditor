@@ -12,6 +12,11 @@ namespace BabaIsYou.Map {
 			ActualFile = actualFile;
 			IsRoot = isRoot;
 		}
+		public Sprite Copy(string name) {
+			Sprite sprite = new Sprite(name, ActualFile, IsRoot);
+			sprite.Images = Images;
+			return sprite;
+		}
 		public int MaxIndex {
 			get {
 				int max = 0;

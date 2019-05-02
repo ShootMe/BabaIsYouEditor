@@ -6,6 +6,10 @@ Simple Level Editor for the game Baba Is You
   - Run and enjoy
 
 ## Change Log
+  - 1.2.1
+    - Fixes
+	  - Fixed some issues with setting object/image settings in the object editor
+
   - 1.2.0
     - Changes
 	  - Added ability to set operator type and arg extra for sprite objects

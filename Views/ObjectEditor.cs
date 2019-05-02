@@ -113,29 +113,36 @@ namespace BabaIsYou.Views {
 					}
 
 					Item item;
-					if (Reader.DefaultsByObject.TryGetValue(Edit.Name, out item)) {
-						Edit.Type = item.Type;
-						if (!Edit.IsObject) {
-							if (Edit.ActiveColor == -1) {
-								Edit.ActiveColor = item.ActiveColor;
+					if (sender == imgObject) {
+						if (Reader.DefaultsByName.TryGetValue(Edit.Name, out item)) {
+							Edit.Type = item.Type;
+							if (!Edit.IsObject) {
+								if (Edit.ActiveColor < 0) {
+									Edit.ActiveColor = Edit.Color;
+								}
+								Edit.OperatorType = item.OperatorType;
+								Edit.ArgExtra = item.ArgExtra;
 							}
-							Edit.OperatorType = item.OperatorType;
-							Edit.ArgExtra = item.ArgExtra;
+						} else {
+							Edit.Type = 0;
 						}
-					} else {
-						Edit.Type = 0;
 					}
 
-					if (Reader.DefaultsByObject.TryGetValue(Edit.Sprite, out item)) {
-						Edit.Tiling = item.Tiling;
-					} else {
-						switch (sprite.MaxIndex) {
-							case 31: Edit.Tiling = (byte)Tiling.Character; break;
-							case 27: Edit.Tiling = (byte)Tiling.Animated; break;
-							case 24: Edit.Tiling = (byte)Tiling.Directional; break;
-							case 15: Edit.Tiling = (byte)Tiling.Tiled; break;
-							case 3: Edit.Tiling = (byte)Tiling.SingleAnimated; break;
-							default: Edit.Tiling = (byte)Tiling.None; break;
+					if (sender == imgImage) {
+						if (Reader.DefaultsByName.TryGetValue(Edit.Sprite, out item)) {
+							Edit.Tiling = item.Tiling;
+							if (!Edit.IsObject && Edit.ActiveColor < 0) {
+								Edit.ActiveColor = Edit.Color;
+							}
+						} else {
+							switch (sprite.MaxIndex) {
+								case 31: Edit.Tiling = (byte)Tiling.Character; break;
+								case 27: Edit.Tiling = (byte)Tiling.Animated; break;
+								case 24: Edit.Tiling = (byte)Tiling.Directional; break;
+								case 15: Edit.Tiling = (byte)Tiling.Tiled; break;
+								case 3: Edit.Tiling = (byte)Tiling.SingleAnimated; break;
+								default: Edit.Tiling = (byte)Tiling.None; break;
+							}
 						}
 					}
 
