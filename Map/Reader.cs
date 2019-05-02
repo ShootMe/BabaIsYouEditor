@@ -332,13 +332,14 @@ namespace BabaIsYou.Map {
 			InflaterInputStream zip = new InflaterInputStream(stream);
 			byte[] decompressed = new byte[size * 2];
 			int read = zip.Read(decompressed, 0, size * 2);
-			if (read != size * 2) {
-				throw new Exception($"Failed to read layer stream in {grid.FileName}");
-			}
+			//if (read != size * 2) {
+			//throw new Exception($"Failed to read layer stream in {grid.FileName}");
+			//}
+			read >>= 1;
 			stream.Position = nextPosition;
 
 			List<Item> items = new List<Item>();
-			for (int j = 0, k = 0; j < size; j++, k += 2) {
+			for (int j = 0, k = 0; j < read; j++, k += 2) {
 				Cell cell = grid.Cells[j];
 				short id = BitConverter.ToInt16(decompressed, k);
 				Item item;
@@ -361,7 +362,7 @@ namespace BabaIsYou.Map {
 				zip = new InflaterInputStream(stream);
 				read = zip.Read(decompressed, 0, size);
 				//if (read != size) {
-				//	throw new Exception("Failed to read layer stream");
+				//	throw new Exception($"Failed to read layer stream in {grid.FileName}");
 				//}
 				stream.Position = nextPosition;
 

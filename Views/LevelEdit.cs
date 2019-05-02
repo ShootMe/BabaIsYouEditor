@@ -73,15 +73,14 @@ namespace BabaIsYou.Views {
 			using (ObjectSelector selector = new ObjectSelector()) {
 				selector.DrawText = true;
 
-				int imgWidth = 0;
-				int imgHeight = 0;
+				int imgWidth = WorldViewer.LevelImageWidth;
+				int imgHeight = WorldViewer.LevelImageHeight;
 				int addedCount = LevelList.Count;
 				for (int i = 0; i < addedCount; i++) {
 					ListItem level = LevelList[i];
 					Grid map = (Grid)level.Value;
-					imgWidth = level.Extra.Width;
-					imgHeight = level.Extra.Height;
-					ListItem item = new ListItem(map, map.Name, level.Extra);
+
+					ListItem item = new ListItem(map, map.Name, imgWidth, imgHeight);
 					item.BackColor = level.BackColor;
 					selector.AddItem(item, map.FileName.Equals(text, StringComparison.OrdinalIgnoreCase));
 				}
@@ -94,27 +93,14 @@ namespace BabaIsYou.Views {
 					return;
 				}
 
-				int sizeX = (int)Math.Sqrt(addedCount);
-				int sizeY = sizeX;
-				bool isY = true;
-				while (sizeX * sizeY < addedCount) {
-					if (isY) {
-						sizeY++;
-						isY = false;
-					} else {
-						sizeX++;
-						isY = true;
-					}
-				}
-				while (imgWidth * sizeX > 1200) {
-					sizeX--;
-				}
-				while (imgHeight * sizeY > 800) {
-					sizeY--;
-				}
-				selector.ClientSize = new Size(imgWidth * sizeX, imgHeight * sizeY);
+				Size size = Renderer.GetSizeForCount(addedCount, 5, 6);
+				selector.ClientSize = new Size(imgWidth * size.Width, imgHeight * size.Height);
 				selector.SortByText = LevelList.SortByText;
 				selector.SortItems();
+				selector.SetRenderItem(delegate (ListItem item, Graphics g) {
+					Grid grid = (Grid)item.Value;
+					Renderer.Render(grid, g, item.Width, item.Height);
+				});
 
 				DialogResult result = selector.ShowDialog(this);
 				if (result == DialogResult.OK) {
@@ -183,7 +169,7 @@ namespace BabaIsYou.Views {
 			if (imgIcon.Cursor != Cursors.Hand) { return; }
 
 			using (ObjectSelector selector = new ObjectSelector()) {
-				int imgSize = 36;
+				int imgSize = 48;
 				Rectangle rect = new Rectangle(0, 0, imgSize, imgSize);
 				Color color = Palette.Colors[levelCopy.ActiveColor >= 0 ? levelCopy.ActiveColor : levelCopy.Color];
 				int spriteCount = 0;
@@ -208,19 +194,9 @@ namespace BabaIsYou.Views {
 
 				selector.BackColor = Palette.Edge;
 				selector.Icon = this.Icon;
-				int sizeX = (int)Math.Sqrt(spriteCount);
-				int sizeY = sizeX;
-				bool isY = true;
-				while (sizeX * sizeY < spriteCount) {
-					if (isY) {
-						sizeY++;
-						isY = false;
-					} else {
-						sizeX++;
-						isY = true;
-					}
-				}
-				selector.ClientSize = new Size(imgSize * sizeX, imgSize * sizeY);
+
+				Size size = Renderer.GetSizeForCount(spriteCount);
+				selector.ClientSize = new Size(imgSize * size.Width, imgSize * size.Height);
 				selector.SortItems();
 
 				DialogResult result = selector.ShowDialog(this);

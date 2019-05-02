@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.IO;
 using System.Text;
-
 namespace BabaIsYou.Map {
 	public class Grid {
 		public delegate void ResizedEvent(Grid map);

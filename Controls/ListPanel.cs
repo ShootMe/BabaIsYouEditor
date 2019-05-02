@@ -11,10 +11,12 @@ namespace BabaIsYou.Controls {
 		public event SelectedIndexChangedEvent IndexChanged;
 		public delegate void ItemClickedEvent(ListItem item, MouseButtons buttons);
 		public event ItemClickedEvent ItemClicked;
+		public delegate void RenderItemEvent(ListItem item, Graphics g);
+		public event RenderItemEvent RenderItem;
+		private static Bitmap Warning;
 
 		[DefaultValue(true)]
 		public bool Focusable { get; set; }
-
 		private bool vertical = true;
 		[DefaultValue(true)]
 		public bool Vertical {
@@ -26,7 +28,6 @@ namespace BabaIsYou.Controls {
 				}
 			}
 		}
-
 		[DefaultValue(true)]
 		public bool DrawText { get; set; }
 		[DefaultValue(false)]
@@ -89,6 +90,25 @@ namespace BabaIsYou.Controls {
 				}
 			}
 		}
+
+		private List<ListItem> Items = new List<ListItem>();
+		private int topIndex = 0;
+		private StringBuilder typedString;
+		private DateTime lastTyped;
+		static ListPanel() {
+			Warning = (Bitmap)Bitmap.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream("BabaIsYou.Images.changed.png"));
+		}
+		public ListPanel() : base() {
+			DrawText = true;
+			SortByText = true;
+			DoubleBuffered = true;
+			UseControlMovement = false;
+			typedString = new StringBuilder();
+			lastTyped = DateTime.MinValue;
+			Focusable = true;
+			ResizeRedraw = true;
+		}
+
 		private int RemoveEmptySpace() {
 			int maxIndex = MaxIndex(true);
 			bool removeExtraSpace = maxIndex + 1 == Items.Count;
@@ -140,21 +160,6 @@ namespace BabaIsYou.Controls {
 			}
 			SelectedIndex = current;
 		}
-
-		private List<ListItem> Items = new List<ListItem>();
-		private int topIndex = 0;
-		private StringBuilder typedString;
-		private DateTime lastTyped;
-		public ListPanel() : base() {
-			DrawText = true;
-			SortByText = true;
-			DoubleBuffered = true;
-			UseControlMovement = false;
-			typedString = new StringBuilder();
-			lastTyped = DateTime.MinValue;
-			Focusable = true;
-		}
-
 		public void AddItem(ListItem item) {
 			if (item.Parent != null) {
 				throw new Exception($"This ListItem ({item.Text}) already has a parent ListPanel ({item.Parent.Name})");
@@ -174,6 +179,8 @@ namespace BabaIsYou.Controls {
 		}
 		public void ClearItems() {
 			Items.Clear();
+			topIndex = 0;
+			selectedIndex = -1;
 		}
 		public void SortItems() {
 			Items.Sort();
@@ -182,21 +189,18 @@ namespace BabaIsYou.Controls {
 		public ListItem this[int index] {
 			get { return Items[index]; }
 		}
-		protected override void OnResize(EventArgs e) {
-			Invalidate();
-		}
 		private int RowLength() {
 			if (Items.Count == 0) { return -1; }
-
+			ListItem item = Items[0];
 			int result = 0;
 			if (vertical) {
-				int width = Items[0].Size.Width;
+				int width = item.Width;
 				result = Width / width;
 				if (result == 0) {
 					result = 1;
 				}
 			} else {
-				int height = Items[0].Size.Height;
+				int height = item.Height;
 				result = Height / height;
 				if (result == 0) {
 					result = 1;
@@ -215,8 +219,7 @@ namespace BabaIsYou.Controls {
 				ListItem item = Items[i];
 				if (!item.Visible) { continue; }
 
-				Size size = item.Size;
-				int height = vertical ? size.Height : size.Width;
+				int height = vertical ? item.Height : item.Width;
 				if (height > maxSize) {
 					maxSize = height;
 				}
@@ -454,15 +457,14 @@ namespace BabaIsYou.Controls {
 				ListItem item = Items[i];
 				if (!item.Visible) { continue; }
 
-				Size size = item.Size;
-				int height = vertical ? size.Height : size.Width;
-				int width = vertical ? size.Width : size.Height;
+				int height = vertical ? item.Height : item.Width;
+				int width = vertical ? item.Width : item.Height;
 				if (height > maxSize) {
 					maxSize = height;
 				}
 				rowSize++;
 
-				if (CheckBounds(e.Location, vertical ? currentWidth : currentHeight, vertical ? currentHeight : currentWidth, size.Width, size.Height)) {
+				if (CheckBounds(e.Location, vertical ? currentWidth : currentHeight, vertical ? currentHeight : currentWidth, item.Width, item.Height)) {
 					if (e.Button == MouseButtons.Left) {
 						SelectedIndex = i;
 					}
@@ -497,15 +499,14 @@ namespace BabaIsYou.Controls {
 				ListItem item = Items[i];
 				if (!item.Visible) { continue; }
 
-				Size size = item.Size;
-				int height = vertical ? size.Height : size.Width;
-				int width = vertical ? size.Width : size.Height;
+				int height = vertical ? item.Height : item.Width;
+				int width = vertical ? item.Width : item.Height;
 				if (height > maxSize) {
 					maxSize = height;
 				}
 				rowSize++;
 
-				item.Render(this, e.Graphics, selectedIndex == i, vertical ? currentWidth : currentHeight, vertical ? currentHeight : currentWidth, DrawText);
+				Render(item, e.Graphics, selectedIndex == i, vertical ? currentWidth : currentHeight, vertical ? currentHeight : currentWidth, DrawText);
 				currentWidth += width;
 
 				if (rowSize == rowLength) {
@@ -519,54 +520,95 @@ namespace BabaIsYou.Controls {
 				}
 			}
 		}
+		private void Render(ListItem item, Graphics g, bool selected, int x, int y, bool drawText) {
+			if (item.BackColor.A != 0) {
+				using (SolidBrush brush = new SolidBrush(item.BackColor)) {
+					g.FillRectangle(brush, x, y, item.Width, item.Height);
+				}
+			}
+
+			if (item.Image == null) {
+				if (RenderItem != null) {
+					Bitmap img = new Bitmap(item.Width, item.Height);
+					using (Graphics graphics = Graphics.FromImage(img)) {
+						RenderItem.Invoke(item, graphics);
+					}
+					item.Image = img;
+				}
+			}
+
+			if (item.Image != null) {
+				g.DrawImage(item.Image, x, y);
+			}
+
+			Rectangle bounds = new Rectangle(x + 2, y + 2, item.Width - 4, item.Height - 4);
+			if (drawText) {
+				if (!string.IsNullOrEmpty(item.Text)) {
+					TextRenderer.DrawText(g, item.Text, this.Font, bounds, this.ForeColor, Color.Empty, TextFormatFlags.HorizontalCenter | TextFormatFlags.Bottom);
+				}
+				string valueText = item.Value.ToString();
+				if (!string.IsNullOrEmpty(valueText)) {
+					TextRenderer.DrawText(g, valueText, this.Font, bounds, this.ForeColor, Color.Empty, TextFormatFlags.HorizontalCenter | TextFormatFlags.Top);
+				}
+			}
+
+			if (item.Changed && Warning != null) {
+				g.DrawImage(Warning, bounds.X - 1, bounds.Y - 1);
+			}
+
+			if (selected) {
+				g.DrawRectangle(Pens.DarkRed, bounds.X - 2, bounds.Y - 2, bounds.Width + 3, bounds.Height + 3);
+				g.DrawRectangle(Pens.Red, bounds.X - 1, bounds.Y - 1, bounds.Width + 1, bounds.Height + 1);
+			}
+		}
 	}
 	public class ListItem : IComparable {
 		public ListPanel Parent { get; set; }
 		public string Text { get; set; }
 		public Bitmap Image { get; set; }
-		public Bitmap Extra { get; set; }
 		public object Value { get; set; }
 		public bool Changed { get; set; }
 		public bool Visible { get; set; }
 		public Color BackColor { get; set; }
-		public Size Size { get { return Image.Size; } }
-		private static Bitmap Warning;
-		static ListItem() {
-			Warning = (Bitmap)Bitmap.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream("BabaIsYou.Images.changed.png"));
+		private int itemWidth;
+		public int Width {
+			get { return itemWidth; }
+			set {
+				if (value != itemWidth) {
+					itemWidth = value;
+					if (Image != null) { Image.Dispose(); }
+					Image = null;
+				}
+			}
+		}
+		private int itemHeight;
+		public int Height {
+			get { return itemHeight; }
+			set {
+				if (value != itemHeight) {
+					itemHeight = value;
+					if (Image != null) { Image.Dispose(); }
+					Image = null;
+				}
+			}
 		}
 
+		public ListItem(object value, string text, int width, int height) {
+			BackColor = Color.Transparent;
+			Text = text;
+			Value = value;
+			Visible = true;
+			itemWidth = width;
+			itemHeight = height;
+		}
 		public ListItem(object value, string text, Bitmap image) {
 			BackColor = Color.Transparent;
 			Text = text;
 			Value = value;
-			Image = image;
 			Visible = true;
-		}
-
-		public void Render(ListPanel panel, Graphics g, bool selected, int x, int y, bool drawText) {
-			if (BackColor.A != 0) {
-				using (SolidBrush brush = new SolidBrush(BackColor)) {
-					g.FillRectangle(brush, x, y, Image.Width, Image.Height);
-				}
-			}
-			g.DrawImage(Image, x, y);
-			Rectangle bounds = new Rectangle(x + 2, y + 2, Image.Width - 4, Image.Height - 4);
-			if (drawText) {
-				if (!string.IsNullOrEmpty(Text)) {
-					TextRenderer.DrawText(g, Text, panel.Font, bounds, panel.ForeColor, Color.Empty, TextFormatFlags.HorizontalCenter | TextFormatFlags.Bottom);
-				}
-				string valueText = Value.ToString();
-				if (!string.IsNullOrEmpty(valueText)) {
-					TextRenderer.DrawText(g, Value.ToString(), panel.Font, bounds, panel.ForeColor, Color.Empty, TextFormatFlags.HorizontalCenter | TextFormatFlags.Top);
-				}
-			}
-			if (Changed && Warning != null) {
-				g.DrawImage(Warning, bounds.X - 1, bounds.Y - 1);
-			}
-			if (selected) {
-				g.DrawRectangle(Pens.DarkRed, bounds.X - 2, bounds.Y - 2, bounds.Width + 3, bounds.Height + 3);
-				g.DrawRectangle(Pens.Red, bounds.X - 1, bounds.Y - 1, bounds.Width + 1, bounds.Height + 1);
-			}
+			Image = image;
+			itemWidth = image.Width;
+			itemHeight = image.Height;
 		}
 		public int CompareTo(object obj) {
 			if (obj is ListItem item) {
@@ -577,6 +619,9 @@ namespace BabaIsYou.Controls {
 				}
 			}
 			return -1;
+		}
+		public override string ToString() {
+			return $"{Parent.Name} {Text}";
 		}
 	}
 }

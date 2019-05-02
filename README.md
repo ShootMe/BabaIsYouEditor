@@ -6,6 +6,13 @@ Simple Level Editor for the game Baba Is You
   - Run and enjoy
 
 ## Change Log
+  - 1.2.2
+    - Features
+	  - Level list and sprite list now resize according to size of program
+    - Changes
+	  - Ignore bad layer data if the map and layer information mismatch
+	  - Improved performance of loading worlds
+
   - 1.2.1
     - Fixes
 	  - Fixed some issues with setting object/image settings in the object editor

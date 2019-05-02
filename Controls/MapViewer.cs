@@ -46,6 +46,7 @@ namespace BabaIsYou.Controls {
 			ShowStacked = false;
 			ShowDirections = false;
 			AllowEdgePlacement = false;
+			ResizeRedraw = true;
 		}
 
 		private void MapResized(Grid map) {
@@ -54,9 +55,6 @@ namespace BabaIsYou.Controls {
 		public void ClearCurrentCell() {
 			currentCell = null;
 			CellMouseOver?.Invoke(currentMap, null, null);
-			Invalidate();
-		}
-		protected override void OnResize(EventArgs e) {
 			Invalidate();
 		}
 		protected override void OnMouseDown(MouseEventArgs e) {

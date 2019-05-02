@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Text;
 using System.IO;
 using System.Reflection;
 using System.Threading;
@@ -21,17 +20,17 @@ namespace BabaIsYou.Views {
 #if !DEBUG
 			try {
 #endif
-				string path = @"C:\Program Files (x86)\Steam\steamapps\common\Baba Is You\Data\";
-				GameDirectory = RegistryRead<string>("GameDirectory", path);
-				if (!Directory.Exists(GameDirectory)) {
-					GameDirectory = Environment.CurrentDirectory;
-				}
-				GameDirectory = GameDirectory.Replace('/', '\\');
-				GameWorld = RegistryRead<string>("GameWorld", "baba");
+			string path = @"C:\Program Files (x86)\Steam\steamapps\common\Baba Is You\Data\";
+			GameDirectory = RegistryRead<string>("GameDirectory", path);
+			if (!Directory.Exists(GameDirectory)) {
+				GameDirectory = Environment.CurrentDirectory;
+			}
+			GameDirectory = GameDirectory.Replace('/', '\\');
+			GameWorld = RegistryRead<string>("GameWorld", "baba");
 
-				Application.EnableVisualStyles();
-				Application.SetCompatibleTextRenderingDefault(false);
-				Application.Run(new WorldViewer());
+			Application.EnableVisualStyles();
+			Application.SetCompatibleTextRenderingDefault(false);
+			Application.Run(new WorldViewer());
 #if !DEBUG
 			} catch (Exception ex) {
 				MessageBox.Show(ex.ToString(), "Application Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -39,10 +38,9 @@ namespace BabaIsYou.Views {
 #endif
 		}
 
-		private const int SpriteSize = 36;
 		private const int MaxLayerCount = 3;
-		private const int ExtraImageWidth = 200;
-		private const int ExtraImageHeight = 150;
+		public static int LevelImageWidth = 200;
+		public static int LevelImageHeight = 150;
 		private Grid map;
 		private Bitmap textX;
 		private Item currentObject;
@@ -58,7 +56,6 @@ namespace BabaIsYou.Views {
 
 		public WorldViewer() {
 			InitializeComponent();
-
 			Renderer.SetFonts(this);
 
 			Text = TitleBarText;
@@ -116,70 +113,62 @@ namespace BabaIsYou.Views {
 #if !DEBUG
 				try {
 #endif
-					string[] files = Directory.GetFiles(Path.Combine(GameDirectory, "Worlds", GameWorld), "*.l", SearchOption.TopDirectoryOnly);
-					Reader.Initialize(GameDirectory, GameWorld);
+				string[] files = Directory.GetFiles(Path.Combine(GameDirectory, "Worlds", GameWorld), "*.l", SearchOption.TopDirectoryOnly);
+				Reader.Initialize(GameDirectory, GameWorld);
 
-					map = null;
-					List<ListItem> newItems = new List<ListItem>();
-					int imgSize = listLevels.Width;
-					for (int i = 0; i < files.Length; i++) {
-						string file = files[i];
-						map = Reader.ReadMap(files[i]);
-						if (map == null || map.Width <= 0 || map.Height <= 0) { continue; }
+				map = null;
+				List<ListItem> newItems = new List<ListItem>();
+				int imgSize = listLevels.Width;
+				for (int i = 0; i < files.Length; i++) {
+					string file = files[i];
+					map = Reader.ReadMap(files[i]);
+					if (map == null || map.Width <= 0 || map.Height <= 0) { continue; }
 
-						float widthRatio = imgSize / map.Width;
-						Bitmap img = new Bitmap(imgSize, (int)(widthRatio * map.Height) + listLevels.Font.Height * 2);
-						using (Graphics g = Graphics.FromImage(img)) {
-							Renderer.Render(map, g, img.Width, img.Height);
-						}
-						Bitmap imgExtra = new Bitmap(ExtraImageWidth, ExtraImageHeight);
-						using (Graphics g = Graphics.FromImage(imgExtra)) {
-							Renderer.Render(map, g, imgExtra.Width, imgExtra.Height);
-						}
-						ListItem item = new ListItem(map, map.Name, img);
-						item.Extra = imgExtra;
-						newItems.Add(item);
+					float widthRatio = imgSize / map.Width;
+					int height = (int)(widthRatio * map.Height) + listLevels.Font.Height * 2;
+					ListItem item = new ListItem(map, map.Name, imgSize, height);
+					newItems.Add(item);
+				}
+
+				this.Invoke((MethodInvoker)delegate () {
+					txtLevelFilter.Visible = true;
+
+					statusLevel.Text = "N/A";
+					listLevels.AddItems(newItems);
+
+					Text = $"{TitleBarText} - {GameWorldName} - {listLevels.Count} Levels";
+
+					menuPalette.DropDownItems.Clear();
+					foreach (string name in Reader.Palettes.Keys) {
+						string paletteName = $"{char.ToUpper(name[0])}{name.Substring(1, name.Length - 5)}";
+						ToolStripMenuItem menuItem = new ToolStripMenuItem(paletteName, null, PaletteMenuItemClick);
+						menuItem.CheckOnClick = true;
+						menuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
+						menuPalette.DropDownItems.Add(menuItem);
 					}
 
-					this.Invoke((MethodInvoker)delegate () {
-						txtLevelFilter.Visible = true;
+					listLevels.SortItems();
+					listLevels.SelectTopMostVisible();
 
-						statusLevel.Text = "N/A";
-						listLevels.AddItems(newItems);
+					if (txtLevelFilter.ForeColor == Color.Black) {
+						txtLevelFilter.Text = string.Empty;
+						txtLevelFilter_Leave(null, null);
+					}
+					menu.Enabled = true;
+					imgBaba.Visible = false;
+					menuLevel.Enabled = true;
+					menuPalette.Enabled = true;
+					menuItemWorldProperties.Enabled = true;
+					menuItemAddLevel.Enabled = true;
+					menuItemRemoveLevel.Enabled = true;
+					menuItemSaveWorld.Enabled = true;
 
-						Text = $"{TitleBarText} - {GameWorldName} - {listLevels.Count} Levels";
-
-						menuPalette.DropDownItems.Clear();
-						foreach (string name in Reader.Palettes.Keys) {
-							string paletteName = $"{char.ToUpper(name[0])}{name.Substring(1, name.Length - 5)}";
-							ToolStripMenuItem menuItem = new ToolStripMenuItem(paletteName, null, PaletteMenuItemClick);
-							menuItem.CheckOnClick = true;
-							menuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
-							menuPalette.DropDownItems.Add(menuItem);
-						}
-
-						listLevels.SortItems();
-						listLevels.SelectTopMostVisible();
-
-						if (txtLevelFilter.ForeColor == Color.Black) {
-							txtLevelFilter.Text = string.Empty;
-							txtLevelFilter_Leave(null, null);
-						}
-						menu.Enabled = true;
-						imgBaba.Visible = false;
-						menuLevel.Enabled = true;
-						menuPalette.Enabled = true;
-						menuItemWorldProperties.Enabled = true;
-						menuItemAddLevel.Enabled = true;
-						menuItemRemoveLevel.Enabled = true;
-						menuItemSaveWorld.Enabled = true;
-
-						if (listLevels.SelectedItem == null) {
-							AddSprites();
-							SelectPalette("default.png");
-						}
-						listObjects.Focus();
-					});
+					if (listLevels.SelectedItem == null) {
+						AddSprites();
+						SelectPalette("default.png");
+					}
+					listObjects.Focus();
+				});
 #if !DEBUG
 				} catch (Exception ex) {
 					MessageBox.Show(ex.ToString(), "Loading World Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -196,6 +185,8 @@ namespace BabaIsYou.Views {
 			thread.Start();
 		}
 		private void Solver_Resize(object sender, EventArgs e) {
+			LevelImageWidth = Width / 5;
+			LevelImageHeight = LevelImageWidth * 3 / 4;
 			ResizeListObjects();
 		}
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
@@ -372,6 +363,20 @@ namespace BabaIsYou.Views {
 			mapViewer.Invalidate();
 			listObjects.Focus();
 		}
+		private void listLevels_Resize(object sender, EventArgs e) {
+			int size = listLevels.Count;
+			for (int i = 0; i < size; i++) {
+				ListItem item = listLevels[i];
+				Grid grid = (Grid)item.Value;
+				item.Width = splitMain.SplitterDistance;
+				float widthRatio = item.Width / grid.Width;
+				item.Height = (int)(widthRatio * grid.Height) + listLevels.Font.Height * 2;
+			}
+		}
+		private void listLevels_RenderItem(ListItem item, Graphics g) {
+			Grid grid = (Grid)item.Value;
+			Renderer.Render(grid, g, item.Width, item.Height);
+		}
 		private void UpdateStatusBar() {
 			statusLevel.Text = map == null ? "N/A" : map.FileName;
 			statusLevelName.Text = map == null ? "N/A" : map.Name;
@@ -383,23 +388,13 @@ namespace BabaIsYou.Views {
 			}
 		}
 		private void UpdateCurrentLevel(ListItem levelItem, bool changed = true) {
+			if (levelItem.Image != null) {
+				levelItem.Image.Dispose();
+			}
+			levelItem.Image = null;
 			Grid mapToUpdate = (Grid)levelItem.Value;
-			int imgSize = listLevels.Width;
-			float widthRatio = imgSize / mapToUpdate.Width;
-			Bitmap img = new Bitmap(imgSize, (int)(widthRatio * mapToUpdate.Height) + listLevels.Font.Height * 2);
-			using (Graphics g = Graphics.FromImage(img)) {
-				Renderer.Render(mapToUpdate, g, img.Width, img.Height);
-			}
-			Bitmap extraImg = new Bitmap(ExtraImageWidth, ExtraImageHeight);
-			using (Graphics g = Graphics.FromImage(extraImg)) {
-				Renderer.Render(mapToUpdate, g, extraImg.Width, extraImg.Height);
-			}
-
 			levelItem.Text = mapToUpdate.Name;
 			levelItem.Changed = changed;
-			levelItem.Image.Dispose();
-			levelItem.Image = img;
-			levelItem.Extra = extraImg;
 
 			listLevels.Invalidate();
 			mapViewer.Invalidate();
@@ -412,6 +407,7 @@ namespace BabaIsYou.Views {
 			currentObject = null;
 			string paletteName = map == null ? "default.png" : map.Palette;
 			Palette palette = Reader.Palettes[paletteName];
+			int spriteSize = listObjects.Width / 24;
 			foreach (Item item in Reader.DefaultsByObject.Values) {
 				if (item.ID <= 0 || string.IsNullOrEmpty(item.Sprite)) { continue; }
 
@@ -421,18 +417,12 @@ namespace BabaIsYou.Views {
 					change.Apply(copy);
 				}
 
-				Bitmap img = new Bitmap(SpriteSize, SpriteSize);
-				Rectangle rect = new Rectangle(0, 0, img.Width, img.Height);
-				using (Graphics g = Graphics.FromImage(img)) {
-					Renderer.DrawSprite(null, g, rect, copy, palette);
-				}
-
 				string name = copy.Name;
 				int index = name.IndexOf("text");
 				if (index == 0) {
 					name = name.Substring(5) + "_text";
 				}
-				ListItem listItem = new ListItem(copy, name, img);
+				ListItem listItem = new ListItem(copy, name, spriteSize, spriteSize);
 				listItem.Changed = copy.Changed;
 				listItem.BackColor = palette.Background;
 				listObjects.AddItem(listItem);
@@ -445,12 +435,17 @@ namespace BabaIsYou.Views {
 			}
 		}
 		private void ResizeListObjects() {
-			int rowSize = listObjects.Width / SpriteSize;
-			int rowCount = listObjects.Count / rowSize;
-			if (rowCount * rowSize < listObjects.Count) {
+			int rowCount = listObjects.Count;
+			rowCount = rowCount == 0 ? 5 : rowCount / 24;
+			if (rowCount * 24 < listObjects.Count) {
 				rowCount++;
 			}
-			splitObjectsLevel.SplitterDistance = SpriteSize * rowCount;
+			int spriteSize = splitObjectsLevel.SplitterDistance / rowCount;
+			if (spriteSize * 24 > splitObjectsLevel.Width) {
+				spriteSize = splitObjectsLevel.Width / 24;
+			}
+			listObjects.MaximumSize = new Size(spriteSize * 24, 9999);
+			listObjects.Size = new Size(spriteSize * 24, spriteSize * rowCount);
 		}
 		private void statusAddLevel_ButtonClick(object sender, EventArgs e) {
 			if (map == null) { return; }
@@ -544,8 +539,26 @@ namespace BabaIsYou.Views {
 				}
 			}
 		}
+		private void listObjects_Resize(object sender, EventArgs e) {
+			ResizeListObjects();
+			int size = listObjects.Count;
+			int spriteSize = listObjects.Width / 24;
+			if (size == 0 || listObjects[0].Width == spriteSize) { return; }
+
+			for (int i = 0; i < size; i++) {
+				ListItem item = listObjects[i];
+				Item spriteItem = (Item)item.Value;
+				item.Width = spriteSize;
+				item.Height = spriteSize;
+			}
+		}
+		private void listObjects_RenderItem(ListItem item, Graphics g) {
+			Palette palette = Reader.Palettes[map == null ? "default.png" : map.Palette];
+			Item spriteItem = (Item)item.Value;
+			Renderer.DrawSprite(null, g, new Rectangle(0, 0, item.Width, item.Height), spriteItem, palette);
+		}
 		private void UpdateSprite(ListItem item, Item sprite, Palette palette) {
-			Bitmap img = new Bitmap(SpriteSize, SpriteSize);
+			Bitmap img = new Bitmap(item.Width, item.Height);
 			Rectangle rect = new Rectangle(0, 0, img.Width, img.Height);
 			using (Graphics g = Graphics.FromImage(img)) {
 				Renderer.DrawSprite(null, g, rect, sprite, palette);
@@ -924,17 +937,8 @@ namespace BabaIsYou.Views {
 
 						int imgSize = listLevels.Width;
 						float widthRatio = imgSize / newMap.Width;
-						Bitmap img = new Bitmap(imgSize, (int)(widthRatio * newMap.Height) + listLevels.Font.Height * 2);
-						using (Graphics g = Graphics.FromImage(img)) {
-							Renderer.Render(newMap, g, img.Width, img.Height);
-						}
-						Bitmap imgExtra = new Bitmap(ExtraImageWidth, ExtraImageHeight);
-						using (Graphics g = Graphics.FromImage(imgExtra)) {
-							Renderer.Render(newMap, g, imgExtra.Width, imgExtra.Height);
-						}
-
-						ListItem item = new ListItem(newMap, newMap.Name, img);
-						item.Extra = imgExtra;
+						int height = (int)(widthRatio * newMap.Height) + listLevels.Font.Height * 2;
+						ListItem item = new ListItem(newMap, newMap.Name, imgSize, height);
 						listLevels.AddItem(item);
 						listLevels.SortItems();
 						listLevels.SelectedItem = item;

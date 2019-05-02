@@ -45,6 +45,24 @@ namespace BabaIsYou.Map {
 				}
 			}
 		}
+		public static Size GetSizeForCount(int count, int maxX = int.MaxValue, int maxY = int.MaxValue) {
+			int sizeX = (int)Math.Sqrt(count);
+			int sizeY = sizeX;
+			if (sizeX > maxX) { sizeX = maxX; }
+			if (sizeY > maxY) { sizeY = maxY; }
+
+			bool isY = true;
+			while ((sizeX < maxX || sizeY < maxY) && sizeX * sizeY < count) {
+				if (isY) {
+					sizeY++;
+					isY = false;
+				} else {
+					sizeX++;
+					isY = true;
+				}
+			}
+			return new Size(sizeX, sizeY);
+		}
 		public static Rectangle GetBounds(Grid grid, int totalWidth, int totalHeight) {
 			int tileWidth = totalWidth / grid.Width;
 			int tileHeight = totalHeight / grid.Height;

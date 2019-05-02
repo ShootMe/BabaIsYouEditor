@@ -93,19 +93,14 @@ namespace BabaIsYou.Views {
 			using (ObjectSelector selector = new ObjectSelector()) {
 				selector.DrawText = true;
 
-				int addedCount = 0;
-				int imgWidth = 0;
-				int imgHeight = 0;
-				int size = LevelList.Count;
-				for (int i = 0; i < size; i++) {
+				int imgWidth = WorldViewer.LevelImageWidth;
+				int imgHeight = WorldViewer.LevelImageHeight;
+				int addedCount = LevelList.Count;
+				for (int i = 0; i < addedCount; i++) {
 					ListItem level = LevelList[i];
 					Grid map = (Grid)level.Value;
-					if (map.CountOfType<Level>() == 0) { continue; }
-					addedCount++;
 
-					imgWidth = level.Extra.Width;
-					imgHeight = level.Extra.Height;
-					ListItem item = new ListItem(map, map.Name, level.Extra);
+					ListItem item = new ListItem(map, map.Name, imgWidth, imgHeight);
 					item.BackColor = level.BackColor;
 					selector.AddItem(item, map.FileName.Equals(txtCustomParent.Text, StringComparison.OrdinalIgnoreCase));
 				}
@@ -114,31 +109,18 @@ namespace BabaIsYou.Views {
 				selector.Icon = this.Icon;
 
 				if (addedCount == 0) {
-					MessageBox.Show(this, "No World level maps to choose from.");
+					MessageBox.Show(this, "No levels to choose from.");
 					return;
 				}
 
-				int sizeX = (int)Math.Sqrt(addedCount);
-				int sizeY = sizeX;
-				bool isY = true;
-				while (sizeX * sizeY < addedCount) {
-					if (isY) {
-						sizeY++;
-						isY = false;
-					} else {
-						sizeX++;
-						isY = true;
-					}
-				}
-				while (imgWidth * sizeX > 1200) {
-					sizeX--;
-				}
-				while (imgHeight * sizeY > 800) {
-					sizeY--;
-				}
-				selector.ClientSize = new Size(imgWidth * sizeX, imgHeight * sizeY);
+				Size size = Renderer.GetSizeForCount(addedCount, 5, 6);
+				selector.ClientSize = new Size(imgWidth * size.Width, imgHeight * size.Height);
 				selector.SortByText = LevelList.SortByText;
 				selector.SortItems();
+				selector.SetRenderItem(delegate (ListItem item, Graphics g) {
+					Grid grid = (Grid)item.Value;
+					Renderer.Render(grid, g, item.Width, item.Height);
+				});
 
 				DialogResult result = selector.ShowDialog(this);
 				if (result == DialogResult.OK) {

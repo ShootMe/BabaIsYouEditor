@@ -8,6 +8,9 @@ namespace BabaIsYou.Views {
 			InitializeComponent();
 			Renderer.SetFonts(this);
 		}
+		public void SetRenderItem(ListPanel.RenderItemEvent renderItem) {
+			listSelector.RenderItem += renderItem;
+		}
 		public void AddItem(ListItem item, bool select) {
 			listSelector.AddItem(item);
 			if (select) {

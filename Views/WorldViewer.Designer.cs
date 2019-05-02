@@ -84,7 +84,6 @@
 			// splitMain
 			// 
 			this.splitMain.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.splitMain.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
 			this.splitMain.ForeColor = System.Drawing.Color.White;
 			this.splitMain.IsSplitterFixed = true;
 			this.splitMain.Location = new System.Drawing.Point(0, 24);
@@ -122,7 +121,6 @@
 			// splitObjectsLevel
 			// 
 			this.splitObjectsLevel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.splitObjectsLevel.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
 			this.splitObjectsLevel.IsSplitterFixed = true;
 			this.splitObjectsLevel.Location = new System.Drawing.Point(0, 0);
 			this.splitObjectsLevel.Name = "splitObjectsLevel";
@@ -136,7 +134,7 @@
 			// 
 			this.splitObjectsLevel.Panel2.Controls.Add(this.mapViewer);
 			this.splitObjectsLevel.Size = new System.Drawing.Size(864, 788);
-			this.splitObjectsLevel.SplitterDistance = 180;
+			this.splitObjectsLevel.SplitterDistance = 179;
 			this.splitObjectsLevel.SplitterWidth = 1;
 			this.splitObjectsLevel.TabIndex = 1;
 			// 
@@ -502,6 +500,8 @@
 			this.listLevels.UseControlMovement = true;
 			this.listLevels.IndexChanged += new BabaIsYou.Controls.ListPanel.SelectedIndexChangedEvent(this.listLevels_IndexChanged);
 			this.listLevels.ItemClicked += new BabaIsYou.Controls.ListPanel.ItemClickedEvent(this.listLevels_ItemClicked);
+			this.listLevels.RenderItem += new BabaIsYou.Controls.ListPanel.RenderItemEvent(this.listLevels_RenderItem);
+			this.listLevels.Resize += new System.EventHandler(this.listLevels_Resize);
 			// 
 			// listObjects
 			// 
@@ -509,20 +509,22 @@
 			this.listObjects.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.listObjects.DrawText = false;
 			this.listObjects.Location = new System.Drawing.Point(0, 0);
-			this.listObjects.MaximumSize = new System.Drawing.Size(864, 999);
+			this.listObjects.MaximumSize = new System.Drawing.Size(864, 9999);
 			this.listObjects.Name = "listObjects";
-			this.listObjects.Size = new System.Drawing.Size(864, 180);
+			this.listObjects.Size = new System.Drawing.Size(864, 179);
 			this.listObjects.TabIndex = 0;
 			this.listObjects.UseControlMovement = true;
 			this.listObjects.IndexChanged += new BabaIsYou.Controls.ListPanel.SelectedIndexChangedEvent(this.listObjects_IndexChanged);
 			this.listObjects.ItemClicked += new BabaIsYou.Controls.ListPanel.ItemClickedEvent(this.listObjects_ItemClicked);
+			this.listObjects.RenderItem += new BabaIsYou.Controls.ListPanel.RenderItemEvent(this.listObjects_RenderItem);
+			this.listObjects.Resize += new System.EventHandler(this.listObjects_Resize);
 			// 
 			// mapViewer
 			// 
 			this.mapViewer.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.mapViewer.Location = new System.Drawing.Point(0, 0);
 			this.mapViewer.Name = "mapViewer";
-			this.mapViewer.Size = new System.Drawing.Size(864, 607);
+			this.mapViewer.Size = new System.Drawing.Size(864, 608);
 			this.mapViewer.TabIndex = 0;
 			this.mapViewer.TabStop = false;
 			this.mapViewer.CellMouseOver += new BabaIsYou.Controls.MapViewer.CellMouseEvent(this.mapViewer_CellMouseOver);
@@ -544,7 +546,7 @@
 			this.DoubleBuffered = true;
 			this.KeyPreview = true;
 			this.MainMenuStrip = this.menu;
-			this.MinimumSize = new System.Drawing.Size(701, 500);
+			this.MinimumSize = new System.Drawing.Size(550, 500);
 			this.Name = "WorldViewer";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "Baba Is You";
