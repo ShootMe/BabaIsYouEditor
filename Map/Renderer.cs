@@ -360,7 +360,7 @@ namespace BabaIsYou.Map {
 		}
 		private static void DrawLevel(Graphics g, Rectangle bounds, Level level, Bitmap image, Color color, Color colorText) {
 			int inc = 40;
-			Color colorInc = ColorUtil.TransformBrightness(colorText, ColorUtil.ColorTransformMode.Hsb, 0.6);
+			Color colorInc = ColorUtil.TransformBrightness(colorText, ColorUtil.ColorTransformMode.Hsb, 0.455);
 			if (colorInc.R == 0 && colorInc.G == 0 && colorInc.B == 0) {
 				colorInc = Color.FromArgb(color.R + inc, color.G + inc, color.B + inc);
 			}
@@ -381,7 +381,7 @@ namespace BabaIsYou.Map {
 
 			if (level.Style == (byte)LevelStyle.Number || level.Style == (byte)LevelStyle.Letter) {
 				using (SolidBrush brush = new SolidBrush(color)) {
-					int fontWidth = bounds.Width * 2 / 3;
+					int fontWidth = bounds.Width * 3 / 4;
 					if (fontWidth <= 0) { fontWidth = 1; }
 					using (Font font = new Font(CustomFont.Families[0], fontWidth, FontStyle.Bold, GraphicsUnit.Pixel)) {
 						int number = level.Number;
@@ -392,6 +392,7 @@ namespace BabaIsYou.Map {
 						}
 						string text = level.Style == (byte)LevelStyle.Number ? number.ToString("00") : ((char)(number + 0x41)).ToString();
 						SizeF textSize = g.MeasureString(text, font, 9999999, StringFormat.GenericTypographic);
+						g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
 						g.DrawString(text, font, brush, new Point(bounds.X + (int)(bounds.Width / 2 - textSize.Width / 2), bounds.Y + (int)(bounds.Height / 2 - textSize.Height / 2)), StringFormat.GenericTypographic);
 					}
 				}
