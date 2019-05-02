@@ -7,8 +7,11 @@ Simple Level Editor for the game Baba Is You
 
 ## Change Log
   - 1.1.9
+    - Fixes
+	  - Fixed Ctrl + Right Mouse on Level/Path/Special objects to actually pick them up
     - Changes
 	  - Added ability to read custom world palettes
+	  - Rendered level colors a bit more accurately
 
   - 1.1.8
     - Features
