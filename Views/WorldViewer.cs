@@ -20,17 +20,17 @@ namespace BabaIsYou.Views {
 #if !DEBUG
 			try {
 #endif
-			string path = @"C:\Program Files (x86)\Steam\steamapps\common\Baba Is You\Data\";
-			GameDirectory = RegistryRead<string>("GameDirectory", path);
-			if (!Directory.Exists(GameDirectory)) {
-				GameDirectory = Environment.CurrentDirectory;
-			}
-			GameDirectory = GameDirectory.Replace('/', '\\');
-			GameWorld = RegistryRead<string>("GameWorld", "baba");
+				string path = @"C:\Program Files (x86)\Steam\steamapps\common\Baba Is You\Data\";
+				GameDirectory = RegistryRead<string>("GameDirectory", path);
+				if (!Directory.Exists(GameDirectory)) {
+					GameDirectory = Environment.CurrentDirectory;
+				}
+				GameDirectory = GameDirectory.Replace('/', '\\');
+				GameWorld = RegistryRead<string>("GameWorld", "baba");
 
-			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new WorldViewer());
+				Application.EnableVisualStyles();
+				Application.SetCompatibleTextRenderingDefault(false);
+				Application.Run(new WorldViewer());
 #if !DEBUG
 			} catch (Exception ex) {
 				MessageBox.Show(ex.ToString(), "Application Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -39,8 +39,8 @@ namespace BabaIsYou.Views {
 		}
 
 		private const int MaxLayerCount = 3;
-		public static int LevelImageWidth = 200;
-		public static int LevelImageHeight = 150;
+		public static int LevelImageWidth = 190;
+		public static int LevelImageHeight = 140;
 		private Grid map;
 		private Bitmap textX;
 		private Item currentObject;
@@ -113,62 +113,62 @@ namespace BabaIsYou.Views {
 #if !DEBUG
 				try {
 #endif
-				string[] files = Directory.GetFiles(Path.Combine(GameDirectory, "Worlds", GameWorld), "*.l", SearchOption.TopDirectoryOnly);
-				Reader.Initialize(GameDirectory, GameWorld);
+					string[] files = Directory.GetFiles(Path.Combine(GameDirectory, "Worlds", GameWorld), "*.l", SearchOption.TopDirectoryOnly);
+					Reader.Initialize(GameDirectory, GameWorld);
 
-				map = null;
-				List<ListItem> newItems = new List<ListItem>();
-				int imgSize = listLevels.Width;
-				for (int i = 0; i < files.Length; i++) {
-					string file = files[i];
-					map = Reader.ReadMap(files[i]);
-					if (map == null || map.Width <= 0 || map.Height <= 0) { continue; }
+					map = null;
+					List<ListItem> newItems = new List<ListItem>();
+					int imgSize = listLevels.Width;
+					for (int i = 0; i < files.Length; i++) {
+						string file = files[i];
+						map = Reader.ReadMap(files[i]);
+						if (map == null || map.Width <= 0 || map.Height <= 0) { continue; }
 
-					float widthRatio = imgSize / map.Width;
-					int height = (int)(widthRatio * map.Height) + listLevels.Font.Height * 2;
-					ListItem item = new ListItem(map, map.Name, imgSize, height);
-					newItems.Add(item);
-				}
-
-				this.Invoke((MethodInvoker)delegate () {
-					txtLevelFilter.Visible = true;
-
-					statusLevel.Text = "N/A";
-					listLevels.AddItems(newItems);
-
-					Text = $"{TitleBarText} - {GameWorldName} - {listLevels.Count} Levels";
-
-					menuPalette.DropDownItems.Clear();
-					foreach (string name in Reader.Palettes.Keys) {
-						string paletteName = $"{char.ToUpper(name[0])}{name.Substring(1, name.Length - 5)}";
-						ToolStripMenuItem menuItem = new ToolStripMenuItem(paletteName, null, PaletteMenuItemClick);
-						menuItem.CheckOnClick = true;
-						menuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
-						menuPalette.DropDownItems.Add(menuItem);
+						float widthRatio = imgSize / map.Width;
+						int height = (int)(widthRatio * map.Height) + listLevels.Font.Height * 2;
+						ListItem item = new ListItem(map, map.Name, imgSize, height);
+						newItems.Add(item);
 					}
 
-					listLevels.SortItems();
-					listLevels.SelectTopMostVisible();
+					this.Invoke((MethodInvoker)delegate () {
+						txtLevelFilter.Visible = true;
 
-					if (txtLevelFilter.ForeColor == Color.Black) {
-						txtLevelFilter.Text = string.Empty;
-						txtLevelFilter_Leave(null, null);
-					}
-					menu.Enabled = true;
-					imgBaba.Visible = false;
-					menuLevel.Enabled = true;
-					menuPalette.Enabled = true;
-					menuItemWorldProperties.Enabled = true;
-					menuItemAddLevel.Enabled = true;
-					menuItemRemoveLevel.Enabled = true;
-					menuItemSaveWorld.Enabled = true;
+						statusLevel.Text = "N/A";
+						listLevels.AddItems(newItems);
 
-					if (listLevels.SelectedItem == null) {
-						AddSprites();
-						SelectPalette("default.png");
-					}
-					listObjects.Focus();
-				});
+						Text = $"{TitleBarText} - {GameWorldName} - {listLevels.Count} Levels";
+
+						menuPalette.DropDownItems.Clear();
+						foreach (string name in Reader.Palettes.Keys) {
+							string paletteName = $"{char.ToUpper(name[0])}{name.Substring(1, name.Length - 5)}";
+							ToolStripMenuItem menuItem = new ToolStripMenuItem(paletteName, null, PaletteMenuItemClick);
+							menuItem.CheckOnClick = true;
+							menuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
+							menuPalette.DropDownItems.Add(menuItem);
+						}
+
+						listLevels.SortItems();
+						listLevels.SelectTopMostVisible();
+
+						if (txtLevelFilter.ForeColor == Color.Black) {
+							txtLevelFilter.Text = string.Empty;
+							txtLevelFilter_Leave(null, null);
+						}
+						menu.Enabled = true;
+						imgBaba.Visible = false;
+						menuLevel.Enabled = true;
+						menuPalette.Enabled = true;
+						menuItemWorldProperties.Enabled = true;
+						menuItemAddLevel.Enabled = true;
+						menuItemRemoveLevel.Enabled = true;
+						menuItemSaveWorld.Enabled = true;
+
+						if (listLevels.SelectedItem == null) {
+							AddSprites();
+							SelectPalette("default.png");
+						}
+						listObjects.Focus();
+					});
 #if !DEBUG
 				} catch (Exception ex) {
 					MessageBox.Show(ex.ToString(), "Loading World Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -185,8 +185,12 @@ namespace BabaIsYou.Views {
 			thread.Start();
 		}
 		private void Solver_Resize(object sender, EventArgs e) {
-			LevelImageWidth = Width / 5;
+			LevelImageWidth = Width / 6;
 			LevelImageHeight = LevelImageWidth * 3 / 4;
+			if (LevelImageHeight * 7 > Height) {
+				LevelImageHeight = Height / 7;
+				LevelImageWidth = LevelImageHeight * 4 / 3;
+			}
 			ResizeListObjects();
 		}
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
