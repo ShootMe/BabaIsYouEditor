@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
 namespace BabaIsYou.Controls {
 	public class MapViewer : MessageFilter {
@@ -41,14 +42,34 @@ namespace BabaIsYou.Controls {
 		public bool ShowDirections { get; set; }
 		[EditorBrowsable(EditorBrowsableState.Never), Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), ReadOnly(true)]
 		public bool AllowEdgePlacement { get; set; }
+		[EditorBrowsable(EditorBrowsableState.Never), Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), ReadOnly(true)]
+		public bool ShowAnimations { get; set; }
+		private Thread redrawThread;
+		private int frameCount = 0;
 		public MapViewer() : base() {
 			DoubleBuffered = true;
 			ShowStacked = false;
 			ShowDirections = false;
+			ShowAnimations = true;
 			AllowEdgePlacement = false;
 			ResizeRedraw = true;
+			redrawThread = new Thread(RedrawTimer);
+			redrawThread.IsBackground = true;
+			redrawThread.Start();
 		}
 
+		private void RedrawTimer() {
+			while (!IsDisposed) {
+				try {
+					frameCount++;
+					if (currentMap != null && ShowAnimations) {
+						this.Invalidate();
+					}
+				} catch {
+				}
+				Thread.Sleep(170);
+			}
+		}
 		private void MapResized(Grid map) {
 			ClearCurrentCell();
 		}
@@ -140,7 +161,7 @@ namespace BabaIsYou.Controls {
 				DrawCurrentCellStart?.Invoke(e.Graphics, currentMap, currentCell, saved);
 			}
 
-			Renderer.Render(currentMap, e.Graphics, Width, Height, ShowStacked, ShowDirections);
+			Renderer.Render(currentMap, e.Graphics, Width, Height, ShowAnimations ? frameCount : 0, ShowStacked, ShowDirections);
 
 			if (saved.X >= 0) {
 				DrawCurrentCellFinish?.Invoke(e.Graphics, currentMap, currentCell, saved);

@@ -6,6 +6,16 @@ Simple Level Editor for the game Baba Is You
   - Run and enjoy
 
 ## Change Log
+  - 1.2.4
+    - Features
+	  - Added 'Show Animations' option to the level menu
+    - Fixes
+	  - Fixed image selector window being too big in some cases
+
+  - 1.2.3
+    - Fixes
+	  - Fixed level picker window being too big
+
   - 1.2.2
     - Features
 	  - Level list and sprite list now resize according to size of program

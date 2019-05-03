@@ -34,6 +34,10 @@ namespace BabaIsYou.Map {
 				Bitmap img;
 				if (Images.TryGetValue(index * 3 + sub, out img)) {
 					return img;
+				} else if (Images.TryGetValue(index * 3 + sub + (sub < 3 ? 1 : -2), out img)) {
+					return img;
+				} else if (Images.TryGetValue(index * 3 + sub + 1 + (sub + 1 < 3 ? 1 : -2), out img)) {
+					return img;
 				}
 				return null;
 			}

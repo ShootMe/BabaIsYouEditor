@@ -49,9 +49,21 @@ namespace BabaIsYou.Views {
 		}
 		private void imgObject_Click(object sender, EventArgs e) {
 			using (ObjectSelector selector = new ObjectSelector()) {
-				int imgSize = 36;
+				int spriteCount = 0;
+				foreach (Item spriteItem in Reader.DefaultsByObject.Values) {
+					if (spriteItem.ID <= 0 || string.IsNullOrEmpty(spriteItem.Sprite)) { continue; }
+
+					spriteCount++;
+				}
+				Size size = Renderer.GetSizeForCount(spriteCount);
+
+				int imgSize = WorldViewer.Instance.Width / (size.Width + 1);
+				if (imgSize * (size.Height + 2) > WorldViewer.Instance.Height) {
+					imgSize = WorldViewer.Instance.Height / (size.Height + 2);
+				}
+				if (imgSize > 48) { imgSize = 48; }
+
 				Rectangle rect = new Rectangle(0, 0, imgSize, imgSize);
-				int spriteCount = Reader.DefaultsByObject.Count;
 				foreach (Item spriteItem in Reader.DefaultsByObject.Values) {
 					if (spriteItem.ID <= 0 || string.IsNullOrEmpty(spriteItem.Sprite)) { continue; }
 

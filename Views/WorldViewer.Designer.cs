@@ -44,6 +44,7 @@
 			this.menuItemThemeSeperator = new System.Windows.Forms.ToolStripSeparator();
 			this.menuItemThemeNone = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuItemLevelSeperator1 = new System.Windows.Forms.ToolStripSeparator();
+			this.menuItemShowAnimations = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuItemShowStacked = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuItemShowDirections = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuItemEdgePlacement = new System.Windows.Forms.ToolStripMenuItem();
@@ -98,8 +99,8 @@
 			// splitMain.Panel2
 			// 
 			this.splitMain.Panel2.Controls.Add(this.splitObjectsLevel);
-			this.splitMain.Size = new System.Drawing.Size(1009, 788);
-			this.splitMain.SplitterDistance = 144;
+			this.splitMain.Size = new System.Drawing.Size(984, 713);
+			this.splitMain.SplitterDistance = 140;
 			this.splitMain.SplitterWidth = 1;
 			this.splitMain.TabIndex = 1;
 			// 
@@ -111,7 +112,7 @@
 			this.txtLevelFilter.ForeColor = System.Drawing.Color.Gray;
 			this.txtLevelFilter.Location = new System.Drawing.Point(0, 0);
 			this.txtLevelFilter.Name = "txtLevelFilter";
-			this.txtLevelFilter.Size = new System.Drawing.Size(144, 20);
+			this.txtLevelFilter.Size = new System.Drawing.Size(140, 20);
 			this.txtLevelFilter.TabIndex = 3;
 			this.txtLevelFilter.Text = "Filter ...";
 			this.txtLevelFilter.TextChanged += new System.EventHandler(this.txtLevelFilter_TextChanged);
@@ -133,8 +134,8 @@
 			// splitObjectsLevel.Panel2
 			// 
 			this.splitObjectsLevel.Panel2.Controls.Add(this.mapViewer);
-			this.splitObjectsLevel.Size = new System.Drawing.Size(864, 788);
-			this.splitObjectsLevel.SplitterDistance = 179;
+			this.splitObjectsLevel.Size = new System.Drawing.Size(843, 713);
+			this.splitObjectsLevel.SplitterDistance = 188;
 			this.splitObjectsLevel.SplitterWidth = 1;
 			this.splitObjectsLevel.TabIndex = 1;
 			// 
@@ -148,7 +149,7 @@
             this.menuHelp});
 			this.menu.Location = new System.Drawing.Point(0, 0);
 			this.menu.Name = "menu";
-			this.menu.Size = new System.Drawing.Size(1009, 24);
+			this.menu.Size = new System.Drawing.Size(984, 24);
 			this.menu.TabIndex = 1;
 			// 
 			// menuWorld
@@ -246,6 +247,7 @@
             this.menuItemLevelProperties,
             this.menuItemSetTheme,
             this.menuItemLevelSeperator1,
+            this.menuItemShowAnimations,
             this.menuItemShowStacked,
             this.menuItemShowDirections,
             this.menuItemEdgePlacement,
@@ -301,6 +303,14 @@
 			// 
 			this.menuItemLevelSeperator1.Name = "menuItemLevelSeperator1";
 			this.menuItemLevelSeperator1.Size = new System.Drawing.Size(198, 6);
+			// 
+			// menuItemShowAnimations
+			// 
+			this.menuItemShowAnimations.CheckOnClick = true;
+			this.menuItemShowAnimations.Name = "menuItemShowAnimations";
+			this.menuItemShowAnimations.Size = new System.Drawing.Size(201, 22);
+			this.menuItemShowAnimations.Text = "Show Animations";
+			this.menuItemShowAnimations.Click += new System.EventHandler(this.menuItemShowAnimations_Click);
 			// 
 			// menuItemShowStacked
 			// 
@@ -389,9 +399,9 @@
             this.statusBlank,
             this.statusSprite,
             this.statusPosition});
-			this.status.Location = new System.Drawing.Point(0, 812);
+			this.status.Location = new System.Drawing.Point(0, 737);
 			this.status.Name = "status";
-			this.status.Size = new System.Drawing.Size(1009, 24);
+			this.status.Size = new System.Drawing.Size(984, 24);
 			this.status.TabIndex = 2;
 			// 
 			// statusLevel
@@ -459,7 +469,7 @@
 			// 
 			this.statusBlank.ForeColor = System.Drawing.Color.Black;
 			this.statusBlank.Name = "statusBlank";
-			this.statusBlank.Size = new System.Drawing.Size(483, 19);
+			this.statusBlank.Size = new System.Drawing.Size(458, 19);
 			this.statusBlank.Spring = true;
 			// 
 			// statusSprite
@@ -482,7 +492,7 @@
 			this.imgBaba.Image = global::BabaIsYou.Properties.Resources.baba;
 			this.imgBaba.Location = new System.Drawing.Point(0, 24);
 			this.imgBaba.Name = "imgBaba";
-			this.imgBaba.Size = new System.Drawing.Size(1009, 788);
+			this.imgBaba.Size = new System.Drawing.Size(984, 713);
 			this.imgBaba.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
 			this.imgBaba.TabIndex = 1;
 			this.imgBaba.TabStop = false;
@@ -494,7 +504,7 @@
 			this.listLevels.Focusable = false;
 			this.listLevels.Location = new System.Drawing.Point(0, 20);
 			this.listLevels.Name = "listLevels";
-			this.listLevels.Size = new System.Drawing.Size(144, 768);
+			this.listLevels.Size = new System.Drawing.Size(140, 693);
 			this.listLevels.TabIndex = 0;
 			this.listLevels.TabStop = false;
 			this.listLevels.UseControlMovement = true;
@@ -509,9 +519,8 @@
 			this.listObjects.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.listObjects.DrawText = false;
 			this.listObjects.Location = new System.Drawing.Point(0, 0);
-			this.listObjects.MaximumSize = new System.Drawing.Size(864, 9999);
 			this.listObjects.Name = "listObjects";
-			this.listObjects.Size = new System.Drawing.Size(864, 179);
+			this.listObjects.Size = new System.Drawing.Size(843, 188);
 			this.listObjects.TabIndex = 0;
 			this.listObjects.UseControlMovement = true;
 			this.listObjects.IndexChanged += new BabaIsYou.Controls.ListPanel.SelectedIndexChangedEvent(this.listObjects_IndexChanged);
@@ -524,7 +533,7 @@
 			this.mapViewer.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.mapViewer.Location = new System.Drawing.Point(0, 0);
 			this.mapViewer.Name = "mapViewer";
-			this.mapViewer.Size = new System.Drawing.Size(864, 608);
+			this.mapViewer.Size = new System.Drawing.Size(843, 524);
 			this.mapViewer.TabIndex = 0;
 			this.mapViewer.TabStop = false;
 			this.mapViewer.CellMouseOver += new BabaIsYou.Controls.MapViewer.CellMouseEvent(this.mapViewer_CellMouseOver);
@@ -538,7 +547,7 @@
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.Black;
-			this.ClientSize = new System.Drawing.Size(1009, 836);
+			this.ClientSize = new System.Drawing.Size(984, 761);
 			this.Controls.Add(this.imgBaba);
 			this.Controls.Add(this.splitMain);
 			this.Controls.Add(this.status);
@@ -619,6 +628,7 @@
 		private System.Windows.Forms.ToolStripDropDownButton statusSetSelector;
 		private System.Windows.Forms.ToolStripDropDownButton statusAddSpecial;
 		private System.Windows.Forms.ToolStripMenuItem menuItemSortLevels;
+		private System.Windows.Forms.ToolStripMenuItem menuItemShowAnimations;
 	}
 }
 

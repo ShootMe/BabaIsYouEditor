@@ -10,9 +10,10 @@ namespace BabaIsYou.Map {
 	public class Renderer {
 		public static PrivateFontCollection CustomFont;
 		private static Font GlobalFont;
-		private static Bitmap Selector;
-		private static Bitmap Petal;
+		private static Bitmap Selector, Petal;
 		private static Bitmap SpecialIcon, DownIcon, IdleIcon, LeftIcon, PauseIcon, RightIcon, UndoIcon, UpIcon;
+		private static Sprite Levels = new Sprite("Level", "Level", true);
+
 		static Renderer() {
 			Assembly assembly = typeof(Renderer).Assembly;
 			Selector = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.grid.png"));
@@ -25,6 +26,9 @@ namespace BabaIsYou.Map {
 			RightIcon = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.right.png"));
 			UndoIcon = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.undo_icon.png"));
 			UpIcon = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.up.png"));
+			Levels[0, 1] = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.level1.png"));
+			Levels[0, 2] = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.level2.png"));
+			Levels[0, 3] = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.level3.png"));
 			using (Stream fontStream = assembly.GetManifestResourceStream("BabaIsYou.Images.Consolas.ttf")) {
 				byte[] fontdata = new byte[fontStream.Length];
 				fontStream.Read(fontdata, 0, (int)fontStream.Length);
@@ -63,6 +67,15 @@ namespace BabaIsYou.Map {
 			}
 			return new Size(sizeX, sizeY);
 		}
+		public static Size GetFillSizeForCount(int count, int xDim, int yDim) {
+			int area = xDim * yDim;
+			int size = (int)Math.Sqrt(area / count);
+
+			while ((xDim / size) * (yDim / size) < count) {
+				size--;
+			}
+			return new Size(xDim / size, yDim / size);
+		}
 		public static Rectangle GetBounds(Grid grid, int totalWidth, int totalHeight) {
 			int tileWidth = totalWidth / grid.Width;
 			int tileHeight = totalHeight / grid.Height;
@@ -79,7 +92,7 @@ namespace BabaIsYou.Map {
 			int y = heightPadding / 2;
 			return new Rectangle(x, y, tileWidth, tileHeight);
 		}
-		public static void Render(Grid grid, Graphics g, int totalWidth, int totalHeight, bool showStacked = false, bool showDirections = false) {
+		public static void Render(Grid grid, Graphics g, int totalWidth, int totalHeight, int frameNumber = 0, bool showStacked = false, bool showDirections = false) {
 			Rectangle mapBounds = GetBounds(grid, totalWidth, totalHeight);
 			int rowEnd = mapBounds.X + mapBounds.Width * grid.Width;
 
@@ -98,9 +111,10 @@ namespace BabaIsYou.Map {
 			}
 
 			g.Clip = new Region(new Rectangle(mapBounds.X, mapBounds.Y, mapBounds.Width * grid.Width, mapBounds.Height * grid.Height));
+			int frame = (frameNumber % 3) + 1;
 			for (int i = 0; i < grid.Images.Count; i++) {
 				string image = grid.Images[i];
-				Bitmap img = Reader.Sprites[image][0, 1];
+				Bitmap img = Reader.Sprites[image][0, frame];
 				int width = img.Width * mapBounds.Width / 24;
 				if (width < 1) { width = 1; }
 				int height = img.Height * mapBounds.Height / 24;
@@ -110,7 +124,7 @@ namespace BabaIsYou.Map {
 
 			int xOrig = mapBounds.X;
 			int yOrig = mapBounds.Y;
-			DrawSpecials(g, grid, mapBounds, rowEnd, palette, true);
+			DrawSpecials(g, grid, mapBounds, rowEnd, palette, true, frameNumber);
 
 			mapBounds.X = xOrig;
 			mapBounds.Y = yOrig;
@@ -128,7 +142,7 @@ namespace BabaIsYou.Map {
 					if (!(item is Level) && !(item is LevelPath) && !(item is Special)) {
 						itemCount++;
 					}
-					DrawSprite(grid, g, mapBounds, item, palette, showStacked && itemCount > 1 && j + 1 == items ? itemCount : 0, hasSpecialLevel);
+					DrawSprite(grid, g, mapBounds, item, palette, frameNumber, showStacked && itemCount > 1 && j + 1 == items ? itemCount : 0, hasSpecialLevel);
 				}
 
 				mapBounds.X += mapBounds.Width;
@@ -140,7 +154,7 @@ namespace BabaIsYou.Map {
 
 			mapBounds.X = xOrig;
 			mapBounds.Y = yOrig;
-			DrawSpecials(g, grid, mapBounds, rowEnd, palette, false);
+			DrawSpecials(g, grid, mapBounds, rowEnd, palette, false, frameNumber);
 
 			if (showDirections) {
 				mapBounds.X = xOrig;
@@ -163,7 +177,7 @@ namespace BabaIsYou.Map {
 				DrawSprite(grid, g, mapBounds, Item.SELECTOR, palette);
 			}
 		}
-		private static void DrawSpecials(Graphics g, Grid grid, Rectangle bounds, int rowEnd, Palette palette, bool drawLevels) {
+		private static void DrawSpecials(Graphics g, Grid grid, Rectangle bounds, int rowEnd, Palette palette, bool drawLevels, int frameNumber) {
 			int xOrig = bounds.X;
 			int size = grid.Cells.Count;
 			for (int i = 0; i < size; i++) {
@@ -175,7 +189,7 @@ namespace BabaIsYou.Map {
 					if (item is Special specialItem) {
 						if (!drawLevels && specialItem.Type == (byte)SpecialType.Flower) {
 							Flower flower = specialItem.GetFlower();
-							DrawFlower(g, bounds, flower.Radius, palette.Colors[flower.Color], palette.Colors[flower.InnerColor]);
+							DrawFlower(g, bounds, flower.Radius, palette.Colors[flower.Color], palette.Colors[flower.InnerColor], frameNumber);
 						} else if (!drawLevels && specialItem.Type == (byte)SpecialType.Controls) {
 							GameControl gameControl = specialItem.GetGameControl();
 							switch (gameControl.Type) {
@@ -193,7 +207,7 @@ namespace BabaIsYou.Map {
 							if (level.Style == (byte)LevelStyle.Icon) {
 								level.Style = (byte)LevelStyle.Dot;
 							}
-							DrawLevel(g, bounds, level, null, palette.Colors[level.ActiveColor], palette.Colors[level.Color]);
+							DrawLevel(g, bounds, level, null, palette.Colors[level.ActiveColor], palette.Colors[level.Color], frameNumber);
 						}
 						break;
 					}
@@ -286,7 +300,7 @@ namespace BabaIsYou.Map {
 			}
 			return img;
 		}
-		public static void DrawSprite(Grid grid, Graphics g, Rectangle destination, Item item, Palette palette, int stackCount = 0, bool hasSpecialLevel = false) {
+		public static void DrawSprite(Grid grid, Graphics g, Rectangle destination, Item item, Palette palette, int frameNumber = 0, int stackCount = 0, bool hasSpecialLevel = false) {
 			Color color = palette.Colors[item.Active && item.ActiveColor != -1 ? item.ActiveColor : item.Color];
 			if (item is Special specialItem) {
 				if (specialItem.Type == (byte)SpecialType.Art || specialItem.Type == (byte)SpecialType.Unknown) {
@@ -304,14 +318,20 @@ namespace BabaIsYou.Map {
 			if (item.ID != short.MaxValue && !Reader.Sprites.TryGetValue(item.Sprite, out sprite)) {
 				throw new Exception($"Failed to find Sprite {item.Sprite}");
 			}
-			Bitmap image = item.ID == short.MaxValue ? Selector : sprite[0, 1];
+			Bitmap image = null;
+			int frame = ((frameNumber + item.Position) % 3) + 1;
+			if (item.ID == short.MaxValue) {
+				image = Selector;
+			} else {
+				image = sprite[0, frame];
+			}
 			switch ((Tiling)item.Tiling) {
 				case Tiling.Directional:
 				case Tiling.Animated:
 					switch ((Direction)item.Direction) {
-						case Direction.Up: image = sprite[8, 1]; break;
-						case Direction.Left: image = sprite[16, 1]; break;
-						case Direction.Down: image = sprite[24, 1]; break;
+						case Direction.Up: image = sprite[8, frame]; break;
+						case Direction.Left: image = sprite[16, frame]; break;
+						case Direction.Down: image = sprite[24, frame]; break;
 					}
 					break;
 				case Tiling.Tiled:
@@ -343,23 +363,23 @@ namespace BabaIsYou.Map {
 							value |= cell.ContainsObject(item) || IsEdge(grid, position) || (isLevelPath && cell.HasLevelPath()) ? 1 : 0;
 						}
 
-						image = sprite[value, 1];
+						image = sprite[value, frame];
 					}
 					break;
 				case Tiling.Character:
 					switch ((Direction)item.Direction) {
-						case Direction.Up: image = sprite[8, 1]; break;
-						case Direction.Left: image = sprite[16, 1]; break;
-						case Direction.Down: image = sprite[24, 1]; break;
+						case Direction.Up: image = sprite[8, frame]; break;
+						case Direction.Left: image = sprite[16, frame]; break;
+						case Direction.Down: image = sprite[24, frame]; break;
 					}
 					if (item.Sleeping) {
-						image = sprite[31, 1];
+						image = sprite[31, frame];
 					}
 					break;
 			}
 
 			if (item is Level level) {
-				DrawLevel(g, destination, level, image, color, palette.Colors[level.Color]);
+				DrawLevel(g, destination, level, image, color, palette.Colors[level.Color], frameNumber);
 			} else {
 				DrawImage(g, image, destination, color, hasSpecialLevel);
 			}
@@ -376,30 +396,17 @@ namespace BabaIsYou.Map {
 				}
 			}
 		}
-		private static void DrawLevel(Graphics g, Rectangle bounds, Level level, Bitmap image, Color color, Color colorText) {
-			int inc = 40;
-			Color colorInc = ColorUtil.TransformBrightness(colorText, ColorUtil.ColorTransformMode.Hsb, 0.455);
-			if (colorInc.R == 0 && colorInc.G == 0 && colorInc.B == 0) {
-				colorInc = Color.FromArgb(color.R + inc, color.G + inc, color.B + inc);
-			}
+		private static void DrawLevel(Graphics g, Rectangle bounds, Level level, Bitmap image, Color color, Color colorText, int frameNumber) {
+			int frame = ((frameNumber + level.Position) % 3) + 1;
+			DrawImage(g, Levels[0, frame], bounds, colorText, false);
 
-			using (GraphicsPath path = RoundedRect(bounds, bounds.Width / 3)) {
-				using (SolidBrush brush = new SolidBrush(colorInc)) {
-					g.FillPath(brush, path);
-				}
-
-				if (level.Style == (byte)LevelStyle.Icon) {
-					DrawImage(g, image, bounds, color, false);
-				}
-
-				using (Pen pen = new Pen(colorText, bounds.Width / 10)) {
-					g.DrawPath(pen, path);
-				}
+			if (level.Style == (byte)LevelStyle.Icon) {
+				DrawImage(g, image, bounds, color, false);
 			}
 
 			if (level.Style == (byte)LevelStyle.Number || level.Style == (byte)LevelStyle.Letter) {
 				using (SolidBrush brush = new SolidBrush(color)) {
-					int fontWidth = bounds.Width * 3 / 4;
+					int fontWidth = bounds.Width * 2 / 3;
 					if (fontWidth <= 0) { fontWidth = 1; }
 					using (Font font = new Font(CustomFont.Families[0], fontWidth, FontStyle.Bold, GraphicsUnit.Pixel)) {
 						int number = level.Number;
@@ -411,32 +418,38 @@ namespace BabaIsYou.Map {
 						string text = level.Style == (byte)LevelStyle.Number ? number.ToString("00") : ((char)(number + 0x41)).ToString();
 						SizeF textSize = g.MeasureString(text, font, 9999999, StringFormat.GenericTypographic);
 						g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
-						g.DrawString(text, font, brush, new Point(bounds.X + (int)(bounds.Width / 2 - textSize.Width / 2), bounds.Y + (int)(bounds.Height / 2 - textSize.Height / 2)), StringFormat.GenericTypographic);
+						g.DrawString(text, font, brush, new Point(bounds.X + (int)((bounds.Width - textSize.Width) / 2f) + 1, bounds.Y + (int)((bounds.Height - textSize.Height) / 2f)), StringFormat.GenericTypographic);
 					}
 				}
 			} else if (level.Style == (byte)LevelStyle.Dot) {
 				DrawDots(g, bounds, level.Number, color);
 			}
 		}
-		private static void DrawFlower(Graphics g, Rectangle bounds, int radius, Color color, Color center) {
+		private static void DrawFlower(Graphics g, Rectangle bounds, int radius, Color color, Color center, int frameNumber) {
 			GraphicsState state = g.Save();
 			Matrix matrix = g.Transform;
 			for (int i = radius; i > 0; i--) {
-				float increase = 360f / (i * 8f);
+				int startingPoint = (frameNumber % 360) * ((i & 1) == 0 ? -4 : 4);
+				float increase = (360f / (i * 8f));
 
 				float offset = bounds.Height * 2f / 3f;
 				for (int j = 1; j < i; j++) {
 					offset += (float)bounds.Height * j / (j + 1) + offset / 8;
 				}
 
+				float totalRotation = startingPoint;
+				matrix.RotateAt(totalRotation, new Point(bounds.X + bounds.Width / 2, bounds.Y + bounds.Height / 2));
+
 				for (int j = i * 8; j > 0; j--) {
+					totalRotation += increase;
 					matrix.RotateAt(increase, new Point(bounds.X + bounds.Width / 2, bounds.Y + bounds.Height / 2));
 					matrix.Translate(0, -offset);
 					g.Transform = matrix;
 					DrawImage(g, Petal, bounds, color, false);
 					matrix.Translate(0, offset);
 				}
-				matrix.RotateAt(increase / 2, new Point(bounds.X + bounds.Width / 2, bounds.Y + bounds.Height / 2));
+
+				matrix.RotateAt(-totalRotation, new Point(bounds.X + bounds.Width / 2, bounds.Y + bounds.Height / 2));
 			}
 
 			g.Restore(state);
@@ -447,7 +460,7 @@ namespace BabaIsYou.Map {
 		private static void DrawDots(Graphics g, Rectangle bounds, int number, Color inside) {
 			int diameter = bounds.Width / 4 - 1;
 			diameter = diameter < 1 ? 1 : diameter;
-			int offset = diameter * 2 / 3;
+			int offset = diameter / 2;
 			switch (number) {
 				case 0:
 					DrawDot(g, (bounds.Width - diameter) / 2 + bounds.X, (bounds.Height - diameter) / 2 + bounds.Y, diameter, diameter, inside);
@@ -549,7 +562,7 @@ namespace BabaIsYou.Map {
 			matrix.Matrix11 = color.G / 255f;
 			matrix.Matrix22 = color.B / 255f;
 			if (drawTransparent) {
-				matrix.Matrix33 = 0.5f;
+				matrix.Matrix33 = 0.6f;
 			}
 			ImageAttributes attributes = new ImageAttributes();
 			attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);

@@ -258,6 +258,10 @@
     <EmbeddedResource Include="Images\undo_icon.png" />
     <EmbeddedResource Include="Images\up.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Images\level1.png" />
+    <EmbeddedResource Include="Images\level2.png" />
+    <EmbeddedResource Include="Images\level3.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
