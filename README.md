@@ -6,6 +6,13 @@ Simple Level Editor for the game Baba Is You
   - Run and enjoy
 
 ## Change Log
+  - 1.2.5
+    - Features
+	  - Added prompt on exiting or loading a new world that tells you if there are unsaved changes
+    - Fixes
+	  - Mouse wheel was always moving counter clockwise for changing direction of object
+	  - Fixed an error when choosing a tiling for a sprite that doesnt exist for that sprite
+
   - 1.2.4
     - Features
 	  - Added 'Show Animations' option to the level menu

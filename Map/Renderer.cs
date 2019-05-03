@@ -12,6 +12,7 @@ namespace BabaIsYou.Map {
 		private static Font GlobalFont;
 		private static Bitmap Selector, Petal;
 		private static Bitmap SpecialIcon, DownIcon, IdleIcon, LeftIcon, PauseIcon, RightIcon, UndoIcon, UpIcon;
+		public static Bitmap Error;
 		private static Sprite Levels = new Sprite("Level", "Level", true);
 
 		static Renderer() {
@@ -26,6 +27,7 @@ namespace BabaIsYou.Map {
 			RightIcon = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.right.png"));
 			UndoIcon = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.undo_icon.png"));
 			UpIcon = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.up.png"));
+			Error = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.error.png"));
 			Levels[0, 1] = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.level1.png"));
 			Levels[0, 2] = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.level2.png"));
 			Levels[0, 3] = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.level3.png"));
@@ -376,6 +378,12 @@ namespace BabaIsYou.Map {
 						image = sprite[31, frame];
 					}
 					break;
+			}
+			if (image == null) {
+				image = sprite[0, frame];
+				if (image == null) {
+					image = Error;
+				}
 			}
 
 			if (item is Level level) {

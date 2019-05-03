@@ -165,7 +165,7 @@ namespace BabaIsYou.Map {
 					cellItem = cell.GetNextObject(null);
 				}
 				if (cellItem != null) {
-					ChangeItemDirection(cellItem, false, specific);
+					ChangeItemDirection(cellItem, clockwise, specific);
 					return true;
 				}
 			}

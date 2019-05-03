@@ -21,18 +21,18 @@ namespace BabaIsYou.Views {
 #if !DEBUG
 			try {
 #endif
-			string path = @"C:\Program Files (x86)\Steam\steamapps\common\Baba Is You\Data\";
-			GameDirectory = RegistryRead<string>("GameDirectory", path);
-			if (!Directory.Exists(GameDirectory)) {
-				GameDirectory = Environment.CurrentDirectory;
-			}
-			GameDirectory = GameDirectory.Replace('/', '\\');
-			GameWorld = RegistryRead<string>("GameWorld", "baba");
+				string path = @"C:\Program Files (x86)\Steam\steamapps\common\Baba Is You\Data\";
+				GameDirectory = RegistryRead<string>("GameDirectory", path);
+				if (!Directory.Exists(GameDirectory)) {
+					GameDirectory = Environment.CurrentDirectory;
+				}
+				GameDirectory = GameDirectory.Replace('/', '\\');
+				GameWorld = RegistryRead<string>("GameWorld", "baba");
 
-			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(false);
-			Instance = new WorldViewer();
-			Application.Run(Instance);
+				Application.EnableVisualStyles();
+				Application.SetCompatibleTextRenderingDefault(false);
+				Instance = new WorldViewer();
+				Application.Run(Instance);
 #if !DEBUG
 			} catch (Exception ex) {
 				MessageBox.Show(ex.ToString(), "Application Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -44,7 +44,6 @@ namespace BabaIsYou.Views {
 		public static int LevelImageWidth = 180;
 		public static int LevelImageHeight = 135;
 		private Grid map;
-		private Bitmap textX;
 		private Item currentObject;
 		private List<ListItem> levelsToBeRemoved = new List<ListItem>();
 		private bool addedObject;
@@ -73,10 +72,6 @@ namespace BabaIsYou.Views {
 			statusPosition.Text = "[-1, -1]";
 			statusSprite.Text = "N/A";
 
-			using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("BabaIsYou.Images.error.png")) {
-				textX = new Bitmap(stream);
-			}
-
 			menuItemShowDirections.Checked = RegistryRead<int>("ShowDirections", 0) != 0;
 			menuItemShowStacked.Checked = RegistryRead<int>("ShowStacked", 0) != 0;
 			menuItemShowAnimations.Checked = RegistryRead<int>("ShowAnimations", 1) != 0;
@@ -93,6 +88,7 @@ namespace BabaIsYou.Views {
 			menuItemAddLevel.Enabled = false;
 			menuItemRemoveLevel.Enabled = false;
 			menuItemSaveWorld.Enabled = false;
+			menuItemSortLevels.Enabled = false;
 
 			if (GameDirectory.IndexOf(@"Baba Is You\Data\", StringComparison.OrdinalIgnoreCase) > 0 && Directory.Exists(Path.Combine(GameDirectory, "Worlds", GameWorld))) {
 				LoadWorld();
@@ -119,62 +115,63 @@ namespace BabaIsYou.Views {
 #if !DEBUG
 				try {
 #endif
-				string[] files = Directory.GetFiles(Path.Combine(GameDirectory, "Worlds", GameWorld), "*.l", SearchOption.TopDirectoryOnly);
-				Reader.Initialize(GameDirectory, GameWorld);
+					string[] files = Directory.GetFiles(Path.Combine(GameDirectory, "Worlds", GameWorld), "*.l", SearchOption.TopDirectoryOnly);
+					Reader.Initialize(GameDirectory, GameWorld);
 
-				map = null;
-				List<ListItem> newItems = new List<ListItem>();
-				int imgSize = listLevels.Width;
-				for (int i = 0; i < files.Length; i++) {
-					string file = files[i];
-					map = Reader.ReadMap(files[i]);
-					if (map == null || map.Width <= 0 || map.Height <= 0) { continue; }
+					map = null;
+					List<ListItem> newItems = new List<ListItem>();
+					int imgSize = listLevels.Width;
+					for (int i = 0; i < files.Length; i++) {
+						string file = files[i];
+						map = Reader.ReadMap(files[i]);
+						if (map == null || map.Width <= 0 || map.Height <= 0) { continue; }
 
-					float widthRatio = imgSize / map.Width;
-					int height = (int)(widthRatio * map.Height) + listLevels.Font.Height * 2;
-					ListItem item = new ListItem(map, map.Name, imgSize, height);
-					newItems.Add(item);
-				}
-
-				this.Invoke((MethodInvoker)delegate () {
-					txtLevelFilter.Visible = true;
-
-					statusLevel.Text = "N/A";
-					listLevels.AddItems(newItems);
-
-					Text = $"{TitleBarText} - {GameWorldName} - {listLevels.Count} Levels";
-
-					menuPalette.DropDownItems.Clear();
-					foreach (string name in Reader.Palettes.Keys) {
-						string paletteName = $"{char.ToUpper(name[0])}{name.Substring(1, name.Length - 5)}";
-						ToolStripMenuItem menuItem = new ToolStripMenuItem(paletteName, null, PaletteMenuItemClick);
-						menuItem.CheckOnClick = true;
-						menuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
-						menuPalette.DropDownItems.Add(menuItem);
+						float widthRatio = imgSize / map.Width;
+						int height = (int)(widthRatio * map.Height) + listLevels.Font.Height * 2;
+						ListItem item = new ListItem(map, map.Name, imgSize, height);
+						newItems.Add(item);
 					}
 
-					listLevels.SortItems();
-					listLevels.SelectTopMostVisible();
+					this.Invoke((MethodInvoker)delegate () {
+						txtLevelFilter.Visible = true;
 
-					if (txtLevelFilter.ForeColor == Color.Black) {
-						txtLevelFilter.Text = string.Empty;
-						txtLevelFilter_Leave(null, null);
-					}
-					menu.Enabled = true;
-					imgBaba.Visible = false;
-					menuLevel.Enabled = true;
-					menuPalette.Enabled = true;
-					menuItemWorldProperties.Enabled = true;
-					menuItemAddLevel.Enabled = true;
-					menuItemRemoveLevel.Enabled = true;
-					menuItemSaveWorld.Enabled = true;
+						statusLevel.Text = "N/A";
+						listLevels.AddItems(newItems);
 
-					if (listLevels.SelectedItem == null) {
-						AddSprites();
-						SelectPalette("default.png");
-					}
-					listObjects.Focus();
-				});
+						Text = $"{TitleBarText} - {GameWorldName} - {listLevels.Count} Levels";
+
+						menuPalette.DropDownItems.Clear();
+						foreach (string name in Reader.Palettes.Keys) {
+							string paletteName = $"{char.ToUpper(name[0])}{name.Substring(1, name.Length - 5)}";
+							ToolStripMenuItem menuItem = new ToolStripMenuItem(paletteName, null, PaletteMenuItemClick);
+							menuItem.CheckOnClick = true;
+							menuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
+							menuPalette.DropDownItems.Add(menuItem);
+						}
+
+						listLevels.SortItems();
+						listLevels.SelectTopMostVisible();
+
+						if (txtLevelFilter.ForeColor == Color.Black) {
+							txtLevelFilter.Text = string.Empty;
+							txtLevelFilter_Leave(null, null);
+						}
+						menu.Enabled = true;
+						imgBaba.Visible = false;
+						menuLevel.Enabled = true;
+						menuPalette.Enabled = true;
+						menuItemWorldProperties.Enabled = true;
+						menuItemAddLevel.Enabled = true;
+						menuItemRemoveLevel.Enabled = true;
+						menuItemSaveWorld.Enabled = true;
+						menuItemSortLevels.Enabled = true;
+
+						if (listLevels.SelectedItem == null) {
+							AddSprites();
+							SelectPalette("default.png");
+						}
+						listObjects.Focus();
+					});
 #if !DEBUG
 				} catch (Exception ex) {
 					MessageBox.Show(ex.ToString(), "Loading World Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -301,6 +298,10 @@ namespace BabaIsYou.Views {
 			}
 		}
 		private void WorldViewer_FormClosing(object sender, FormClosingEventArgs e) {
+			if (HasChanges() && MessageBox.Show(this, "This world has unsaved changes. Are you sure you want to exit?", "World Changes", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK) {
+				e.Cancel = true;
+				return;
+			}
 			RegistryWrite<int>("ShowStacked", menuItemShowStacked.Checked ? 1 : 0);
 			RegistryWrite<int>("ShowDirections", menuItemShowDirections.Checked ? 1 : 0);
 			RegistryWrite<int>("SortByFile", menuItemSortLevels.Checked ? 1 : 0);
@@ -308,6 +309,20 @@ namespace BabaIsYou.Views {
 		}
 		private void WorldViewer_Deactivate(object sender, EventArgs e) {
 			holdingControl = false;
+		}
+		private bool HasChanges() {
+			if (levelsToBeRemoved.Count > 0) {
+				return true;
+			}
+
+			int size = listLevels.Count;
+			for (int i = 0; i < size; i++) {
+				ListItem item = listLevels[i];
+				if (item.Changed) {
+					return true;
+				}
+			}
+			return false;
 		}
 		private void txtLevelFilter_Enter(object sender, EventArgs e) {
 			if (txtLevelFilter.ForeColor == Color.Gray) {
@@ -754,7 +769,6 @@ namespace BabaIsYou.Views {
 				mapViewer.Invalidate();
 			}
 		}
-
 		private void mapViewer_DrawCurrentCellStart(Graphics g, Grid map, Cell cell, Rectangle bounds) {
 			if (currentObject != null) {
 				bool containsType = cell.ContainsObject(currentObject);
@@ -772,7 +786,7 @@ namespace BabaIsYou.Views {
 				if (addedObject) {
 					cell.Objects.Remove(currentObject);
 				} else {
-					g.DrawImage(textX, bounds);
+					g.DrawImage(Renderer.Error, bounds);
 				}
 			}
 			g.DrawRectangle(Pens.Red, bounds);
@@ -1035,6 +1049,10 @@ namespace BabaIsYou.Views {
 			}
 		}
 		private void menuItemOpenWorld_Click(object sender, EventArgs e) {
+			if (HasChanges() && MessageBox.Show(this, "This world has unsaved changes. Are you sure you want to load another one?", "World Changes", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK) {
+				return;
+			}
+
 			OpenFolderDialog browser = new OpenFolderDialog();
 			browser.Title = "Open World";
 			if (GameDirectory.IndexOf(@"Baba Is You\Data\", StringComparison.OrdinalIgnoreCase) > 0) {
