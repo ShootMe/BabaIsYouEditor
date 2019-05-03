@@ -131,24 +131,27 @@
       + Holding CTRL will 'Pick Up' the currently selected sprite under your mouse, if it doesn't exist will grab the top one
 
   - Middle Mouse or Space on Keyboard
-      Will bring up window to edit info if the cell contains a level object or a path object
+      Will bring up a window to edit info if the cell contains a level, path, or special object
 
   - Shift + E
       Will go 'Into' the current Level object under your mouse if one exists
 
   - Shift + R
-      Will return to the previous Level you came from if you used Shift + E
+      Will return to the previous Level you came from if you used Shift + E, or will search for any parent level that uses this level
 
   - Shift + (W/S/A/D)
       Will move the entire map in the direction specified. Object will wrap if they encounter an edge
 
-  - Mouse Wheel
+  - Mouse Wheel or Arrow Keys
       Will change the direction of the top most sprite under the mouse or
       If the currently selected sprite is in the cell it will change the direction of that sprite
       + Holding CTRL will change the direction of the currently selected sprite
 
 
 Controls For Sprite List
+  - Left Mouse
+     Will select that sprite to be used in the editor
+
   - Right Mouse
       Will open sprite editor window
 

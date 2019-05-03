@@ -53,7 +53,7 @@
 			this.textBox1.Name = "textBox1";
 			this.textBox1.ReadOnly = true;
 			this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.textBox1.Size = new System.Drawing.Size(877, 336);
+			this.textBox1.Size = new System.Drawing.Size(877, 374);
 			this.textBox1.TabIndex = 2;
 			this.textBox1.TabStop = false;
 			this.textBox1.Text = resources.GetString("textBox1.Text");
@@ -62,7 +62,7 @@
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.Black;
-			this.ClientSize = new System.Drawing.Size(877, 442);
+			this.ClientSize = new System.Drawing.Size(877, 480);
 			this.Controls.Add(this.textBox1);
 			this.Controls.Add(this.imgBaba);
 			this.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
