@@ -41,8 +41,8 @@ namespace BabaIsYou.Views {
 		}
 
 		private const int MaxLayerCount = 3;
-		public static int LevelImageWidth = 180;
-		public static int LevelImageHeight = 135;
+		public static int LevelImageWidth = 160;
+		public static int LevelImageHeight = 120;
 		private Grid map;
 		private Item currentObject;
 		private List<ListItem> levelsToBeRemoved = new List<ListItem>();
