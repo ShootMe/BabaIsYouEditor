@@ -78,7 +78,6 @@ namespace BabaIsYou.Views {
 				foreach (Sprite sprite in Reader.Sprites.Values) {
 					if (sprite.Name.IndexOf("img_") == 0 || sprite.Name.IndexOf("icon_") == 0) { continue; }
 
-					spriteCount++;
 					string name = sprite.Name;
 					int index = name.IndexOf("text");
 					if (index == 0) {
@@ -96,19 +95,7 @@ namespace BabaIsYou.Views {
 
 				selector.BackColor = Palette.Edge;
 				selector.Icon = this.Icon;
-				int sizeX = (int)Math.Sqrt(spriteCount);
-				int sizeY = sizeX;
-				bool isY = true;
-				while (sizeX * sizeY < spriteCount) {
-					if (isY) {
-						sizeY++;
-						isY = false;
-					} else {
-						sizeX++;
-						isY = true;
-					}
-				}
-				selector.ClientSize = new Size(imgSize * sizeX, imgSize * sizeY);
+				selector.ClientSize = new Size(imgSize * size.Width, imgSize * size.Height);
 				selector.SortItems();
 
 				DialogResult result = selector.ShowDialog(this);

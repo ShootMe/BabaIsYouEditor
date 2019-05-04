@@ -6,6 +6,10 @@ Simple Level Editor for the game Baba Is You
   - Run and enjoy
 
 ## Change Log
+  - 1.2.6
+    - Fixes
+	  - Fixed object editor window size when choosing a new object/image
+
   - 1.2.5
     - Features
 	  - Added prompt on exiting or loading a new world that tells you if there are unsaved changes
