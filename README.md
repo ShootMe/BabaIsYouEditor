@@ -6,6 +6,10 @@ Simple Level Editor for the game Baba Is You
   - Run and enjoy
 
 ## Change Log
+  - 1.2.7
+    - Features
+	  - Added a simple rule parser that will hopefully show the words proper active/inactive colors
+
   - 1.2.6
     - Fixes
 	  - Fixed object editor window size when choosing a new object/image
