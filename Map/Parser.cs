@@ -273,7 +273,7 @@ namespace BabaIsYou.Map {
 			}
 
 			not = not || ParseNot(rule);
-			bool addedNoun = token == TextType.Noun;
+			bool addedNoun = token == TextType.Noun || (extra != null && extra.Extra.Name == "text_facing" && (current.Name == "text_up" || current.Name == "text_left" || current.Name == "text_right" || current.Name == "text_down"));
 			if (addedNoun) {
 				List<Target> targets = extra != null ? extra.Targets : rule.Targets;
 				targets.Add(new Target(current, not, current.IsObject));

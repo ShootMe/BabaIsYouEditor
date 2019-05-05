@@ -6,6 +6,10 @@ Simple Level Editor for the game Baba Is You
   - Run and enjoy
 
 ## Change Log
+  - 1.2.9
+    - Fixes
+	  - Fixed rule parser with the facing word
+
   - 1.2.8
     - Changes
 	  - Added argtype to object editor for use in mods
