@@ -19,7 +19,7 @@ namespace BabaIsYou.Map {
 		Noun,
 		Link,
 		Action,
-		Before,
+		Lonely,
 		Not,
 		Letter,
 		And,
@@ -91,16 +91,10 @@ namespace BabaIsYou.Map {
 			return $"{ID} {Object} {Name} {Direction}";
 		}
 		public override bool Equals(object obj) {
-			return obj != null && obj == (object)this;
+			return obj == this;
 		}
 		public override int GetHashCode() {
 			return ID;
-		}
-		public static bool operator ==(Item one, Item two) {
-			return (object)one == (object)two;
-		}
-		public static bool operator !=(Item one, Item two) {
-			return (object)one != (object)two;
 		}
 	}
 }

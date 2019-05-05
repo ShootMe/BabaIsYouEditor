@@ -68,6 +68,8 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\OpenFolderDialog.cs" />
+    <Compile Include="Map\Parser.cs" />
+    <Compile Include="Map\Rule.cs" />
     <Compile Include="Map\Special.cs" />
     <Compile Include="Views\LevelEdit.cs">
       <SubType>Form</SubType>
@@ -262,6 +264,9 @@
     <EmbeddedResource Include="Images\level1.png" />
     <EmbeddedResource Include="Images\level2.png" />
     <EmbeddedResource Include="Images\level3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\rules.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

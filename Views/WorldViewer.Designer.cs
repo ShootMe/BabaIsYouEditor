@@ -24,8 +24,12 @@
 		/// </summary>
 		private void InitializeComponent() {
 			this.splitMain = new System.Windows.Forms.SplitContainer();
+			this.listLevels = new BabaIsYou.Controls.ListPanel();
 			this.txtLevelFilter = new System.Windows.Forms.TextBox();
 			this.splitObjectsLevel = new System.Windows.Forms.SplitContainer();
+			this.listObjects = new BabaIsYou.Controls.ListPanel();
+			this.mapViewer = new BabaIsYou.Controls.MapViewer();
+			this.listRules = new BabaIsYou.Controls.ListPanel();
 			this.menu = new System.Windows.Forms.MenuStrip();
 			this.menuWorld = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuItemAddWorld = new System.Windows.Forms.ToolStripMenuItem();
@@ -43,6 +47,7 @@
 			this.menuItemNewTheme = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuItemThemeSeperator = new System.Windows.Forms.ToolStripSeparator();
 			this.menuItemThemeNone = new System.Windows.Forms.ToolStripMenuItem();
+			this.menuItemShowRules = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuItemLevelSeperator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.menuItemShowAnimations = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuItemShowStacked = new System.Windows.Forms.ToolStripMenuItem();
@@ -66,9 +71,6 @@
 			this.statusSprite = new System.Windows.Forms.ToolStripStatusLabel();
 			this.statusPosition = new System.Windows.Forms.ToolStripStatusLabel();
 			this.imgBaba = new System.Windows.Forms.PictureBox();
-			this.listLevels = new BabaIsYou.Controls.ListPanel();
-			this.listObjects = new BabaIsYou.Controls.ListPanel();
-			this.mapViewer = new BabaIsYou.Controls.MapViewer();
 			((System.ComponentModel.ISupportInitialize)(this.splitMain)).BeginInit();
 			this.splitMain.Panel1.SuspendLayout();
 			this.splitMain.Panel2.SuspendLayout();
@@ -104,6 +106,21 @@
 			this.splitMain.SplitterWidth = 1;
 			this.splitMain.TabIndex = 1;
 			// 
+			// listLevels
+			// 
+			this.listLevels.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.listLevels.Focusable = false;
+			this.listLevels.Location = new System.Drawing.Point(0, 20);
+			this.listLevels.Name = "listLevels";
+			this.listLevels.Size = new System.Drawing.Size(140, 693);
+			this.listLevels.TabIndex = 0;
+			this.listLevels.TabStop = false;
+			this.listLevels.UseControlMovement = true;
+			this.listLevels.IndexChanged += new BabaIsYou.Controls.ListPanel.SelectedIndexChangedEvent(this.listLevels_IndexChanged);
+			this.listLevels.ItemClicked += new BabaIsYou.Controls.ListPanel.ItemClickedEvent(this.listLevels_ItemClicked);
+			this.listLevels.RenderItem += new BabaIsYou.Controls.ListPanel.RenderItemEvent(this.listLevels_RenderItem);
+			this.listLevels.Resize += new System.EventHandler(this.listLevels_Resize);
+			// 
 			// txtLevelFilter
 			// 
 			this.txtLevelFilter.BackColor = System.Drawing.Color.White;
@@ -134,10 +151,53 @@
 			// splitObjectsLevel.Panel2
 			// 
 			this.splitObjectsLevel.Panel2.Controls.Add(this.mapViewer);
+			this.splitObjectsLevel.Panel2.Controls.Add(this.listRules);
 			this.splitObjectsLevel.Size = new System.Drawing.Size(843, 713);
 			this.splitObjectsLevel.SplitterDistance = 188;
 			this.splitObjectsLevel.SplitterWidth = 1;
 			this.splitObjectsLevel.TabIndex = 1;
+			// 
+			// listObjects
+			// 
+			this.listObjects.BackColor = System.Drawing.Color.Black;
+			this.listObjects.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.listObjects.DrawText = false;
+			this.listObjects.Location = new System.Drawing.Point(0, 0);
+			this.listObjects.Name = "listObjects";
+			this.listObjects.Size = new System.Drawing.Size(843, 188);
+			this.listObjects.TabIndex = 0;
+			this.listObjects.UseControlMovement = true;
+			this.listObjects.IndexChanged += new BabaIsYou.Controls.ListPanel.SelectedIndexChangedEvent(this.listObjects_IndexChanged);
+			this.listObjects.ItemClicked += new BabaIsYou.Controls.ListPanel.ItemClickedEvent(this.listObjects_ItemClicked);
+			this.listObjects.RenderItem += new BabaIsYou.Controls.ListPanel.RenderItemEvent(this.listObjects_RenderItem);
+			this.listObjects.Resize += new System.EventHandler(this.listObjects_Resize);
+			// 
+			// mapViewer
+			// 
+			this.mapViewer.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.mapViewer.Location = new System.Drawing.Point(0, 0);
+			this.mapViewer.Name = "mapViewer";
+			this.mapViewer.Size = new System.Drawing.Size(843, 524);
+			this.mapViewer.TabIndex = 0;
+			this.mapViewer.TabStop = false;
+			this.mapViewer.CellMouseOver += new BabaIsYou.Controls.MapViewer.CellMouseEvent(this.mapViewer_CellMouseOver);
+			this.mapViewer.CellMouseDown += new BabaIsYou.Controls.MapViewer.CellMouseEvent(this.mapViewer_CellMouseDown);
+			this.mapViewer.CellMouseWheel += new BabaIsYou.Controls.MapViewer.CellMouseEvent(this.mapViewer_CellMouseWheel);
+			this.mapViewer.DrawCurrentCellStart += new BabaIsYou.Controls.MapViewer.DrawCurrentCellEvent(this.mapViewer_DrawCurrentCellStart);
+			this.mapViewer.DrawCurrentCellFinish += new BabaIsYou.Controls.MapViewer.DrawCurrentCellEvent(this.mapViewer_DrawCurrentCellFinish);
+			this.mapViewer.PaintFinished += new BabaIsYou.Controls.MapViewer.PaintFinishedEvent(this.mapViewer_PaintFinished);
+			this.mapViewer.MouseUp += new System.Windows.Forms.MouseEventHandler(this.mapViewer_MouseUp);
+			// 
+			// listRules
+			// 
+			this.listRules.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.listRules.Focusable = false;
+			this.listRules.Location = new System.Drawing.Point(0, 0);
+			this.listRules.Name = "listRules";
+			this.listRules.Size = new System.Drawing.Size(843, 524);
+			this.listRules.TabIndex = 1;
+			this.listRules.Vertical = false;
+			this.listRules.Visible = false;
 			// 
 			// menu
 			// 
@@ -246,6 +306,7 @@
 			this.menuLevel.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuItemLevelProperties,
             this.menuItemSetTheme,
+            this.menuItemShowRules,
             this.menuItemLevelSeperator1,
             this.menuItemShowAnimations,
             this.menuItemShowStacked,
@@ -298,6 +359,15 @@
 			this.menuItemThemeNone.Size = new System.Drawing.Size(138, 22);
 			this.menuItemThemeNone.Text = "none";
 			this.menuItemThemeNone.Click += new System.EventHandler(this.menuItemSetTheme_Click);
+			// 
+			// menuItemShowRules
+			// 
+			this.menuItemShowRules.Image = global::BabaIsYou.Properties.Resources.rules;
+			this.menuItemShowRules.Name = "menuItemShowRules";
+			this.menuItemShowRules.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.T)));
+			this.menuItemShowRules.Size = new System.Drawing.Size(201, 22);
+			this.menuItemShowRules.Text = "Show Rules";
+			this.menuItemShowRules.Click += new System.EventHandler(this.menuItemShowRules_Click);
 			// 
 			// menuItemLevelSeperator1
 			// 
@@ -498,51 +568,6 @@
 			this.imgBaba.TabStop = false;
 			this.imgBaba.Visible = false;
 			// 
-			// listLevels
-			// 
-			this.listLevels.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.listLevels.Focusable = false;
-			this.listLevels.Location = new System.Drawing.Point(0, 20);
-			this.listLevels.Name = "listLevels";
-			this.listLevels.Size = new System.Drawing.Size(140, 693);
-			this.listLevels.TabIndex = 0;
-			this.listLevels.TabStop = false;
-			this.listLevels.UseControlMovement = true;
-			this.listLevels.IndexChanged += new BabaIsYou.Controls.ListPanel.SelectedIndexChangedEvent(this.listLevels_IndexChanged);
-			this.listLevels.ItemClicked += new BabaIsYou.Controls.ListPanel.ItemClickedEvent(this.listLevels_ItemClicked);
-			this.listLevels.RenderItem += new BabaIsYou.Controls.ListPanel.RenderItemEvent(this.listLevels_RenderItem);
-			this.listLevels.Resize += new System.EventHandler(this.listLevels_Resize);
-			// 
-			// listObjects
-			// 
-			this.listObjects.BackColor = System.Drawing.Color.Black;
-			this.listObjects.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.listObjects.DrawText = false;
-			this.listObjects.Location = new System.Drawing.Point(0, 0);
-			this.listObjects.Name = "listObjects";
-			this.listObjects.Size = new System.Drawing.Size(843, 188);
-			this.listObjects.TabIndex = 0;
-			this.listObjects.UseControlMovement = true;
-			this.listObjects.IndexChanged += new BabaIsYou.Controls.ListPanel.SelectedIndexChangedEvent(this.listObjects_IndexChanged);
-			this.listObjects.ItemClicked += new BabaIsYou.Controls.ListPanel.ItemClickedEvent(this.listObjects_ItemClicked);
-			this.listObjects.RenderItem += new BabaIsYou.Controls.ListPanel.RenderItemEvent(this.listObjects_RenderItem);
-			this.listObjects.Resize += new System.EventHandler(this.listObjects_Resize);
-			// 
-			// mapViewer
-			// 
-			this.mapViewer.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.mapViewer.Location = new System.Drawing.Point(0, 0);
-			this.mapViewer.Name = "mapViewer";
-			this.mapViewer.Size = new System.Drawing.Size(843, 524);
-			this.mapViewer.TabIndex = 0;
-			this.mapViewer.TabStop = false;
-			this.mapViewer.CellMouseOver += new BabaIsYou.Controls.MapViewer.CellMouseEvent(this.mapViewer_CellMouseOver);
-			this.mapViewer.CellMouseDown += new BabaIsYou.Controls.MapViewer.CellMouseEvent(this.mapViewer_CellMouseDown);
-			this.mapViewer.CellMouseWheel += new BabaIsYou.Controls.MapViewer.CellMouseEvent(this.mapViewer_CellMouseWheel);
-			this.mapViewer.DrawCurrentCellStart += new BabaIsYou.Controls.MapViewer.DrawCurrentCellEvent(this.mapViewer_DrawCurrentCellStart);
-			this.mapViewer.DrawCurrentCellFinish += new BabaIsYou.Controls.MapViewer.DrawCurrentCellEvent(this.mapViewer_DrawCurrentCellFinish);
-			this.mapViewer.MouseUp += new System.Windows.Forms.MouseEventHandler(this.mapViewer_MouseUp);
-			// 
 			// WorldViewer
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -629,6 +654,8 @@
 		private System.Windows.Forms.ToolStripDropDownButton statusAddSpecial;
 		private System.Windows.Forms.ToolStripMenuItem menuItemSortLevels;
 		private System.Windows.Forms.ToolStripMenuItem menuItemShowAnimations;
+		private System.Windows.Forms.ToolStripMenuItem menuItemShowRules;
+		private Controls.ListPanel listRules;
 	}
 }
 

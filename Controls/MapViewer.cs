@@ -13,6 +13,8 @@ namespace BabaIsYou.Controls {
 		public delegate void DrawCurrentCellEvent(Graphics g, Grid map, Cell cell, Rectangle bounds);
 		public event DrawCurrentCellEvent DrawCurrentCellStart;
 		public event DrawCurrentCellEvent DrawCurrentCellFinish;
+		public delegate void PaintFinishedEvent(Graphics g, Grid map);
+		public event PaintFinishedEvent PaintFinished;
 
 		private Grid currentMap;
 		[EditorBrowsable(EditorBrowsableState.Never), Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), ReadOnly(true)]
@@ -166,6 +168,8 @@ namespace BabaIsYou.Controls {
 			if (saved.X >= 0) {
 				DrawCurrentCellFinish?.Invoke(e.Graphics, currentMap, currentCell, saved);
 			}
+
+			PaintFinished?.Invoke(e.Graphics, currentMap);
 		}
 	}
 }

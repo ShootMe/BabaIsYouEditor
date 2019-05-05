@@ -43,11 +43,15 @@ namespace BabaIsYou.Map {
 			}
 			GlobalFont = new Font(CustomFont.Families[0], 8, FontStyle.Regular, GraphicsUnit.Point);
 		}
-		public static void SetFonts(Control control) {
+		public static void SetFonts(Control control, float customSize = -1, Font font = null) {
+			if (font == null) {
+				font = customSize <= 0 ? GlobalFont : new Font(CustomFont.Families[0], customSize, FontStyle.Regular, GraphicsUnit.Point);
+			}
+			control.Font = font;
 			foreach (Control ctr in control.Controls) {
-				ctr.Font = GlobalFont;
+				ctr.Font = font;
 				if (ctr.HasChildren) {
-					SetFonts(ctr);
+					SetFonts(ctr, customSize, font);
 				}
 			}
 		}

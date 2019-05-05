@@ -56,10 +56,12 @@ namespace BabaIsYou.Views {
 		private ListItem parentLevel;
 		private int maxSpriteRowSize = 20;
 		private int maxSpriteRowCount = 5;
+		private bool drawLevelRules = false;
 
 		public WorldViewer() {
 			InitializeComponent();
 			Renderer.SetFonts(this);
+			Renderer.SetFonts(listRules, 10);
 
 			Text = TitleBarText;
 			using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("BabaIsYou.Images.baba.ico")) {
@@ -383,6 +385,7 @@ namespace BabaIsYou.Views {
 				SelectPalette(map.Palette);
 			}
 
+			if (drawLevelRules) { UpdateRules(); }
 			AddSprites();
 			UpdateStatusBar();
 			mapViewer.Invalidate();
@@ -421,6 +424,7 @@ namespace BabaIsYou.Views {
 			levelItem.Text = mapToUpdate.Name;
 			levelItem.Changed = changed;
 
+			if (drawLevelRules) { UpdateRules(); }
 			listLevels.Invalidate();
 			mapViewer.Invalidate();
 		}
@@ -673,6 +677,7 @@ namespace BabaIsYou.Views {
 					if (currentItem != null) {
 						item = currentItem;
 						if (item is Level || item is Special || item is LevelPath) {
+							hasChanged = true;
 							cell.Objects.Remove(item);
 							listObjects.SelectedItem = null;
 							UpdateCurrentObject(item, true);
@@ -696,6 +701,7 @@ namespace BabaIsYou.Views {
 								listObjects.SelectedItem = sprite;
 								if (holdingControl) {
 									Item spriteItem = (Item)sprite.Value;
+									hasChanged = true;
 									cell.Objects.Remove(item);
 									spriteItem.Direction = item.Direction;
 								}
@@ -790,6 +796,12 @@ namespace BabaIsYou.Views {
 				}
 			}
 			g.DrawRectangle(Pens.Red, bounds);
+		}
+		private void mapViewer_PaintFinished(Graphics g, Grid map) {
+			if (drawLevelRules) {
+				listRules.Size = mapViewer.Size;
+				listRules.PaintList(g);
+			}
 		}
 		private void menuItemSetTheme_DropDownOpening(object sender, EventArgs e) {
 			string themePath = Path.Combine(GameDirectory, "Worlds", GameWorld, "Themes");
@@ -1103,6 +1115,34 @@ namespace BabaIsYou.Views {
 					UpdateStatusBar();
 				}
 			}
+		}
+		private void menuItemShowRules_Click(object sender, EventArgs e) {
+			if (drawLevelRules) {
+				drawLevelRules = false;
+			} else {
+				UpdateRules();
+				drawLevelRules = true;
+			}
+		}
+		private void UpdateRules() {
+			listRules.ClearItems();
+			if (map != null) {
+				Parser parser = new Parser(map, false);
+				List<Rule> rules = parser.Rules;
+				for (int i = 0; i < rules.Count; i++) {
+					Rule rule = rules[i];
+					List<string> allRules = rule.AllRules();
+					for (int j = 0; j < allRules.Count; j++) {
+						string currentRule = allRules[j];
+						Size textSize = TextRenderer.MeasureText(currentRule, listRules.Font, new Size(99999, 90), TextFormatFlags.NoPadding | TextFormatFlags.SingleLine);
+						ListItem item = new ListItem(null, currentRule, textSize.Width + 5, textSize.Height + 5);
+						listRules.AddItem(item);
+					}
+				}
+				listRules.SortItems();
+			}
+			listRules.Size = mapViewer.Size;
+			listRules.Invalidate();
 		}
 		private void menuItemShowAnimations_Click(object sender, EventArgs e) {
 			mapViewer.ShowAnimations = menuItemShowAnimations.Checked;

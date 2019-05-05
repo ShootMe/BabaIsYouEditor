@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
@@ -488,6 +489,9 @@ namespace BabaIsYou.Controls {
 			return location.X >= x && location.X < x + w && location.Y >= y && location.Y < y + h;
 		}
 		protected override void OnPaint(PaintEventArgs e) {
+			PaintList(e.Graphics);
+		}
+		public void PaintList(Graphics g) {
 			int endHeight = vertical ? Height : Width;
 			int endWidth = vertical ? Width : Height;
 			int rowLength = RowLength();
@@ -506,7 +510,7 @@ namespace BabaIsYou.Controls {
 				}
 				rowSize++;
 
-				Render(item, e.Graphics, selectedIndex == i, vertical ? currentWidth : currentHeight, vertical ? currentHeight : currentWidth, DrawText);
+				Render(item, g, selectedIndex == i, vertical ? currentWidth : currentHeight, vertical ? currentHeight : currentWidth, DrawText);
 				currentWidth += width;
 
 				if (rowSize == rowLength) {
@@ -543,10 +547,11 @@ namespace BabaIsYou.Controls {
 
 			Rectangle bounds = new Rectangle(x + 2, y + 2, item.Width - 4, item.Height - 4);
 			if (drawText) {
+				g.InterpolationMode = InterpolationMode.NearestNeighbor;
 				if (!string.IsNullOrEmpty(item.Text)) {
 					TextRenderer.DrawText(g, item.Text, this.Font, bounds, this.ForeColor, Color.Empty, TextFormatFlags.HorizontalCenter | TextFormatFlags.Bottom);
 				}
-				string valueText = item.Value.ToString();
+				string valueText = item.Value == null ? string.Empty : item.Value.ToString();
 				if (!string.IsNullOrEmpty(valueText)) {
 					TextRenderer.DrawText(g, valueText, this.Font, bounds, this.ForeColor, Color.Empty, TextFormatFlags.HorizontalCenter | TextFormatFlags.Top);
 				}
