@@ -36,6 +36,18 @@ namespace BabaIsYou.Map {
 			Theme = Music.None;
 		}
 
+		public void MarkAllInactive() {
+			int size = Cells.Count;
+			for (int i = 0; i < size; i++) {
+				Cell cell = Cells[i];
+
+				int objects = cell.Objects.Count;
+				for (int j = 0; j < objects; j++) {
+					Item item = cell.Objects[j];
+					item.Active = false;
+				}
+			}
+		}
 		public void Resize(int width, int height) {
 			Item edgeItem = Reader.DefaultsByID[0];
 			List<Cell> newCells = new List<Cell>();

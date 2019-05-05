@@ -7,6 +7,7 @@ namespace BabaIsYou.Map {
 		public List<Target> Targets = new List<Target>();
 		public List<ExtraRule> Extras = new List<ExtraRule>();
 		public List<ExtraRule> Actions = new List<ExtraRule>();
+		public List<Item> OtherItems = new List<Item>();
 
 		public bool ApplysTo(Item item) {
 			bool applies = false;
@@ -85,6 +86,35 @@ namespace BabaIsYou.Map {
 				}
 			}
 			return Targets.Count > 0 && Actions.Count > 0;
+		}
+		public void MarkItemsActive() {
+			if (Lonely != null) {
+				Lonely.Item.MarkActive();
+			}
+			foreach (Target target in Targets) {
+				target.Item.MarkActive();
+			}
+			foreach (ExtraRule extra in Extras) {
+				extra.Extra.MarkActive();
+				foreach (Target target in extra.Targets) {
+					target.Item.MarkActive();
+				}
+			}
+			int maxPos = 0;
+			foreach (ExtraRule extra in Actions) {
+				extra.Extra.MarkActive();
+				foreach (Target target in extra.Targets) {
+					int pos = target.Item.MarkActive();
+					if (pos > maxPos) {
+						maxPos = pos;
+					}
+				}
+			}
+			foreach (Item item in OtherItems) {
+				if (item.Position < maxPos) {
+					item.MarkActive();
+				}
+			}
 		}
 		public List<string> AllRules() {
 			List<string> rules = new List<string>();

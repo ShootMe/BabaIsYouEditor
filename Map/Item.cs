@@ -73,6 +73,20 @@ namespace BabaIsYou.Map {
 				ArgExtra = ArgExtra
 			};
 		}
+		public int MarkActive() {
+			int maxPos = Position;
+			Active = true;
+			if (this is Word word) {
+				for (int i = 0; i < word.Letters.Count; i++) {
+					Item letter = word.Letters[i];
+					letter.Active = true;
+					if(letter.Position > maxPos) {
+						maxPos = letter.Position;
+					}
+				}
+			}
+			return maxPos;
+		}
 		public int CompareTo(object obj) {
 			if (obj is Item item) {
 				return CompareTo(item);

@@ -22,35 +22,61 @@ namespace BabaIsYou.Map {
 			StringBuilder sb = new StringBuilder();
 			int count = Words.Count;
 			for (int i = 0; i < count; i++) {
-				sb.Append($"{Words[i].Name} ");
+				Item item = Words[i];
+				string name = item.Name;
+				sb.Append($"{name} ");
 			}
 			if (sb.Length > 0) { sb.Length--; }
 			return sb.ToString();
 		}
 	}
-	public class Word {
+	public class Word : Item {
 		public Item Item;
-		public StringBuilder Name = new StringBuilder();
+		public List<Item> Letters = new List<Item>();
 		public int EndPosition;
 		public int EndDimension;
 
-		public Word Copy(int copyLength = int.MaxValue) {
+		public Word CopyWord(int copyLength = int.MaxValue) {
 			Word word = new Word();
-			word.Name.Append(Name.ToString(0, Name.Length < copyLength ? Name.Length : copyLength));
+			for (int i = 0; i < Letters.Count && i < copyLength; i++) {
+				word.Letters.Add(Letters[i]);
+			}
 			return word;
 		}
 
+		public string WordName {
+			get {
+				StringBuilder sb = new StringBuilder();
+				for (int i = 0; i < Letters.Count; i++) {
+					sb.Append(Letters[i].Name.Substring(5));
+				}
+				return sb.ToString();
+			}
+		}
 		public bool IsValid(int position) {
 			Item item = null;
-			if (!Reader.DefaultsByName.TryGetValue($"text_{Name.ToString()}", out item) || item.Type == (byte)TextType.Letter) {
+
+			if (!Reader.DefaultsByName.TryGetValue($"text_{WordName}", out item) || item.Type == (byte)TextType.Letter) {
 				return false;
 			}
 			Item = item.Copy();
 			Item.Position = (short)position;
+			Position = (short)position;
+			ID = Item.ID;
+			Type = Item.Type;
+			Object = Item.Object;
+			Sprite = Item.Sprite;
+			SpriteInRoot = Item.SpriteInRoot;
+			Name = Item.Name;
+			Layer = Item.Layer;
+			Color = Item.Color;
+			ActiveColor = Item.ActiveColor;
+			Tiling = Item.Tiling;
+			IsObject = false;
 			return true;
 		}
 		public override string ToString() {
-			return Name.ToString();
+			return WordName;
 		}
 	}
 	public class Parser {
@@ -129,13 +155,13 @@ namespace BabaIsYou.Map {
 					if (!item.IsObject && item.Type == (byte)TextType.Letter) {
 						List<Word> words = new List<Word>();
 						Word word = new Word();
-						word.Name.Append(item.Name.Substring(5));
+						word.Letters.Add(item);
 						FindWords(words, word, calculated, grid, newPosition, dimension + 1, direction);
 						for (int i = 0; i < words.Count; i++) {
 							word = words[i];
 							Sentance newSentance = added == 0 ? current : current.Copy(currentCount);
 							added++;
-							newSentance.Words.Add(word.Item);
+							newSentance.Words.Add(word);
 							Parse(sentances, newSentance, calculated, grid, word.EndPosition, word.EndDimension, direction);
 						}
 					} else if (!item.IsObject || useObjects) {
@@ -156,7 +182,7 @@ namespace BabaIsYou.Map {
 			int newPosition = position + (direction == ParseDirection.Right ? 1 : grid.Width);
 			if (dimension >= dimensionCheck) { return; }
 
-			int currentCount = current.Name.Length;
+			int currentCount = current.Letters.Count;
 			int added = 0;
 			calculated.Add(position);
 			Cell cell = grid.Cells[position];
@@ -164,16 +190,16 @@ namespace BabaIsYou.Map {
 			for (int j = 0; j < objects; j++) {
 				Item item = cell.Objects[j];
 				if (item.ID != 0 && item.ID != short.MaxValue && !item.IsObject && item.Type == (byte)TextType.Letter) {
-					Word newWord = added == 0 ? current : current.Copy(currentCount);
+					Word newWord = added == 0 ? current : current.CopyWord(currentCount);
 					added++;
 
-					newWord.Name.Append(item.Name.Substring(5));
+					newWord.Letters.Add(item);
 					newWord.EndPosition = newPosition;
 					newWord.EndDimension = dimension + 1;
 
 					if (newWord.IsValid(item.Position)) {
 						words.Add(newWord);
-						newWord = newWord.Copy();
+						newWord = newWord.CopyWord();
 					}
 					FindWords(words, newWord, calculated, grid, newPosition, dimension + 1, direction);
 				}
@@ -219,7 +245,7 @@ namespace BabaIsYou.Map {
 		private Rule ParseStart() {
 			Rule rule = new Rule();
 
-			bool not = ParseNot();
+			bool not = ParseNot(rule);
 			bool lonely = token == TextType.Lonely;
 			if (lonely) {
 				rule.Lonely = new Target(current, not);
@@ -230,10 +256,11 @@ namespace BabaIsYou.Map {
 
 			return rule;
 		}
-		private bool ParseNot() {
+		private bool ParseNot(Rule rule) {
 			bool isNot = token == TextType.Not;
 			bool not = false;
 			while (token == TextType.Not) {
+				rule.OtherItems.Add(current);
 				not = !not;
 				GetNext();
 			}
@@ -244,14 +271,17 @@ namespace BabaIsYou.Map {
 				return;
 			}
 
-			not = not || ParseNot();
-			if (token == TextType.Noun) {
+			not = not || ParseNot(rule);
+			bool addedNoun = token == TextType.Noun;
+			if (addedNoun) {
 				List<Target> targets = extra != null ? extra.Targets : rule.Targets;
 				targets.Add(new Target(current, not, current.IsObject));
+				not = false;
 				GetNext();
 			}
 
 			if (token == TextType.And) {
+				rule.OtherItems.Add(current);
 				GetNext();
 				ParseTarget(rule, extra, false);
 			} else if (token == TextType.Not || token == TextType.Extra) {
@@ -261,7 +291,7 @@ namespace BabaIsYou.Map {
 			}
 		}
 		private void ParseExtra(Rule rule, bool not) {
-			not = not || ParseNot();
+			not = not || ParseNot(rule);
 			if (token != TextType.Extra) {
 				return;
 			}
@@ -273,7 +303,7 @@ namespace BabaIsYou.Map {
 			ParseTarget(rule, extra, false);
 		}
 		private void ParseLink(Rule rule, bool not) {
-			not = not || ParseNot();
+			not = not || ParseNot(rule);
 			if (token != TextType.Link) {
 				return;
 			}
@@ -285,7 +315,7 @@ namespace BabaIsYou.Map {
 			ParseAction(rule, extra, false);
 		}
 		private void ParseAction(Rule rule, ExtraRule extra, bool not) {
-			not = not || ParseNot();
+			not = not || ParseNot(rule);
 			if ((token != TextType.Noun || (!includeObjects && current.IsObject)) && (extra.Extra.Name != "text_is" || token != TextType.Action)) {
 				return;
 			}
@@ -294,8 +324,9 @@ namespace BabaIsYou.Map {
 			GetNext();
 
 			if (token == TextType.And) {
+				rule.OtherItems.Add(current);
 				GetNext();
-				not = ParseNot();
+				not = ParseNot(rule);
 				if (token == TextType.Link) {
 					ParseLink(rule, not);
 				} else {

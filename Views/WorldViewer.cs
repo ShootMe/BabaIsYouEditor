@@ -385,7 +385,7 @@ namespace BabaIsYou.Views {
 				SelectPalette(map.Palette);
 			}
 
-			if (drawLevelRules) { UpdateRules(); }
+			UpdateRules();
 			AddSprites();
 			UpdateStatusBar();
 			mapViewer.Invalidate();
@@ -424,7 +424,7 @@ namespace BabaIsYou.Views {
 			levelItem.Text = mapToUpdate.Name;
 			levelItem.Changed = changed;
 
-			if (drawLevelRules) { UpdateRules(); }
+			UpdateRules();
 			listLevels.Invalidate();
 			mapViewer.Invalidate();
 		}
@@ -782,6 +782,7 @@ namespace BabaIsYou.Views {
 				addedObject = (cell.LayerCount() < MaxLayerCount || currentObject.ID == short.MaxValue) && (!isLevelPath || !cell.HasLevelPath()) && (!(currentObject is Special) || !cell.HasObject<Special>());
 				if (addedObject && (!containsType || holdingControl) && isAdding.GetValueOrDefault(true)) {
 					currentObject.Position = cell.Position;
+					currentObject.Active = false;
 					cell.Objects.Add(currentObject);
 					cell.Objects.Sort();
 				}
@@ -1117,20 +1118,17 @@ namespace BabaIsYou.Views {
 			}
 		}
 		private void menuItemShowRules_Click(object sender, EventArgs e) {
-			if (drawLevelRules) {
-				drawLevelRules = false;
-			} else {
-				UpdateRules();
-				drawLevelRules = true;
-			}
+			drawLevelRules = !drawLevelRules;
 		}
 		private void UpdateRules() {
 			listRules.ClearItems();
 			if (map != null) {
+				map.MarkAllInactive();
 				Parser parser = new Parser(map, false);
 				List<Rule> rules = parser.Rules;
 				for (int i = 0; i < rules.Count; i++) {
 					Rule rule = rules[i];
+					rule.MarkItemsActive();
 					List<string> allRules = rule.AllRules();
 					for (int j = 0; j < allRules.Count; j++) {
 						string currentRule = allRules[j];
@@ -1142,7 +1140,6 @@ namespace BabaIsYou.Views {
 				listRules.SortItems();
 			}
 			listRules.Size = mapViewer.Size;
-			listRules.Invalidate();
 		}
 		private void menuItemShowAnimations_Click(object sender, EventArgs e) {
 			mapViewer.ShowAnimations = menuItemShowAnimations.Checked;
