@@ -9,6 +9,7 @@ Simple Level Editor for the game Baba Is You
   - 1.2.8
     - Changes
 	  - Added argtype to object editor for use in mods
+	  - Changed how TextType loads for types that dont exist in normal gmae
 
   - 1.2.7
     - Features

@@ -29,6 +29,14 @@ namespace BabaIsYou.Views {
 			imgOriginal.Image = Renderer.DrawSprite(DefaultItem, imgOriginal.Width, Palette);
 
 			UpdateImages();
+
+			if (!Enum.IsDefined(typeof(TextType), Edit.Type)) {
+				cboTextType.Items.Add(Edit.Type);
+				cboTextType.SelectedItem = Edit.Type;
+			}
+			if (Edit.Type != DefaultItem.Type && !Enum.IsDefined(typeof(TextType), DefaultItem.Type)) {
+				cboTextType.Items.Add(DefaultItem.Type);
+			}
 		}
 		private void numLayer_ValueChanged(object sender, EventArgs e) {
 			Edit.Layer = (byte)numLayer.Value;
@@ -49,12 +57,12 @@ namespace BabaIsYou.Views {
 			if (cboTextType.SelectedIndex >= 0) {
 				Edit.Type = (byte)(TextType)cboTextType.Items[cboTextType.SelectedIndex];
 			} else {
-				cboTextType.SelectedItem = (TextType)DefaultItem.Type;
+				SetTextType((TextType)DefaultItem.Type);
 			}
 		}
 		private void cboTextType_Validated(object sender, EventArgs e) {
 			if (string.IsNullOrEmpty(cboTextType.Text)) {
-				cboTextType.SelectedItem = (TextType)DefaultItem.Type;
+				SetTextType((TextType)DefaultItem.Type);
 			}
 		}
 		private void imgCurrent_Click(object sender, EventArgs e) {
@@ -213,7 +221,7 @@ namespace BabaIsYou.Views {
 			DrawImage(imgImage);
 
 			numLayer.Value = Edit.Layer;
-			cboTextType.SelectedItem = (TextType)Edit.Type;
+			SetTextType((TextType)Edit.Type);
 			cboTiling.SelectedItem = (Tiling)Edit.Tiling;
 			txtArgExtra.Text = Edit.ArgExtra;
 			txtOperatorType.Text = Edit.OperatorType;
@@ -239,8 +247,8 @@ namespace BabaIsYou.Views {
 		private void btnReset_Click(object sender, EventArgs e) {
 			Edit = DefaultItem.Copy();
 			numLayer.Value = DefaultItem.Layer;
-			cboTextType.SelectedValue = (TextType)DefaultItem.Type;
-			cboTiling.SelectedValue = (Tiling)DefaultItem.Tiling;
+			SetTextType((TextType)DefaultItem.Type);
+			cboTiling.SelectedItem = (Tiling)DefaultItem.Tiling;
 			UpdateImages();
 		}
 		private void btnSave_Click(object sender, EventArgs e) {
@@ -249,6 +257,12 @@ namespace BabaIsYou.Views {
 			Map.ApplyChanges();
 			this.DialogResult = DialogResult.OK;
 			this.Close();
+		}
+		private void SetTextType(TextType textType) {
+			cboTextType.SelectedItem = textType;
+			if (cboTextType.SelectedItem == null) {
+				cboTextType.SelectedItem = (byte)textType;
+			}
 		}
 		private void txtOperatorType_TextChanged(object sender, EventArgs e) {
 			Edit.OperatorType = string.IsNullOrEmpty(txtOperatorType.Text) ? null : txtOperatorType.Text;
