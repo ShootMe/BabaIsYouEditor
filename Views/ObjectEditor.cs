@@ -109,6 +109,7 @@ namespace BabaIsYou.Views {
 						Edit.ActiveColor = -1;
 						Edit.OperatorType = null;
 						Edit.ArgExtra = null;
+						Edit.ArgType = null;
 					}
 
 					Item item;
@@ -121,6 +122,7 @@ namespace BabaIsYou.Views {
 								}
 								Edit.OperatorType = item.OperatorType;
 								Edit.ArgExtra = item.ArgExtra;
+								Edit.ArgType = item.ArgType;
 							}
 						} else {
 							Edit.Type = 0;
@@ -194,10 +196,12 @@ namespace BabaIsYou.Views {
 			cboTextType.Visible = !Edit.IsObject;
 			lblArgExtra.Visible = !Edit.IsObject;
 			txtArgExtra.Visible = !Edit.IsObject;
+			lblArgType.Visible = !Edit.IsObject;
+			txtArgType.Visible = !Edit.IsObject;
 			lblOperatorType.Visible = !Edit.IsObject;
 			txtOperatorType.Visible = !Edit.IsObject;
 			if (!Edit.IsObject) {
-				ClientSize = new Size(ClientSize.Width, 315);
+				ClientSize = new Size(ClientSize.Width, 352);
 				DrawImage(imgActive);
 			} else {
 				ClientSize = new Size(ClientSize.Width, 274);
@@ -213,6 +217,7 @@ namespace BabaIsYou.Views {
 			cboTiling.SelectedItem = (Tiling)Edit.Tiling;
 			txtArgExtra.Text = Edit.ArgExtra;
 			txtOperatorType.Text = Edit.OperatorType;
+			txtArgType.Text = Edit.ArgType;
 		}
 		private void DrawImage(PictureBox img, bool useNameOnly = false) {
 			if (img.Image != null) {
@@ -250,6 +255,9 @@ namespace BabaIsYou.Views {
 		}
 		private void txtArgExtra_TextChanged(object sender, EventArgs e) {
 			Edit.ArgExtra = string.IsNullOrEmpty(txtArgExtra.Text) ? null : txtArgExtra.Text;
+		}
+		private void txtArgType_TextChanged(object sender, EventArgs e) {
+			Edit.ArgType = string.IsNullOrEmpty(txtArgType.Text) ? null : txtArgType.Text;
 		}
 	}
 }

@@ -290,6 +290,7 @@ namespace BabaIsYou.Map {
 			hasChanges = UpdateChanges(item.ID, "root", defaultItem.SpriteInRoot != item.SpriteInRoot ? item.SpriteInRoot ? "1" : "0" : null);
 			hasChanges = UpdateChanges(item.ID, "operatortype", defaultItem.OperatorType != item.OperatorType ? item.OperatorType : null);
 			hasChanges = UpdateChanges(item.ID, "argextra", defaultItem.ArgExtra != item.ArgExtra ? item.ArgExtra : null);
+			hasChanges = UpdateChanges(item.ID, "argetype", defaultItem.ArgType != item.ArgType ? item.ArgType : null);
 			return hasChanges;
 		}
 		public bool UpdateChanges(short id, string property, string value) {

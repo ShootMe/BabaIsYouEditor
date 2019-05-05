@@ -28,6 +28,7 @@ namespace BabaIsYou.Map {
 					case "tiling": item.Tiling = (byte)short.Parse(pair.Value); break;
 					case "operatortype": item.OperatorType = pair.Value; break;
 					case "argextra": item.ArgExtra = pair.Value; break;
+					case "argtype": item.ArgType = pair.Value; break;
 				}
 			}
 		}
@@ -68,6 +69,7 @@ namespace BabaIsYou.Map {
 					case "tiling": changed = item.Tiling.ToString() != pair.Value; break;
 					case "operatortype": changed = item.OperatorType != pair.Value; break;
 					case "argextra": changed = item.ArgExtra != pair.Value; break;
+					case "argtype": changed = item.ArgType != pair.Value; break;
 				}
 
 				if (changed) {

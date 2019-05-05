@@ -267,7 +267,8 @@ namespace BabaIsYou.Map {
 			return isNot && not;
 		}
 		private void ParseTarget(Rule rule, ExtraRule extra, bool not) {
-			if ((token != TextType.Noun || (!includeObjects && current.IsObject)) && token != TextType.Not && (extra == null || extra.Extra.Name != "text_facing" || (current.Name != "text_up" && current.Name != "text_left" && current.Name != "text_right" && current.Name != "text_down"))) {
+			if ((token != TextType.Noun || (!includeObjects && current.IsObject)) && token != TextType.Not &&
+				(extra == null || extra.Extra.Name != "text_facing" || (current.Name != "text_up" && current.Name != "text_left" && current.Name != "text_right" && current.Name != "text_down"))) {
 				return;
 			}
 
@@ -283,7 +284,12 @@ namespace BabaIsYou.Map {
 			if (token == TextType.And) {
 				rule.OtherItems.Add(current);
 				GetNext();
-				ParseTarget(rule, extra, false);
+				not = ParseNot(rule);
+				if (token == TextType.Extra) {
+					ParseExtra(rule, not);
+				} else {
+					ParseTarget(rule, extra, not);
+				}
 			} else if (token == TextType.Not || token == TextType.Extra) {
 				ParseExtra(rule, not);
 			} else if (token == TextType.Link) {

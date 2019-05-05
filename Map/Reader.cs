@@ -226,6 +226,7 @@ namespace BabaIsYou.Map {
 				case "tile": item.ID = CoordinateToShort(value); break;
 				case "operatortype": item.OperatorType = value.Substring(1, value.Length - 2); break;
 				case "argextra": item.ArgExtra = value; break;
+				case "argtype": item.ArgType = value; break;
 			}
 		}
 		public static short CoordinateToShort(string coordinate) {

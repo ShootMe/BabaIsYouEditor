@@ -29,6 +29,12 @@
 			this.imgObject = new System.Windows.Forms.PictureBox();
 			this.lblColor = new System.Windows.Forms.Label();
 			this.grpProperties = new System.Windows.Forms.GroupBox();
+			this.lblArgType = new System.Windows.Forms.Label();
+			this.txtArgType = new System.Windows.Forms.TextBox();
+			this.lblArgExtra = new System.Windows.Forms.Label();
+			this.txtArgExtra = new System.Windows.Forms.TextBox();
+			this.lblOperatorType = new System.Windows.Forms.Label();
+			this.txtOperatorType = new System.Windows.Forms.TextBox();
 			this.lblImage = new System.Windows.Forms.Label();
 			this.imgImage = new System.Windows.Forms.PictureBox();
 			this.cboTiling = new System.Windows.Forms.ComboBox();
@@ -38,16 +44,12 @@
 			this.imgActive = new System.Windows.Forms.PictureBox();
 			this.imgNormal = new System.Windows.Forms.PictureBox();
 			this.lblLayerNote = new System.Windows.Forms.Label();
+			this.numLayer = new BabaIsYou.Controls.NumericBox();
 			this.lblLayer = new System.Windows.Forms.Label();
 			this.lblActiveColor = new System.Windows.Forms.Label();
 			this.btnReset = new System.Windows.Forms.Button();
 			this.btnSave = new System.Windows.Forms.Button();
 			this.toolTips = new System.Windows.Forms.ToolTip(this.components);
-			this.txtOperatorType = new System.Windows.Forms.TextBox();
-			this.lblOperatorType = new System.Windows.Forms.Label();
-			this.lblArgExtra = new System.Windows.Forms.Label();
-			this.txtArgExtra = new System.Windows.Forms.TextBox();
-			this.numLayer = new BabaIsYou.Controls.NumericBox();
 			((System.ComponentModel.ISupportInitialize)(this.imgOriginal)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.imgObject)).BeginInit();
 			this.grpProperties.SuspendLayout();
@@ -97,9 +99,11 @@
 			// 
 			// grpProperties
 			// 
-			this.grpProperties.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-			| System.Windows.Forms.AnchorStyles.Left)
-			| System.Windows.Forms.AnchorStyles.Right)));
+			this.grpProperties.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.grpProperties.Controls.Add(this.lblArgType);
+			this.grpProperties.Controls.Add(this.txtArgType);
 			this.grpProperties.Controls.Add(this.lblArgExtra);
 			this.grpProperties.Controls.Add(this.txtArgExtra);
 			this.grpProperties.Controls.Add(this.lblOperatorType);
@@ -121,9 +125,60 @@
 			this.grpProperties.Controls.Add(this.imgObject);
 			this.grpProperties.Location = new System.Drawing.Point(12, 66);
 			this.grpProperties.Name = "grpProperties";
-			this.grpProperties.Size = new System.Drawing.Size(306, 237);
+			this.grpProperties.Size = new System.Drawing.Size(306, 274);
 			this.grpProperties.TabIndex = 0;
 			this.grpProperties.TabStop = false;
+			// 
+			// lblArgType
+			// 
+			this.lblArgType.AutoSize = true;
+			this.lblArgType.Location = new System.Drawing.Point(131, 188);
+			this.lblArgType.Name = "lblArgType";
+			this.lblArgType.Size = new System.Drawing.Size(55, 13);
+			this.lblArgType.TabIndex = 13;
+			this.lblArgType.Text = "Arg Type";
+			// 
+			// txtArgType
+			// 
+			this.txtArgType.Location = new System.Drawing.Point(129, 204);
+			this.txtArgType.Name = "txtArgType";
+			this.txtArgType.Size = new System.Drawing.Size(165, 20);
+			this.txtArgType.TabIndex = 14;
+			this.txtArgType.TextChanged += new System.EventHandler(this.txtArgType_TextChanged);
+			// 
+			// lblArgExtra
+			// 
+			this.lblArgExtra.AutoSize = true;
+			this.lblArgExtra.Location = new System.Drawing.Point(23, 228);
+			this.lblArgExtra.Name = "lblArgExtra";
+			this.lblArgExtra.Size = new System.Drawing.Size(61, 13);
+			this.lblArgExtra.TabIndex = 15;
+			this.lblArgExtra.Text = "Arg Extra";
+			// 
+			// txtArgExtra
+			// 
+			this.txtArgExtra.Location = new System.Drawing.Point(21, 244);
+			this.txtArgExtra.Name = "txtArgExtra";
+			this.txtArgExtra.Size = new System.Drawing.Size(273, 20);
+			this.txtArgExtra.TabIndex = 16;
+			this.txtArgExtra.TextChanged += new System.EventHandler(this.txtArgExtra_TextChanged);
+			// 
+			// lblOperatorType
+			// 
+			this.lblOperatorType.AutoSize = true;
+			this.lblOperatorType.Location = new System.Drawing.Point(26, 188);
+			this.lblOperatorType.Name = "lblOperatorType";
+			this.lblOperatorType.Size = new System.Drawing.Size(85, 13);
+			this.lblOperatorType.TabIndex = 11;
+			this.lblOperatorType.Text = "Operator Type";
+			// 
+			// txtOperatorType
+			// 
+			this.txtOperatorType.Location = new System.Drawing.Point(21, 204);
+			this.txtOperatorType.Name = "txtOperatorType";
+			this.txtOperatorType.Size = new System.Drawing.Size(100, 20);
+			this.txtOperatorType.TabIndex = 12;
+			this.txtOperatorType.TextChanged += new System.EventHandler(this.txtOperatorType_TextChanged);
 			// 
 			// lblImage
 			// 
@@ -217,6 +272,26 @@
 			this.lblLayerNote.TabIndex = 6;
 			this.lblLayerNote.Text = "Higher values will show overtop lower values";
 			// 
+			// numLayer
+			// 
+			this.numLayer.BackColor = System.Drawing.Color.White;
+			this.numLayer.ForeColor = System.Drawing.Color.Black;
+			this.numLayer.Location = new System.Drawing.Point(21, 116);
+			this.numLayer.Maximum = new decimal(new int[] {
+            99,
+            0,
+            0,
+            0});
+			this.numLayer.Name = "numLayer";
+			this.numLayer.Size = new System.Drawing.Size(48, 20);
+			this.numLayer.TabIndex = 5;
+			this.numLayer.Value = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
+			this.numLayer.ValueChanged += new System.EventHandler(this.numLayer_ValueChanged);
+			// 
 			// lblLayer
 			// 
 			this.lblLayer.AutoSize = true;
@@ -261,66 +336,12 @@
 			this.toolTips.InitialDelay = 100;
 			this.toolTips.ReshowDelay = 100;
 			// 
-			// txtOperatorType
-			// 
-			this.txtOperatorType.Location = new System.Drawing.Point(21, 204);
-			this.txtOperatorType.Name = "txtOperatorType";
-			this.txtOperatorType.Size = new System.Drawing.Size(100, 20);
-			this.txtOperatorType.TabIndex = 12;
-			this.txtOperatorType.TextChanged += new System.EventHandler(this.txtOperatorType_TextChanged);
-			// 
-			// lblOperatorType
-			// 
-			this.lblOperatorType.AutoSize = true;
-			this.lblOperatorType.Location = new System.Drawing.Point(26, 188);
-			this.lblOperatorType.Name = "lblOperatorType";
-			this.lblOperatorType.Size = new System.Drawing.Size(85, 13);
-			this.lblOperatorType.TabIndex = 11;
-			this.lblOperatorType.Text = "Operator Type";
-			// 
-			// lblArgExtra
-			// 
-			this.lblArgExtra.AutoSize = true;
-			this.lblArgExtra.Location = new System.Drawing.Point(131, 188);
-			this.lblArgExtra.Name = "lblArgExtra";
-			this.lblArgExtra.Size = new System.Drawing.Size(61, 13);
-			this.lblArgExtra.TabIndex = 13;
-			this.lblArgExtra.Text = "Arg Extra";
-			// 
-			// txtArgExtra
-			// 
-			this.txtArgExtra.Location = new System.Drawing.Point(129, 204);
-			this.txtArgExtra.Name = "txtArgExtra";
-			this.txtArgExtra.Size = new System.Drawing.Size(165, 20);
-			this.txtArgExtra.TabIndex = 14;
-			this.txtArgExtra.TextChanged += new System.EventHandler(this.txtArgExtra_TextChanged);
-			// 
-			// numLayer
-			// 
-			this.numLayer.BackColor = System.Drawing.Color.White;
-			this.numLayer.ForeColor = System.Drawing.Color.Black;
-			this.numLayer.Location = new System.Drawing.Point(21, 116);
-			this.numLayer.Maximum = new decimal(new int[] {
-			99,
-			0,
-			0,
-			0});
-			this.numLayer.Name = "numLayer";
-			this.numLayer.Size = new System.Drawing.Size(48, 20);
-			this.numLayer.TabIndex = 5;
-			this.numLayer.Value = new decimal(new int[] {
-			20,
-			0,
-			0,
-			0});
-			this.numLayer.ValueChanged += new System.EventHandler(this.numLayer_ValueChanged);
-			// 
 			// ObjectEditor
 			// 
 			this.AcceptButton = this.btnSave;
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.Black;
-			this.ClientSize = new System.Drawing.Size(330, 315);
+			this.ClientSize = new System.Drawing.Size(330, 352);
 			this.Controls.Add(this.btnSave);
 			this.Controls.Add(this.btnReset);
 			this.Controls.Add(this.grpProperties);
@@ -375,5 +396,7 @@
 		private System.Windows.Forms.TextBox txtArgExtra;
 		private System.Windows.Forms.Label lblOperatorType;
 		private System.Windows.Forms.TextBox txtOperatorType;
+		private System.Windows.Forms.Label lblArgType;
+		private System.Windows.Forms.TextBox txtArgType;
 	}
 }

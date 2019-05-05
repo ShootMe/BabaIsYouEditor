@@ -35,6 +35,7 @@ namespace BabaIsYou.Map {
 		public string Sprite;
 		public string OperatorType;
 		public string ArgExtra;
+		public string ArgType;
 		public bool SpriteInRoot;
 		public bool IsObject;
 		public bool Active;
@@ -70,7 +71,8 @@ namespace BabaIsYou.Map {
 				Color = Color,
 				ActiveColor = ActiveColor,
 				OperatorType = OperatorType,
-				ArgExtra = ArgExtra
+				ArgExtra = ArgExtra,
+				ArgType = ArgType
 			};
 		}
 		public int MarkActive() {
