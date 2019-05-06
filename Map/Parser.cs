@@ -44,6 +44,18 @@ namespace BabaIsYou.Map {
 			return word;
 		}
 
+		public bool Is(Word word) {
+			if (word.Letters.Count != Letters.Count) { return false; }
+
+			for (int i = 0; i < Letters.Count; i++) {
+				Item letter = Letters[i];
+				Item otherLetter = word.Letters[i];
+				if (letter.Position != otherLetter.Position || letter.ID != otherLetter.ID) {
+					return false;
+				}
+			}
+			return true;
+		}
 		public string WordName {
 			get {
 				StringBuilder sb = new StringBuilder();
@@ -156,7 +168,7 @@ namespace BabaIsYou.Map {
 						List<Word> words = new List<Word>();
 						Word word = new Word();
 						word.Letters.Add(item);
-						FindWords(words, word, calculated, grid, newPosition, dimension + 1, direction);
+						FindWords(words, word, grid, newPosition, dimension + 1, direction);
 						for (int i = 0; i < words.Count; i++) {
 							word = words[i];
 							Sentance newSentance = added == 0 ? current : current.Copy(currentCount);
@@ -177,14 +189,13 @@ namespace BabaIsYou.Map {
 				sentances.Add(current);
 			}
 		}
-		private void FindWords(List<Word> words, Word current, HashSet<int> calculated, Grid grid, int position, int dimension, ParseDirection direction) {
+		private void FindWords(List<Word> words, Word current, Grid grid, int position, int dimension, ParseDirection direction) {
 			int dimensionCheck = direction == ParseDirection.Right ? grid.Width : grid.Height;
 			int newPosition = position + (direction == ParseDirection.Right ? 1 : grid.Width);
 			if (dimension >= dimensionCheck) { return; }
 
 			int currentCount = current.Letters.Count;
 			int added = 0;
-			calculated.Add(position);
 			Cell cell = grid.Cells[position];
 			int objects = cell.Objects.Count;
 			for (int j = 0; j < objects; j++) {
@@ -199,9 +210,9 @@ namespace BabaIsYou.Map {
 
 					if (newWord.IsValid(item.Position)) {
 						words.Add(newWord);
-						newWord = newWord.CopyWord();
+					} else {
+						FindWords(words, newWord, grid, newPosition, dimension + 1, direction);
 					}
-					FindWords(words, newWord, calculated, grid, newPosition, dimension + 1, direction);
 				}
 			}
 		}
@@ -267,13 +278,13 @@ namespace BabaIsYou.Map {
 			return isNot && not;
 		}
 		private void ParseTarget(Rule rule, ExtraRule extra, bool not) {
-			if ((token != TextType.Noun || (!includeObjects && current.IsObject)) && token != TextType.Not &&
-				(extra == null || extra.Extra.Name != "text_facing" || (current.Name != "text_up" && current.Name != "text_left" && current.Name != "text_right" && current.Name != "text_down"))) {
+			bool isFacingType = extra != null && extra.Extra.Name == "text_facing" && (current.Name == "text_up" || current.Name == "text_left" || current.Name == "text_right" || current.Name == "text_down");
+			if ((token != TextType.Noun || (!includeObjects && current.IsObject)) && token != TextType.Not && !isFacingType) {
 				return;
 			}
 
 			not = not || ParseNot(rule);
-			bool addedNoun = token == TextType.Noun || (extra != null && extra.Extra.Name == "text_facing" && (current.Name == "text_up" || current.Name == "text_left" || current.Name == "text_right" || current.Name == "text_down"));
+			bool addedNoun = token == TextType.Noun || isFacingType;
 			if (addedNoun) {
 				List<Target> targets = extra != null ? extra.Targets : rule.Targets;
 				targets.Add(new Target(current, not, current.IsObject));

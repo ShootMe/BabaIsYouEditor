@@ -33,6 +33,10 @@ namespace BabaIsYou.Map {
 				foreach (Target target in extra.Targets) {
 					if (extra.Extra.Name == "text_facing") {
 
+					} else if (extra.Extra.Name == "text_near") {
+
+					} else if (extra.Extra.Name == "text_on") {
+
 					}
 				}
 			}
@@ -209,7 +213,7 @@ namespace BabaIsYou.Map {
 			FromWord = fromWord;
 		}
 		public override bool Equals(object obj) {
-			return obj != null && obj is Target target && target.Not == Not && target.Item.Position == Item.Position && target.Item.Name == Item.Name;
+			return obj != null && obj is Target target && target.Not == Not && target.Item.Position == Item.Position && target.Item.Name == Item.Name && (Item is Word == target.Item is Word) && (!(Item is Word) || ((Word)Item).Is((Word)target.Item));
 		}
 		public override int GetHashCode() {
 			return Item.ID ^ Item.Position;
