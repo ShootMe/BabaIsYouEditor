@@ -110,6 +110,7 @@ namespace BabaIsYou.Views {
 				if (result == DialogResult.OK) {
 					Sprite sprite = (Sprite)selector.SelectedItem;
 					Edit.Name = sender == imgImage ? Edit.Name : sprite.Name;
+					txtObjectText.Text = Edit.Name;
 					Edit.Sprite = sender == imgImage ? sprite.Name : Edit.Sprite;
 					Edit.SpriteInRoot = sender == imgImage ? sprite.IsRoot : Edit.SpriteInRoot;
 					Edit.IsObject = Edit.Name.IndexOf("text_") < 0;
@@ -209,10 +210,10 @@ namespace BabaIsYou.Views {
 			lblOperatorType.Visible = !Edit.IsObject;
 			txtOperatorType.Visible = !Edit.IsObject;
 			if (!Edit.IsObject) {
-				ClientSize = new Size(ClientSize.Width, 352);
+				ClientSize = new Size(ClientSize.Width, 344);
 				DrawImage(imgActive);
 			} else {
-				ClientSize = new Size(ClientSize.Width, 274);
+				ClientSize = new Size(ClientSize.Width, 264);
 			}
 
 			toolTips.SetToolTip(imgObject, Edit.Name);
@@ -226,6 +227,7 @@ namespace BabaIsYou.Views {
 			txtArgExtra.Text = Edit.ArgExtra;
 			txtOperatorType.Text = Edit.OperatorType;
 			txtArgType.Text = Edit.ArgType;
+			txtObjectText.Text = Edit.Name;
 		}
 		private void DrawImage(PictureBox img, bool useNameOnly = false) {
 			if (img.Image != null) {
@@ -272,6 +274,17 @@ namespace BabaIsYou.Views {
 		}
 		private void txtArgType_TextChanged(object sender, EventArgs e) {
 			Edit.ArgType = string.IsNullOrEmpty(txtArgType.Text) ? null : txtArgType.Text;
+		}
+		private void txtObjectText_TextChanged(object sender, EventArgs e) {
+			Edit.Name = txtObjectText.Text;
+			DrawImage(imgObject, true);
+		}
+		private void txtObjectText_Validated(object sender, EventArgs e) {
+			if (string.IsNullOrEmpty(txtObjectText.Text)) {
+				txtObjectText.Text = DefaultItem.Name;
+			}
+			Edit.Name = txtObjectText.Text;
+			DrawImage(imgObject, true);
 		}
 	}
 }
