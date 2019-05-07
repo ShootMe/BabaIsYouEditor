@@ -251,7 +251,7 @@ namespace BabaIsYou.Map {
 							currentIndex--;
 							GetNext();
 							currentIndex--;
-						} while (current != null && current.Name == "text_not");
+						} while (current != null && current.Type == (byte)TextType.Not);
 						lastIndex = currentIndex + 1;
 					} else {
 						lastIndex = currentIndex - 2;
