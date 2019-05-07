@@ -246,7 +246,13 @@ namespace BabaIsYou.Map {
 				if (rule.IsValid()) {
 					rules.Add(rule);
 					if (lastIndex < currentIndex - 3) {
-						lastIndex = currentIndex - 3;
+						currentIndex = currentIndex - 2;
+						do {
+							currentIndex--;
+							GetNext();
+							currentIndex--;
+						} while (current != null && current.Name == "text_not");
+						lastIndex = currentIndex + 1;
 					} else {
 						lastIndex = currentIndex - 2;
 					}
