@@ -4,7 +4,6 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.IO;
-using System.Reflection;
 using System.Windows.Forms;
 namespace BabaIsYou.Map {
 	public class Renderer {
@@ -16,22 +15,21 @@ namespace BabaIsYou.Map {
 		private static Sprite Levels = new Sprite("Level", "Level", true);
 
 		static Renderer() {
-			Assembly assembly = typeof(Renderer).Assembly;
-			Selector = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.grid.png"));
-			Petal = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.petal.png"));
-			SpecialIcon = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.special_icon.png"));
-			DownIcon = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.down.png"));
-			IdleIcon = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.idle.png"));
-			LeftIcon = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.left.png"));
-			PauseIcon = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.pause.png"));
-			RightIcon = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.right.png"));
-			UndoIcon = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.undo_icon.png"));
-			UpIcon = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.up.png"));
-			Error = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.error.png"));
-			Levels[0, 1] = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.level1.png"));
-			Levels[0, 2] = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.level2.png"));
-			Levels[0, 3] = (Bitmap)Bitmap.FromStream(assembly.GetManifestResourceStream("BabaIsYou.Images.level3.png"));
-			using (Stream fontStream = assembly.GetManifestResourceStream("BabaIsYou.Images.Consolas.ttf")) {
+			Selector = GetBitmapFromAssembly("BabaIsYou.Images.grid.png");
+			Petal = GetBitmapFromAssembly("BabaIsYou.Images.petal.png");
+			SpecialIcon = GetBitmapFromAssembly("BabaIsYou.Images.special_icon.png");
+			DownIcon = GetBitmapFromAssembly("BabaIsYou.Images.down.png");
+			IdleIcon = GetBitmapFromAssembly("BabaIsYou.Images.idle.png");
+			LeftIcon = GetBitmapFromAssembly("BabaIsYou.Images.left.png");
+			PauseIcon = GetBitmapFromAssembly("BabaIsYou.Images.pause.png");
+			RightIcon = GetBitmapFromAssembly("BabaIsYou.Images.right.png");
+			UndoIcon = GetBitmapFromAssembly("BabaIsYou.Images.undo_icon.png");
+			UpIcon = GetBitmapFromAssembly("BabaIsYou.Images.up.png");
+			Error = GetBitmapFromAssembly("BabaIsYou.Images.error.png");
+			Levels[0, 1] = GetBitmapFromAssembly("BabaIsYou.Images.level1.png");
+			Levels[0, 2] = GetBitmapFromAssembly("BabaIsYou.Images.level2.png");
+			Levels[0, 3] = GetBitmapFromAssembly("BabaIsYou.Images.level3.png");
+			using (Stream fontStream = typeof(Renderer).Assembly.GetManifestResourceStream("BabaIsYou.Images.Consolas.ttf")) {
 				byte[] fontdata = new byte[fontStream.Length];
 				fontStream.Read(fontdata, 0, (int)fontStream.Length);
 				CustomFont = new PrivateFontCollection();
@@ -42,6 +40,11 @@ namespace BabaIsYou.Map {
 				}
 			}
 			GlobalFont = new Font(CustomFont.Families[0], 8, FontStyle.Regular, GraphicsUnit.Point);
+		}
+		public static Bitmap GetBitmapFromAssembly(string name) {
+			using (Stream stream = typeof(Renderer).Assembly.GetManifestResourceStream(name)) {
+				return (Bitmap)Bitmap.FromStream(stream);
+			}
 		}
 		public static void SetFonts(Control control, float customSize = -1, Font font = null) {
 			if (font == null) {
@@ -397,14 +400,12 @@ namespace BabaIsYou.Map {
 			}
 
 			if (stackCount > 0) {
-				using (SolidBrush brush = new SolidBrush(Color.Red)) {
-					int fontWidth = destination.Width / 3;
-					if (fontWidth <= 0) { fontWidth = 1; }
-					using (Font font = new Font(CustomFont.Families[0], fontWidth, FontStyle.Bold, GraphicsUnit.Pixel)) {
-						string text = stackCount.ToString();
-						SizeF textSize = g.MeasureString(text, font, 9999999, StringFormat.GenericTypographic);
-						g.DrawString(text, font, brush, new Point(destination.X + 1, destination.Y - 2), StringFormat.GenericTypographic);
-					}
+				int fontWidth = destination.Width / 3;
+				if (fontWidth <= 0) { fontWidth = 1; }
+				using (Font font = new Font(CustomFont.Families[0], fontWidth, FontStyle.Bold, GraphicsUnit.Pixel)) {
+					string text = stackCount.ToString();
+					SizeF textSize = g.MeasureString(text, font, 9999999, StringFormat.GenericTypographic);
+					g.DrawString(text, font, Brushes.Red, new Point(destination.X + 1, destination.Y - 2), StringFormat.GenericTypographic);
 				}
 			}
 		}
@@ -546,27 +547,6 @@ namespace BabaIsYou.Map {
 			using (SolidBrush brush = new SolidBrush(inside)) {
 				g.FillEllipse(brush, x, y, w, h);
 			}
-		}
-		public static GraphicsPath RoundedRect(Rectangle bounds, int radius) {
-			int diameter = radius * 2;
-			Size size = new Size(diameter, diameter);
-			Rectangle arc = new Rectangle(bounds.Location, size);
-			GraphicsPath path = new GraphicsPath();
-
-			if (radius == 0) {
-				path.AddRectangle(bounds);
-				return path;
-			}
-
-			path.AddArc(arc, 180, 90);
-			arc.X = bounds.Right - diameter;
-			path.AddArc(arc, 270, 90);
-			arc.Y = bounds.Bottom - diameter;
-			path.AddArc(arc, 0, 90);
-			arc.X = bounds.Left;
-			path.AddArc(arc, 90, 90);
-			path.CloseFigure();
-			return path;
 		}
 		private static void DrawImage(Graphics g, Image image, Rectangle bounds, Color color, bool drawTransparent) {
 			ColorMatrix matrix = new ColorMatrix();

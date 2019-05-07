@@ -6,6 +6,7 @@ namespace BabaIsYou.Map {
 	public class Writer {
 		public const int MAIN = 0x4e49414d;
 		public const int DATA = 0x41544144;
+		private static DeflaterOutputStream Zip = new DeflaterOutputStream(null, new Deflater(Deflater.BEST_COMPRESSION));
 		public static void WriteMap(Grid map, string filePath) {
 			using (FileStream stream = File.Open(Path.Combine(filePath, $"{map.FileName}.l"), FileMode.Create, FileAccess.ReadWrite)) {
 				byte[] data = BitConverter.GetBytes(Reader.ACHTUNG);
@@ -150,9 +151,9 @@ namespace BabaIsYou.Map {
 
 			byte[] compressed;
 			using (MemoryStream ms = new MemoryStream()) {
-				using (DeflaterOutputStream zip = new DeflaterOutputStream(ms, new Deflater(Deflater.BEST_COMPRESSION))) {
-					zip.Write(data, 0, data.Length);
-				}
+				Zip.ResetStream(ms);
+				Zip.Write(data, 0, data.Length);
+				Zip.Finish();
 				compressed = ms.ToArray();
 			}
 
@@ -171,9 +172,9 @@ namespace BabaIsYou.Map {
 			stream.Write(data, 0, data.Length);
 
 			using (MemoryStream ms = new MemoryStream()) {
-				using (DeflaterOutputStream zip = new DeflaterOutputStream(ms, new Deflater(Deflater.BEST_COMPRESSION))) {
-					zip.Write(directions, 0, directions.Length);
-				}
+				Zip.ResetStream(ms);
+				Zip.Write(directions, 0, directions.Length);
+				Zip.Finish();
 				compressed = ms.ToArray();
 			}
 

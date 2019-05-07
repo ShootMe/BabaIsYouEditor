@@ -76,7 +76,7 @@ namespace BabaIsYou.Controls {
 					setOptionsMethodInfo.Invoke(iFileDialog, new object[] { (uint)getOptionsMethodInfo.Invoke(openFileDialog, new object[] { }) | fosPickFoldersBitFlag });
 					var adviseParametersWithOutputConnectionToken = new[] { vistaDialogEventsConstructorInfo.Invoke(new object[] { openFileDialog }), 0U };
 					adviseMethodInfo.Invoke(iFileDialog, adviseParametersWithOutputConnectionToken);
-
+					
 					try {
 						int retVal = (int)showMethodInfo.Invoke(iFileDialog, new object[] { ownerHandle });
 						return new ShowDialogResult {

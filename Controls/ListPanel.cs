@@ -1,9 +1,9 @@
-﻿using System;
+﻿using BabaIsYou.Map;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 namespace BabaIsYou.Controls {
@@ -97,7 +97,7 @@ namespace BabaIsYou.Controls {
 		private StringBuilder typedString;
 		private DateTime lastTyped;
 		static ListPanel() {
-			Warning = (Bitmap)Bitmap.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream("BabaIsYou.Images.changed.png"));
+			Warning = Renderer.GetBitmapFromAssembly("BabaIsYou.Images.changed.png");
 		}
 		public ListPanel() : base() {
 			DrawText = true;
@@ -540,14 +540,14 @@ namespace BabaIsYou.Controls {
 					item.Image = img;
 				}
 			}
-
+			g.InterpolationMode = InterpolationMode.NearestNeighbor;
+			g.PixelOffsetMode = PixelOffsetMode.Half;
 			if (item.Image != null) {
 				g.DrawImage(item.Image, x, y);
 			}
 
 			Rectangle bounds = new Rectangle(x + 2, y + 2, item.Width - 4, item.Height - 4);
 			if (drawText) {
-				g.InterpolationMode = InterpolationMode.NearestNeighbor;
 				if (!string.IsNullOrEmpty(item.Text)) {
 					TextRenderer.DrawText(g, item.Text, this.Font, bounds, this.ForeColor, Color.Empty, TextFormatFlags.HorizontalCenter | TextFormatFlags.Bottom);
 				}
@@ -558,7 +558,15 @@ namespace BabaIsYou.Controls {
 			}
 
 			if (item.Changed && Warning != null) {
-				g.DrawImage(Warning, bounds.X - 1, bounds.Y - 1);
+				Size size = TopLevelControl.ClientSize;
+				int sizeX = size.Width / 90;
+				int sizeY = size.Height / 90;
+				if (sizeX > sizeY) { sizeX = sizeY; }
+				sizeY = bounds.Width / 4;
+				if (sizeX > sizeY) { sizeX = sizeY; }
+				sizeY = bounds.Height / 4;
+				if (sizeX > sizeY) { sizeX = sizeY; }
+				g.DrawImage(Warning, new Rectangle(bounds.X - 1, bounds.Y - 1, sizeX, sizeX), 0, 0, Warning.Width, Warning.Height, GraphicsUnit.Pixel);
 			}
 
 			if (selected) {

@@ -2,6 +2,8 @@
 using System.IO;
 namespace BabaIsYou.Zip {
 	public class DeflaterOutputStream : Stream {
+		public DeflaterOutputStream() : this(null) {
+		}
 		/// <summary>
 		/// Creates a new DeflaterOutputStream with a default Deflater and default buffer size.
 		/// </summary>
@@ -49,21 +51,13 @@ namespace BabaIsYou.Zip {
 		/// deflater instance is null
 		/// </exception>
 		public DeflaterOutputStream(Stream baseOutputStream, Deflater deflater, int bufferSize) {
-			if (baseOutputStream == null) {
-				throw new ArgumentNullException(nameof(baseOutputStream));
-			}
-
-			if (baseOutputStream.CanWrite == false) {
-				throw new ArgumentException("Must support writing", nameof(baseOutputStream));
-			}
-
 			if (bufferSize < 512) {
 				throw new ArgumentOutOfRangeException(nameof(bufferSize));
 			}
 
-			baseOutputStream_ = baseOutputStream;
-			buffer_ = new byte[bufferSize];
-			deflater_ = deflater ?? throw new ArgumentNullException(nameof(deflater));
+			this.baseOutputStream = baseOutputStream;
+			buffer = new byte[bufferSize];
+			this.deflater = deflater ?? throw new ArgumentNullException(nameof(deflater));
 		}
 
 		/// <summary>
@@ -73,21 +67,21 @@ namespace BabaIsYou.Zip {
 		/// Not all input is deflated
 		/// </exception>
 		public virtual void Finish() {
-			deflater_.Finish();
-			while (!deflater_.IsFinished) {
-				int len = deflater_.Deflate(buffer_, 0, buffer_.Length);
+			deflater.Finish();
+			while (!deflater.IsFinished) {
+				int len = deflater.Deflate(buffer, 0, buffer.Length);
 				if (len <= 0) {
 					break;
 				}
 
-				baseOutputStream_.Write(buffer_, 0, len);
+				baseOutputStream.Write(buffer, 0, len);
 			}
 
-			if (!deflater_.IsFinished) {
+			if (!deflater.IsFinished) {
 				throw new Exception("Can't deflate all input?");
 			}
 
-			baseOutputStream_.Flush();
+			baseOutputStream.Flush();
 		}
 
 		/// <summary>
@@ -102,7 +96,7 @@ namespace BabaIsYou.Zip {
 		/// </summary>
 		public bool CanPatchEntries {
 			get {
-				return baseOutputStream_.CanSeek;
+				return baseOutputStream.CanSeek;
 			}
 		}
 
@@ -112,17 +106,17 @@ namespace BabaIsYou.Zip {
 		/// are processed.
 		/// </summary>
 		protected void Deflate() {
-			while (!deflater_.IsNeedingInput) {
-				int deflateCount = deflater_.Deflate(buffer_, 0, buffer_.Length);
+			while (!deflater.IsNeedingInput) {
+				int deflateCount = deflater.Deflate(buffer, 0, buffer.Length);
 
 				if (deflateCount <= 0) {
 					break;
 				}
 
-				baseOutputStream_.Write(buffer_, 0, deflateCount);
+				baseOutputStream.Write(buffer, 0, deflateCount);
 			}
 
-			if (!deflater_.IsNeedingInput) {
+			if (!deflater.IsNeedingInput) {
 				throw new Exception("DeflaterOutputStream can't deflate all input?");
 			}
 		}
@@ -151,7 +145,7 @@ namespace BabaIsYou.Zip {
 		/// </summary>
 		public override bool CanWrite {
 			get {
-				return baseOutputStream_.CanWrite;
+				return baseOutputStream.CanWrite;
 			}
 		}
 
@@ -160,7 +154,7 @@ namespace BabaIsYou.Zip {
 		/// </summary>
 		public override long Length {
 			get {
-				return baseOutputStream_.Length;
+				return baseOutputStream.Length;
 			}
 		}
 
@@ -170,7 +164,7 @@ namespace BabaIsYou.Zip {
 		/// <exception cref="NotSupportedException">Any attempt to set position</exception>
 		public override long Position {
 			get {
-				return baseOutputStream_.Position;
+				return baseOutputStream.Position;
 			}
 			set {
 				throw new NotSupportedException("Position property not supported");
@@ -223,9 +217,9 @@ namespace BabaIsYou.Zip {
 		/// on the underlying stream.  This ensures that all bytes are flushed.
 		/// </summary>
 		public override void Flush() {
-			deflater_.Flush();
+			deflater.Flush();
 			Deflate();
-			baseOutputStream_.Flush();
+			baseOutputStream.Flush();
 		}
 
 		/// <summary>
@@ -233,14 +227,14 @@ namespace BabaIsYou.Zip {
 		/// stream when <see cref="IsStreamOwner"></see> is true.
 		/// </summary>
 		protected override void Dispose(bool disposing) {
-			if (!isClosed_) {
-				isClosed_ = true;
+			if (!isClosed) {
+				isClosed = true;
 
 				try {
 					Finish();
 				} finally {
 					if (IsStreamOwner) {
-						baseOutputStream_.Dispose();
+						baseOutputStream.Dispose();
 					}
 				}
 			}
@@ -271,25 +265,29 @@ namespace BabaIsYou.Zip {
 		/// The number of bytes to write.
 		/// </param>
 		public override void Write(byte[] buffer, int offset, int count) {
-			deflater_.SetInput(buffer, offset, count);
+			deflater.SetInput(buffer, offset, count);
 			Deflate();
+		}
+		public void ResetStream(Stream newStream) {
+			baseOutputStream = newStream;
+			deflater.Reset();
 		}
 
 		/// <summary>
 		/// This buffer is used temporarily to retrieve the bytes from the
 		/// deflater and write them to the underlying output stream.
 		/// </summary>
-		private byte[] buffer_;
+		private byte[] buffer;
 
 		/// <summary>
 		/// The deflater which is used to deflate the stream.
 		/// </summary>
-		protected Deflater deflater_;
+		protected Deflater deflater;
 
 		/// <summary>
 		/// Base stream the deflater depends on.
 		/// </summary>
-		protected Stream baseOutputStream_;
-		private bool isClosed_;
+		protected Stream baseOutputStream;
+		private bool isClosed;
 	}
 }

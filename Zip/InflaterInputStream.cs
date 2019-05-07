@@ -112,7 +112,7 @@ namespace BabaIsYou.Zip {
 					}
 				}
 				int toCopy = Math.Min(currentLength, available);
-				System.Array.Copy(rawData, rawLength - (int)available, outBuffer, currentOffset, toCopy);
+				Array.Copy(rawData, rawLength - (int)available, outBuffer, currentOffset, toCopy);
 				currentOffset += toCopy;
 				currentLength -= toCopy;
 				available -= toCopy;
@@ -160,6 +160,10 @@ namespace BabaIsYou.Zip {
 			return (uint)ReadLeInt() | ((long)ReadLeInt() << 32);
 		}
 
+		public void ResetStream(Stream newStream) {
+			inputStream = newStream;
+		}
+
 		private int rawLength;
 		private byte[] rawData;
 		private int available;
@@ -176,6 +180,9 @@ namespace BabaIsYou.Zip {
 	/// Author of the original java version : John Leuner.
 	/// </summary>
 	public class InflaterInputStream : Stream {
+		public InflaterInputStream() : this(null) {
+
+		}
 		/// <summary>
 		/// Create an InflaterInputStream with the default decompressor
 		/// and a default buffer size of 4KB.
@@ -215,20 +222,12 @@ namespace BabaIsYou.Zip {
 		/// Size of the buffer to use
 		/// </param>
 		public InflaterInputStream(Stream baseInputStream, Inflater inflater, int bufferSize) {
-			if (baseInputStream == null) {
-				throw new ArgumentNullException(nameof(baseInputStream));
-			}
-
-			if (inflater == null) {
-				throw new ArgumentNullException(nameof(inflater));
-			}
-
 			if (bufferSize <= 0) {
 				throw new ArgumentOutOfRangeException(nameof(bufferSize));
 			}
 
 			this.baseInputStream = baseInputStream;
-			this.inf = inflater;
+			this.inf = inflater ?? throw new ArgumentNullException(nameof(inflater));
 
 			inputBuffer = new InflaterInputBuffer(baseInputStream, bufferSize);
 		}
@@ -465,6 +464,12 @@ namespace BabaIsYou.Zip {
 				}
 			}
 			return count - remainingBytes;
+		}
+
+		public void ResetStream(Stream newStream) {
+			baseInputStream = newStream;
+			inputBuffer.ResetStream(newStream);
+			inf.Reset();
 		}
 
 		/// <summary>

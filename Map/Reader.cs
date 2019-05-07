@@ -14,6 +14,8 @@ namespace BabaIsYou.Map {
 		public static Dictionary<string, Palette> Palettes = new Dictionary<string, Palette>(StringComparer.OrdinalIgnoreCase);
 		public static Dictionary<string, Sprite> Sprites = new Dictionary<string, Sprite>();
 		public static string DataPath = string.Empty;
+		private static InflaterInputStream Zip = new InflaterInputStream();
+		private static byte[] MapBuffer = new byte[32768];
 		public static void Initialize(string path, string world) {
 			DataPath = path;
 
@@ -253,31 +255,30 @@ namespace BabaIsYou.Map {
 			Grid grid = new Grid(filePath);
 			if (string.IsNullOrEmpty(grid.Name)) { return null; }
 
-			byte[] data = new byte[8];
 			using (FileStream stream = File.Open(filePath, FileMode.Open, FileAccess.Read)) {
-				stream.Read(data, 0, 8);
-				long header = BitConverter.ToInt64(data, 0);
+				stream.Read(MapBuffer, 0, 8);
+				long header = BitConverter.ToInt64(MapBuffer, 0);
 				if (header != ACHTUNG) {
 					throw new Exception($"Invalid map file {grid.FileName}");
 				}
 
-				stream.Read(data, 0, 2);
-				int version = BitConverter.ToInt16(data, 0);
+				stream.Read(MapBuffer, 0, 2);
+				int version = BitConverter.ToInt16(MapBuffer, 0);
 				if (version < 256 || version > 261) {
 					throw new Exception($"Invalid map version in {grid.FileName}");
 				}
 
 				while (stream.Position < stream.Length) {
-					stream.Read(data, 0, 8);
-					int blockHeader = BitConverter.ToInt32(data, 0);
+					stream.Read(MapBuffer, 0, 8);
+					int blockHeader = BitConverter.ToInt32(MapBuffer, 0);
 
 					switch (blockHeader) {
 						case MAP:
-							stream.Read(data, 0, 2);
+							stream.Read(MapBuffer, 0, 2);
 							break;
 						case LAYR:
-							stream.Read(data, 0, 2);
-							int layerCount = BitConverter.ToInt16(data, 0);
+							stream.Read(MapBuffer, 0, 2);
+							int layerCount = BitConverter.ToInt16(MapBuffer, 0);
 							for (int i = 0; i < layerCount; i++) {
 								ReadLayer(stream, grid, version);
 							}
@@ -295,22 +296,20 @@ namespace BabaIsYou.Map {
 			return grid;
 		}
 		private static void ReadLayer(FileStream stream, Grid grid, int version) {
-			byte[] data = new byte[25];
-
-			stream.Read(data, 0, 4);
-			grid.Width = BitConverter.ToInt32(data, 0);
-			stream.Read(data, 0, 4);
-			grid.Height = BitConverter.ToInt32(data, 0);
+			stream.Read(MapBuffer, 0, 4);
+			grid.Width = BitConverter.ToInt32(MapBuffer, 0);
+			stream.Read(MapBuffer, 0, 4);
+			grid.Height = BitConverter.ToInt32(MapBuffer, 0);
 
 			if (version >= 258) {
-				stream.Read(data, 0, 4);
+				stream.Read(MapBuffer, 0, 4);
 			}
-			stream.Read(data, 0, 25);
+			stream.Read(MapBuffer, 0, 25);
 
 			if (version == 260) {
-				stream.Read(data, 0, 2);
+				stream.Read(MapBuffer, 0, 2);
 			} else if (version == 261) {
-				stream.Read(data, 0, 3);
+				stream.Read(MapBuffer, 0, 3);
 			}
 
 			int size = grid.Width * grid.Height;
@@ -327,12 +326,11 @@ namespace BabaIsYou.Map {
 			}
 
 			//MAIN
-			stream.Read(data, 0, 8);
-			int compressedSize = BitConverter.ToInt32(data, 4);
+			stream.Read(MapBuffer, 0, 8);
+			int compressedSize = BitConverter.ToInt32(MapBuffer, 4);
 			int nextPosition = (int)stream.Position + compressedSize;
-			InflaterInputStream zip = new InflaterInputStream(stream);
-			byte[] decompressed = new byte[size * 2];
-			int read = zip.Read(decompressed, 0, size * 2);
+			Zip.ResetStream(stream);
+			int read = Zip.Read(MapBuffer, 0, size * 2);
 			//if (read != size * 2) {
 			//throw new Exception($"Failed to read layer stream in {grid.FileName}");
 			//}
@@ -342,7 +340,7 @@ namespace BabaIsYou.Map {
 			List<Item> items = new List<Item>();
 			for (int j = 0, k = 0; j < read; j++, k += 2) {
 				Cell cell = grid.Cells[j];
-				short id = BitConverter.ToInt16(decompressed, k);
+				short id = BitConverter.ToInt16(MapBuffer, k);
 				Item item;
 				if (!DefaultsByID.TryGetValue(id, out item)) {
 					throw new Exception($"Failed to find Object with ID {id} [{Reader.ShortToCoordinate(id)}] in {grid.FileName}");
@@ -357,11 +355,11 @@ namespace BabaIsYou.Map {
 
 			if (dataBlocks == 2) {
 				//DATA
-				stream.Read(data, 0, 13);
-				compressedSize = BitConverter.ToInt32(data, 9);
+				stream.Read(MapBuffer, 0, 13);
+				compressedSize = BitConverter.ToInt32(MapBuffer, 9);
 				nextPosition = (int)stream.Position + compressedSize;
-				zip = new InflaterInputStream(stream);
-				read = zip.Read(decompressed, 0, size);
+				Zip.ResetStream(stream);
+				read = Zip.Read(MapBuffer, 0, size);
 				//if (read != size) {
 				//	throw new Exception($"Failed to read layer stream in {grid.FileName}");
 				//}
@@ -369,7 +367,7 @@ namespace BabaIsYou.Map {
 
 				for (int j = 0; j < read; j++) {
 					Item item = items[j];
-					item.Direction = decompressed[j];
+					item.Direction = MapBuffer[j];
 				}
 			}
 		}

@@ -6,7 +6,6 @@ namespace BabaIsYou.Controls {
 		private Color onColor;
 		private Color offColor;
 		private Rectangle circle;
-		private Pen outline;
 
 		public Color OnColor {
 			get { return onColor; }
@@ -31,7 +30,6 @@ namespace BabaIsYou.Controls {
 
 		public ColorRadioButton() {
 			circle = new Rectangle(2, 4, 8, 8);
-			outline = new Pen(new SolidBrush(Color.Black), 1F);
 
 			SetStyle(ControlStyles.SupportsTransparentBackColor, true);
 			BackColor = Color.Transparent;
@@ -44,12 +42,16 @@ namespace BabaIsYou.Controls {
 
 			if (this.Checked) {
 				if (OnColor != Color.Empty) {
-					g.FillEllipse(new SolidBrush(OnColor), circle);
-					g.DrawEllipse(outline, circle);
+					using (SolidBrush brush = new SolidBrush(OnColor)) {
+						g.FillEllipse(brush, circle);
+					}
+					g.DrawEllipse(Pens.Black, circle);
 				}
 			} else if (OffColour != Color.Empty) {
-				g.FillEllipse(new SolidBrush(OffColour), circle);
-				g.DrawEllipse(outline, circle);
+				using (SolidBrush brush = new SolidBrush(OffColour)) {
+					g.FillEllipse(brush, circle);
+				}
+				g.DrawEllipse(Pens.Black, circle);
 			}
 		}
 	}
