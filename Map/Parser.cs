@@ -245,7 +245,11 @@ namespace BabaIsYou.Map {
 				Rule rule = ParseStart();
 				if (rule.IsValid()) {
 					rules.Add(rule);
-					lastIndex = currentIndex - 2;
+					if (lastIndex < currentIndex - 3) {
+						lastIndex = currentIndex - 3;
+					} else {
+						lastIndex = currentIndex - 2;
+					}
 				}
 				currentIndex = lastIndex;
 				GetNext();
@@ -278,7 +282,7 @@ namespace BabaIsYou.Map {
 			return isNot && not;
 		}
 		private void ParseTarget(Rule rule, ExtraRule extra, bool not) {
-			bool isFacingType = extra != null && extra.Extra.Name == "text_facing" && (current.Name == "text_up" || current.Name == "text_left" || current.Name == "text_right" || current.Name == "text_down");
+			bool isFacingType = extra != null && extra.Extra.Name == "text_facing" && current != null && (current.Name == "text_up" || current.Name == "text_left" || current.Name == "text_right" || current.Name == "text_down");
 			if ((token != TextType.Noun || (!includeObjects && current.IsObject)) && token != TextType.Not && !isFacingType) {
 				return;
 			}

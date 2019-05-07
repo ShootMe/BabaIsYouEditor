@@ -6,6 +6,10 @@ Simple Level Editor for the game Baba Is You
   - Run and enjoy
 
 ## Change Log
+  - 1.3.2
+    - Fixes
+	  - Fixed error when placing the word Facing
+
   - 1.3.1
     - Changes
 	  - Minor performance improvements
