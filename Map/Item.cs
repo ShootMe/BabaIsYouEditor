@@ -75,6 +75,24 @@ namespace BabaIsYou.Map {
 				ArgType = ArgType
 			};
 		}
+		public void Apply(Item item) {
+			ID = item.ID;
+			Object = item.Object;
+			Name = item.Name;
+			Sprite = item.Sprite;
+			SpriteInRoot = item.SpriteInRoot;
+			IsObject = item.IsObject;
+			Active = item.Active;
+			Sleeping = item.Sleeping;
+			Type = item.Type;
+			Tiling = item.Tiling;
+			Layer = item.Layer;
+			Color = item.Color;
+			ActiveColor = item.ActiveColor;
+			OperatorType = item.OperatorType;
+			ArgExtra = item.ArgExtra;
+			ArgType = item.ArgType;
+		}
 		public int MarkActive() {
 			int maxPos = Position;
 			Active = true;
