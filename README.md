@@ -6,6 +6,10 @@ Simple Level Editor for the game Baba Is You
   - Run and enjoy
 
 ## Change Log
+  - 1.3.4
+    - Fixes
+	  - Removed ability to Add a world until youve opened one since it needs to know where the baba directory is
+
   - 1.3.3
     - Fixes
 	  - Fixed issue with object editor not updating sprites in map visually when you made a change is certain cases
