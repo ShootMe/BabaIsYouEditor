@@ -6,6 +6,10 @@ Simple Level Editor for the game Baba Is You
   - Run and enjoy
 
 ## Change Log
+  - 1.3.3
+    - Fixes
+	  - Fixed issue with object editor not updating sprites in map visually when you made a change is certain cases
+
   - 1.3.2
     - Fixes
 	  - Fixed error when placing the word Facing
