@@ -88,24 +88,12 @@ namespace BabaIsYou.Views {
 					}
 					ListItem item = new ListItem(copy, name, img);
 					item.BackColor = Palette.Background;
-					selector.AddItem(item, false);
+					selector.AddItem(item, copy.Name == pathCopy.Name);
 				}
 
 				selector.BackColor = Palette.Edge;
 				selector.Icon = this.Icon;
-				int sizeX = (int)Math.Sqrt(spriteCount);
-				int sizeY = sizeX;
-				bool isY = true;
-				while (sizeX * sizeY < spriteCount) {
-					if (isY) {
-						sizeY++;
-						isY = false;
-					} else {
-						sizeX++;
-						isY = true;
-					}
-				}
-				selector.ClientSize = new Size(imgSize * sizeX, imgSize * sizeY);
+				selector.ClientSize = new Size(imgSize * size.Width, imgSize * size.Height);
 				selector.SortItems();
 
 				DialogResult result = selector.ShowDialog(this);
