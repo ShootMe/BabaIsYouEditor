@@ -179,27 +179,28 @@ namespace BabaIsYou.Map {
 			HashSet<string> enabledRules = new HashSet<string>();
 			while (!reader.EndOfStream) {
 				string line = reader.ReadLine().Trim();
-				if (line.IndexOf("mod.tile[\"", StringComparison.OrdinalIgnoreCase) != 0 && line.IndexOf("mod.enabled[\"", StringComparison.OrdinalIgnoreCase) != 0) {
+				if (line.IndexOf("mod.tile[\"", StringComparison.OrdinalIgnoreCase) != 0) {
+					//if (line.IndexOf("mod.tile[\"", StringComparison.OrdinalIgnoreCase) != 0 && line.IndexOf("mod.enabled[\"", StringComparison.OrdinalIgnoreCase) != 0) {
 					continue;
 				}
 
-				if (line.IndexOf("mod.enabled[\"", StringComparison.OrdinalIgnoreCase) == 0) {
-					int index = line.IndexOf('"', 13);
-					string rule = line.Substring(13, index - 13);
+				//if (line.IndexOf("mod.enabled[\"", StringComparison.OrdinalIgnoreCase) == 0) {
+				//	int index = line.IndexOf('"', 13);
+				//	string rule = line.Substring(13, index - 13);
 
-					index = line.IndexOf('=', index);
-					bool temp = false;
-					if (bool.TryParse(line.Substring(index + 1).Trim(), out temp) && temp) {
-						enabledRules.Add(rule);
-					}
-					continue;
-				} else {
-					int index = line.IndexOf('"', 10);
-					string rule = line.Substring(10, index - 10);
-					if (!enabledRules.Contains(rule)) {
-						continue;
-					}
-				}
+				//	index = line.IndexOf('=', index);
+				//	bool temp = false;
+				//	if (bool.TryParse(line.Substring(index + 1).Trim(), out temp) && temp) {
+				//		enabledRules.Add(rule);
+				//	}
+				//	continue;
+				//} else {
+				//	int index = line.IndexOf('"', 10);
+				//	string rule = line.Substring(10, index - 10);
+				//	if (!enabledRules.Contains(rule)) {
+				//		continue;
+				//	}
+				//}
 
 				maxID++;
 				Item item = new Item();
@@ -365,9 +366,12 @@ namespace BabaIsYou.Map {
 				short id = BitConverter.ToInt16(MapBuffer, k);
 				Item item;
 				if (!DefaultsByID.TryGetValue(id, out item)) {
-					throw new Exception($"Failed to find Object with ID {id} [{Reader.ShortToCoordinate(id)}] in {grid.FileName}");
+					//throw new Exception($"Failed to find Object with ID {id} [{Reader.ShortToCoordinate(id)}] in {grid.FileName}");
+					item = Item.EMPTY.Copy();
+					id = -1;
+				} else {
+					item = item.Copy();
 				}
-				item = item.Copy();
 				item.Position = (short)j;
 				items.Add(item);
 				if (id != -1) {
