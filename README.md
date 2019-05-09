@@ -8,6 +8,10 @@ Simple Level Editor for the game Baba Is You
   - ...\Baba Is You\Data\Worlds\baba
 
 ## Change Log
+  - 1.3.6
+    - Fixes
+	  - Added some logic to remove duplicate palettes that are named the same
+
   - 1.3.5
     - Changes
 	  - Added ability to set Orb requirement in the path edit popup

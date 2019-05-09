@@ -70,7 +70,10 @@ namespace BabaIsYou.Map {
 				files = Directory.GetFiles(palettesPath, "*.png", SearchOption.TopDirectoryOnly);
 				for (int i = 0; i < files.Length; i++) {
 					string file = files[i];
-					Palettes.Add(Path.GetFileName(file), new Palette(file));
+					string fileName = Path.GetFileName(file);
+					if (!Palettes.ContainsKey(fileName)) {
+						Palettes.Add(fileName, new Palette(file));
+					}
 				}
 			}
 		}
