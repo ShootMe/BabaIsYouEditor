@@ -176,10 +176,29 @@ namespace BabaIsYou.Map {
 			return maxID;
 		}
 		private static void ReadExtraObjects(StreamReader reader, int maxID) {
+			HashSet<string> enabledRules = new HashSet<string>();
 			while (!reader.EndOfStream) {
 				string line = reader.ReadLine().Trim();
-				if (line.IndexOf("mod.tile[\"") != 0) {
+				if (line.IndexOf("mod.tile[\"", StringComparison.OrdinalIgnoreCase) != 0 && line.IndexOf("mod.enabled[\"", StringComparison.OrdinalIgnoreCase) != 0) {
 					continue;
+				}
+
+				if (line.IndexOf("mod.enabled[\"", StringComparison.OrdinalIgnoreCase) == 0) {
+					int index = line.IndexOf('"', 13);
+					string rule = line.Substring(13, index - 13);
+
+					index = line.IndexOf('=', index);
+					bool temp = false;
+					if (bool.TryParse(line.Substring(index + 1).Trim(), out temp) && temp) {
+						enabledRules.Add(rule);
+					}
+					continue;
+				} else {
+					int index = line.IndexOf('"', 10);
+					string rule = line.Substring(10, index - 10);
+					if (!enabledRules.Contains(rule)) {
+						continue;
+					}
 				}
 
 				maxID++;
@@ -193,7 +212,7 @@ namespace BabaIsYou.Map {
 						break;
 					}
 
-					int index = obj.IndexOf("=");
+					int index = obj.IndexOf('=');
 					if (index < 0) {
 						continue;
 					}
