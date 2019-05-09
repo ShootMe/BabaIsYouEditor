@@ -4,8 +4,14 @@ Simple Level Editor for the game Baba Is You
 ## Installing
   - Download from the [Releases](https://github.com/ShootMe/BabaIsYouEditor/releases)
   - Run and enjoy
+  - If you dont have Baba in the normal steam directory, you will need to open a world first where you have baba installed
+  - ...\Baba Is You\Data\Worlds\baba
 
 ## Change Log
+  - 1.3.5
+    - Changes
+	  - Added ability to set Orb requirement in the path edit popup
+
   - 1.3.4
     - Fixes
 	  - Removed ability to Add a world until youve opened one since it needs to know where the baba directory is

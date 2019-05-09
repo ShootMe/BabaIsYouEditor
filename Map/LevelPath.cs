@@ -1,8 +1,9 @@
 ﻿namespace BabaIsYou.Map {
 	public enum PathGate : byte {
 		None,
-		LevelClears,
-		MapClears
+		Level,
+		Area,
+		Orb
 	}
 	public enum PathStyle : byte {
 		Hidden,

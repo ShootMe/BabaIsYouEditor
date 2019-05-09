@@ -27,9 +27,10 @@
 			this.lblObject = new System.Windows.Forms.Label();
 			this.lblGate = new System.Windows.Forms.Label();
 			this.grpGate = new System.Windows.Forms.GroupBox();
+			this.chkOrbs = new BabaIsYou.Controls.ColorRadioButton();
 			this.chkNope = new BabaIsYou.Controls.ColorRadioButton();
-			this.chkLevelClears = new BabaIsYou.Controls.ColorRadioButton();
-			this.chkMapClears = new BabaIsYou.Controls.ColorRadioButton();
+			this.chkLevels = new BabaIsYou.Controls.ColorRadioButton();
+			this.chkAreas = new BabaIsYou.Controls.ColorRadioButton();
 			this.lblStyle = new System.Windows.Forms.Label();
 			this.grpStyle = new System.Windows.Forms.GroupBox();
 			this.chkHidden = new BabaIsYou.Controls.ColorRadioButton();
@@ -75,14 +76,29 @@
 			// 
 			// grpGate
 			// 
+			this.grpGate.Controls.Add(this.chkOrbs);
 			this.grpGate.Controls.Add(this.chkNope);
-			this.grpGate.Controls.Add(this.chkLevelClears);
-			this.grpGate.Controls.Add(this.chkMapClears);
+			this.grpGate.Controls.Add(this.chkLevels);
+			this.grpGate.Controls.Add(this.chkAreas);
 			this.grpGate.Location = new System.Drawing.Point(151, 38);
 			this.grpGate.Name = "grpGate";
-			this.grpGate.Size = new System.Drawing.Size(252, 31);
+			this.grpGate.Size = new System.Drawing.Size(242, 31);
 			this.grpGate.TabIndex = 4;
 			this.grpGate.TabStop = false;
+			// 
+			// chkOrbs
+			// 
+			this.chkOrbs.AutoSize = true;
+			this.chkOrbs.BackColor = System.Drawing.Color.Transparent;
+			this.chkOrbs.Location = new System.Drawing.Point(186, 9);
+			this.chkOrbs.Name = "chkOrbs";
+			this.chkOrbs.OffColour = System.Drawing.Color.Empty;
+			this.chkOrbs.OnColor = System.Drawing.Color.Red;
+			this.chkOrbs.Size = new System.Drawing.Size(49, 17);
+			this.chkOrbs.TabIndex = 3;
+			this.chkOrbs.TabStop = true;
+			this.chkOrbs.Text = "Orbs";
+			this.chkOrbs.UseVisualStyleBackColor = true;
 			// 
 			// chkNope
 			// 
@@ -99,35 +115,35 @@
 			this.chkNope.UseVisualStyleBackColor = true;
 			this.chkNope.CheckedChanged += new System.EventHandler(this.chkGate_CheckedChanged);
 			// 
-			// chkLevelClears
+			// chkLevels
 			// 
-			this.chkLevelClears.AutoSize = true;
-			this.chkLevelClears.BackColor = System.Drawing.Color.Transparent;
-			this.chkLevelClears.Location = new System.Drawing.Point(59, 9);
-			this.chkLevelClears.Name = "chkLevelClears";
-			this.chkLevelClears.OffColour = System.Drawing.Color.Empty;
-			this.chkLevelClears.OnColor = System.Drawing.Color.Red;
-			this.chkLevelClears.Size = new System.Drawing.Size(97, 17);
-			this.chkLevelClears.TabIndex = 1;
-			this.chkLevelClears.TabStop = true;
-			this.chkLevelClears.Text = "Level Clears";
-			this.chkLevelClears.UseVisualStyleBackColor = true;
-			this.chkLevelClears.CheckedChanged += new System.EventHandler(this.chkGate_CheckedChanged);
+			this.chkLevels.AutoSize = true;
+			this.chkLevels.BackColor = System.Drawing.Color.Transparent;
+			this.chkLevels.Location = new System.Drawing.Point(59, 9);
+			this.chkLevels.Name = "chkLevels";
+			this.chkLevels.OffColour = System.Drawing.Color.Empty;
+			this.chkLevels.OnColor = System.Drawing.Color.Red;
+			this.chkLevels.Size = new System.Drawing.Size(61, 17);
+			this.chkLevels.TabIndex = 1;
+			this.chkLevels.TabStop = true;
+			this.chkLevels.Text = "Levels";
+			this.chkLevels.UseVisualStyleBackColor = true;
+			this.chkLevels.CheckedChanged += new System.EventHandler(this.chkGate_CheckedChanged);
 			// 
-			// chkMapClears
+			// chkAreas
 			// 
-			this.chkMapClears.AutoSize = true;
-			this.chkMapClears.BackColor = System.Drawing.Color.Transparent;
-			this.chkMapClears.Location = new System.Drawing.Point(159, 9);
-			this.chkMapClears.Name = "chkMapClears";
-			this.chkMapClears.OffColour = System.Drawing.Color.Empty;
-			this.chkMapClears.OnColor = System.Drawing.Color.Red;
-			this.chkMapClears.Size = new System.Drawing.Size(85, 17);
-			this.chkMapClears.TabIndex = 2;
-			this.chkMapClears.TabStop = true;
-			this.chkMapClears.Text = "Map Clears";
-			this.chkMapClears.UseVisualStyleBackColor = true;
-			this.chkMapClears.CheckedChanged += new System.EventHandler(this.chkGate_CheckedChanged);
+			this.chkAreas.AutoSize = true;
+			this.chkAreas.BackColor = System.Drawing.Color.Transparent;
+			this.chkAreas.Location = new System.Drawing.Point(125, 9);
+			this.chkAreas.Name = "chkAreas";
+			this.chkAreas.OffColour = System.Drawing.Color.Empty;
+			this.chkAreas.OnColor = System.Drawing.Color.Red;
+			this.chkAreas.Size = new System.Drawing.Size(55, 17);
+			this.chkAreas.TabIndex = 2;
+			this.chkAreas.TabStop = true;
+			this.chkAreas.Text = "Areas";
+			this.chkAreas.UseVisualStyleBackColor = true;
+			this.chkAreas.CheckedChanged += new System.EventHandler(this.chkGate_CheckedChanged);
 			// 
 			// lblStyle
 			// 
@@ -182,7 +198,7 @@
 			// 
 			this.btnSave.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
 			this.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnSave.Location = new System.Drawing.Point(184, 117);
+			this.btnSave.Location = new System.Drawing.Point(184, 105);
 			this.btnSave.Name = "btnSave";
 			this.btnSave.Size = new System.Drawing.Size(51, 23);
 			this.btnSave.TabIndex = 7;
@@ -218,7 +234,7 @@
 			this.AcceptButton = this.btnSave;
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.Black;
-			this.ClientSize = new System.Drawing.Size(419, 152);
+			this.ClientSize = new System.Drawing.Size(419, 140);
 			this.Controls.Add(this.lblRequirement);
 			this.Controls.Add(this.numRequirement);
 			this.Controls.Add(this.btnSave);
@@ -257,8 +273,8 @@
 		private System.Windows.Forms.Label lblGate;
 		private System.Windows.Forms.GroupBox grpGate;
 		private Controls.ColorRadioButton chkNope;
-		private Controls.ColorRadioButton chkLevelClears;
-		private Controls.ColorRadioButton chkMapClears;
+		private Controls.ColorRadioButton chkLevels;
+		private Controls.ColorRadioButton chkAreas;
 		private System.Windows.Forms.Label lblStyle;
 		private System.Windows.Forms.GroupBox grpStyle;
 		private Controls.ColorRadioButton chkHidden;
@@ -266,5 +282,6 @@
 		private System.Windows.Forms.Button btnSave;
 		private System.Windows.Forms.Label lblRequirement;
 		private Controls.NumericBox numRequirement;
+		private Controls.ColorRadioButton chkOrbs;
 	}
 }

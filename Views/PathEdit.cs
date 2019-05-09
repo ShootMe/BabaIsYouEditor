@@ -18,8 +18,9 @@ namespace BabaIsYou.Views {
 			pathCopy = (LevelPath)Edit.Copy();
 			numRequirement.Value = pathCopy.Requirement;
 			switch ((PathGate)pathCopy.Gate) {
-				case PathGate.LevelClears: chkLevelClears.Checked = true; break;
-				case PathGate.MapClears: chkMapClears.Checked = true; break;
+				case PathGate.Level: chkLevels.Checked = true; break;
+				case PathGate.Area: chkAreas.Checked = true; break;
+				case PathGate.Orb: chkOrbs.Checked = true; break;
 				default: chkNope.Checked = true; break;
 			}
 			switch ((PathStyle)pathCopy.Style) {
@@ -39,8 +40,9 @@ namespace BabaIsYou.Views {
 			if (pathCopy == null) { return; }
 
 			pathCopy.Gate = chkNope.Checked ? (byte)PathGate.None : pathCopy.Gate;
-			pathCopy.Gate = chkLevelClears.Checked ? (byte)PathGate.LevelClears : pathCopy.Gate;
-			pathCopy.Gate = chkMapClears.Checked ? (byte)PathGate.MapClears : pathCopy.Gate;
+			pathCopy.Gate = chkLevels.Checked ? (byte)PathGate.Level : pathCopy.Gate;
+			pathCopy.Gate = chkAreas.Checked ? (byte)PathGate.Area : pathCopy.Gate;
+			pathCopy.Gate = chkOrbs.Checked ? (byte)PathGate.Orb : pathCopy.Gate;
 		}
 		private void numRequirement_ValueChanged(object sender, EventArgs e) {
 			if (pathCopy == null) { return; }
