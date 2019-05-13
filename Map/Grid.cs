@@ -288,7 +288,6 @@ namespace BabaIsYou.Map {
 			hasChanges = UpdateChanges(item.ID, "image", defaultItem.Sprite != item.Sprite ? item.Sprite : null);
 			hasChanges = UpdateChanges(item.ID, "unittype", defaultItem.IsObject != item.IsObject ? item.IsObject ? "object" : "text" : null);
 			hasChanges = UpdateChanges(item.ID, "root", defaultItem.SpriteInRoot != item.SpriteInRoot ? item.SpriteInRoot ? "1" : "0" : null);
-			hasChanges = UpdateChanges(item.ID, "operatortype", defaultItem.OperatorType != item.OperatorType ? item.OperatorType : null);
 			hasChanges = UpdateChanges(item.ID, "argextra", defaultItem.ArgExtra != item.ArgExtra ? item.ArgExtra : null);
 			hasChanges = UpdateChanges(item.ID, "argetype", defaultItem.ArgType != item.ArgType ? item.ArgType : null);
 			return hasChanges;

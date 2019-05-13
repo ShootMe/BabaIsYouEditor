@@ -37,7 +37,6 @@ namespace BabaIsYou.Map {
 				Direction = Direction,
 				Color = Color,
 				ActiveColor = ActiveColor,
-				OperatorType = OperatorType,
 				ArgExtra = ArgExtra,
 				ArgType = ArgType,
 				File = File,

@@ -8,6 +8,15 @@ Simple Level Editor for the game Baba Is You
   - ...\Baba Is You\Data\Worlds\baba
 
 ## Change Log
+  - 1.3.9
+    - Changes
+	  - Removed the Operator Type field in the object editor
+	  - Changed how ArgType and ArgExtra are formatted from values.lua
+
+  - 1.3.8
+    - Changes
+	  - Reverted previous change
+
   - 1.3.7
     - Changes
 	  - Added some logic to try and detect if modded tile are enabled

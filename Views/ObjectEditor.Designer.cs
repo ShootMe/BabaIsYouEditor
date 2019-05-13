@@ -35,8 +35,6 @@
 			this.txtArgType = new System.Windows.Forms.TextBox();
 			this.lblArgExtra = new System.Windows.Forms.Label();
 			this.txtArgExtra = new System.Windows.Forms.TextBox();
-			this.lblOperatorType = new System.Windows.Forms.Label();
-			this.txtOperatorType = new System.Windows.Forms.TextBox();
 			this.lblImage = new System.Windows.Forms.Label();
 			this.imgImage = new System.Windows.Forms.PictureBox();
 			this.cboTiling = new System.Windows.Forms.ComboBox();
@@ -109,8 +107,6 @@
 			this.grpProperties.Controls.Add(this.txtArgType);
 			this.grpProperties.Controls.Add(this.lblArgExtra);
 			this.grpProperties.Controls.Add(this.txtArgExtra);
-			this.grpProperties.Controls.Add(this.lblOperatorType);
-			this.grpProperties.Controls.Add(this.txtOperatorType);
 			this.grpProperties.Controls.Add(this.lblImage);
 			this.grpProperties.Controls.Add(this.imgImage);
 			this.grpProperties.Controls.Add(this.cboTiling);
@@ -153,7 +149,7 @@
 			// lblArgType
 			// 
 			this.lblArgType.AutoSize = true;
-			this.lblArgType.Location = new System.Drawing.Point(131, 180);
+			this.lblArgType.Location = new System.Drawing.Point(23, 180);
 			this.lblArgType.Name = "lblArgType";
 			this.lblArgType.Size = new System.Drawing.Size(55, 13);
 			this.lblArgType.TabIndex = 14;
@@ -162,9 +158,9 @@
 			// txtArgType
 			// 
 			this.txtArgType.CharacterCasing = System.Windows.Forms.CharacterCasing.Lower;
-			this.txtArgType.Location = new System.Drawing.Point(129, 196);
+			this.txtArgType.Location = new System.Drawing.Point(21, 196);
 			this.txtArgType.Name = "txtArgType";
-			this.txtArgType.Size = new System.Drawing.Size(156, 20);
+			this.txtArgType.Size = new System.Drawing.Size(208, 20);
 			this.txtArgType.TabIndex = 15;
 			this.txtArgType.TextChanged += new System.EventHandler(this.txtArgType_TextChanged);
 			// 
@@ -185,24 +181,6 @@
 			this.txtArgExtra.Size = new System.Drawing.Size(264, 20);
 			this.txtArgExtra.TabIndex = 17;
 			this.txtArgExtra.TextChanged += new System.EventHandler(this.txtArgExtra_TextChanged);
-			// 
-			// lblOperatorType
-			// 
-			this.lblOperatorType.AutoSize = true;
-			this.lblOperatorType.Location = new System.Drawing.Point(26, 180);
-			this.lblOperatorType.Name = "lblOperatorType";
-			this.lblOperatorType.Size = new System.Drawing.Size(85, 13);
-			this.lblOperatorType.TabIndex = 12;
-			this.lblOperatorType.Text = "Operator Type";
-			// 
-			// txtOperatorType
-			// 
-			this.txtOperatorType.CharacterCasing = System.Windows.Forms.CharacterCasing.Lower;
-			this.txtOperatorType.Location = new System.Drawing.Point(21, 196);
-			this.txtOperatorType.Name = "txtOperatorType";
-			this.txtOperatorType.Size = new System.Drawing.Size(100, 20);
-			this.txtOperatorType.TabIndex = 13;
-			this.txtOperatorType.TextChanged += new System.EventHandler(this.txtOperatorType_TextChanged);
 			// 
 			// lblImage
 			// 
@@ -410,8 +388,6 @@
 		private System.Windows.Forms.ToolTip toolTips;
 		private System.Windows.Forms.Label lblArgExtra;
 		private System.Windows.Forms.TextBox txtArgExtra;
-		private System.Windows.Forms.Label lblOperatorType;
-		private System.Windows.Forms.TextBox txtOperatorType;
 		private System.Windows.Forms.Label lblArgType;
 		private System.Windows.Forms.TextBox txtArgType;
 		private System.Windows.Forms.Label lblObjectText;

@@ -249,9 +249,8 @@ namespace BabaIsYou.Map {
 				case "active": item.ActiveColor = CoordinateToShort(value); break;
 				case "tiling": item.Tiling = ParseByte(value); break;
 				case "tile": item.ID = CoordinateToShort(value); break;
-				case "operatortype": item.OperatorType = value.Substring(1, value.Length - 2); break;
-				case "argextra": item.ArgExtra = value; break;
-				case "argtype": item.ArgType = value; break;
+				case "argextra": item.ArgExtra = value.Substring(1, value.Length - 2).Replace("\"",""); break;
+				case "argtype": item.ArgType = value.Substring(1, value.Length - 2).Replace(" ", ""); break;
 			}
 		}
 		public static short CoordinateToShort(string coordinate) {

@@ -30,7 +30,6 @@ namespace BabaIsYou.Map {
 						case "unittype": item.IsObject = pair.Value == "object"; break;
 						case "layer": item.Layer = byte.Parse(pair.Value); break;
 						case "tiling": item.Tiling = (byte)short.Parse(pair.Value); break;
-						case "operatortype": item.OperatorType = pair.Value; break;
 						case "argextra": item.ArgExtra = pair.Value; break;
 						case "argtype": item.ArgType = pair.Value; break;
 					}
@@ -71,7 +70,6 @@ namespace BabaIsYou.Map {
 					case "unittype": changed = defaultItem.IsObject != (pair.Value == "object"); break;
 					case "layer": changed = defaultItem.Layer.ToString() != pair.Value; break;
 					case "tiling": changed = defaultItem.Tiling.ToString() != pair.Value; break;
-					case "operatortype": changed = defaultItem.OperatorType != pair.Value; break;
 					case "argextra": changed = defaultItem.ArgExtra != pair.Value; break;
 					case "argtype": changed = defaultItem.ArgType != pair.Value; break;
 				}

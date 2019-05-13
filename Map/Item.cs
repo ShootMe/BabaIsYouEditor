@@ -33,7 +33,6 @@ namespace BabaIsYou.Map {
 		public string Object;
 		public string Name;
 		public string Sprite;
-		public string OperatorType;
 		public string ArgExtra;
 		public string ArgType;
 		public bool SpriteInRoot;
@@ -70,7 +69,6 @@ namespace BabaIsYou.Map {
 				Direction = Direction,
 				Color = Color,
 				ActiveColor = ActiveColor,
-				OperatorType = OperatorType,
 				ArgExtra = ArgExtra,
 				ArgType = ArgType
 			};
@@ -89,7 +87,6 @@ namespace BabaIsYou.Map {
 			Layer = item.Layer;
 			Color = item.Color;
 			ActiveColor = item.ActiveColor;
-			OperatorType = item.OperatorType;
 			ArgExtra = item.ArgExtra;
 			ArgType = item.ArgType;
 		}
