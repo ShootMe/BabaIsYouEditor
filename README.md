@@ -8,6 +8,12 @@ Simple Level Editor for the game Baba Is You
   - ...\Baba Is You\Data\Worlds\baba
 
 ## Change Log
+  - 1.4.0
+    - Changes
+	  - Allow spaces in new world names
+	  - Fixed map selection red rectangle from being cut off in edge placement mode
+	  - Fixed red rectangle being a few pixels too small in the sprite and map lists
+
   - 1.3.9
     - Changes
 	  - Removed the Operator Type field in the object editor

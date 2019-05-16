@@ -1045,13 +1045,13 @@ namespace BabaIsYou.Views {
 				if (addWorld.ShowDialog(this) == DialogResult.OK) {
 					string name = addWorld.InputText;
 					if (!string.IsNullOrEmpty(name)) {
-						string dirName = Path.Combine(GameDirectory, "Worlds", name.Replace(" ", ""));
+						string dirName = Path.Combine(GameDirectory, "Worlds", name);
 						if (Directory.Exists(dirName)) {
 							MessageBox.Show(this, "This world already exists in the Worlds directory. Please open it instead.", "World Exists", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 						} else if (!Directory.Exists(GameDirectory)) {
 							MessageBox.Show(this, "You need to open a world from the Baba directory first before you can add any new worlds.", "World Exists", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 						} else {
-							GameWorld = name.Replace(" ", "");
+							GameWorld = name;
 							Directory.CreateDirectory(dirName);
 							Directory.CreateDirectory(Path.Combine(dirName, "Sprites"));
 							Info worldInfo = new Info(Path.Combine(dirName, "world_data.txt"), false);

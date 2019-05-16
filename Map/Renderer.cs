@@ -119,7 +119,7 @@ namespace BabaIsYou.Map {
 				g.FillRectangle(brush, mapBounds.X, mapBounds.Y, mapBounds.Width * grid.Width, mapBounds.Height * grid.Height);
 			}
 
-			g.Clip = new Region(new Rectangle(mapBounds.X, mapBounds.Y, mapBounds.Width * grid.Width, mapBounds.Height * grid.Height));
+			g.Clip = new Region(new Rectangle(mapBounds.X - 1, mapBounds.Y - 1, mapBounds.Width * grid.Width + 1, mapBounds.Height * grid.Height + 1));
 			int frame = (frameNumber % 3) + 1;
 			for (int i = 0; i < grid.Images.Count; i++) {
 				string image = grid.Images[i];

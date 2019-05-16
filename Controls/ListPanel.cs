@@ -570,8 +570,8 @@ namespace BabaIsYou.Controls {
 			}
 
 			if (selected) {
-				g.DrawRectangle(Pens.DarkRed, bounds.X - 2, bounds.Y - 2, bounds.Width + 3, bounds.Height + 3);
-				g.DrawRectangle(Pens.Red, bounds.X - 1, bounds.Y - 1, bounds.Width + 1, bounds.Height + 1);
+				g.DrawRectangle(Pens.DarkRed, bounds.X - 2, bounds.Y - 2, bounds.Width + 4, bounds.Height + 4);
+				g.DrawRectangle(Pens.Red, bounds.X - 1, bounds.Y - 1, bounds.Width + 2, bounds.Height + 2);
 			}
 		}
 	}
