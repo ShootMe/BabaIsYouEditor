@@ -79,6 +79,7 @@ namespace BabaIsYou.Views {
 			menuItemShowAnimations.Checked = RegistryRead<int>("ShowAnimations", 1) != 0;
 			listLevels.SortByText = RegistryRead<int>("SortByFile", 0) == 0;
 			menuItemSortLevels.Checked = !listLevels.SortByText;
+			menuItemSortObjectsByID.Checked = RegistryRead<int>("SortObjectsByID", 0) != 0;
 
 			mapViewer.ShowStacked = menuItemShowStacked.Checked;
 			mapViewer.ShowDirections = menuItemShowDirections.Checked;
@@ -310,6 +311,7 @@ namespace BabaIsYou.Views {
 			RegistryWrite<int>("ShowDirections", menuItemShowDirections.Checked ? 1 : 0);
 			RegistryWrite<int>("SortByFile", menuItemSortLevels.Checked ? 1 : 0);
 			RegistryWrite<int>("ShowAnimations", menuItemShowAnimations.Checked ? 1 : 0);
+			RegistryWrite<int>("SortObjectsByID", menuItemSortObjectsByID.Checked ? 1 : 0);
 		}
 		private void WorldViewer_Deactivate(object sender, EventArgs e) {
 			holdingControl = false;
@@ -431,7 +433,9 @@ namespace BabaIsYou.Views {
 			mapViewer.Invalidate();
 		}
 		private void AddSprites() {
-			string currentText = listObjects.SelectedItem?.Text;
+			ListItem current = listObjects.SelectedItem;
+			int currentID = current == null ? -100 : ((Item)current.Value).ID;
+			current = null;
 			listObjects.SelectedIndex = -1;
 			listObjects.ClearItems();
 
@@ -460,10 +464,18 @@ namespace BabaIsYou.Views {
 				if (index == 0) {
 					name = name.Substring(5) + "_text";
 				}
+				if (menuItemSortObjectsByID.Checked) {
+					name = $"{copy.Grid.ToString("00000")} {name}";
+				}
+
 				ListItem listItem = new ListItem(copy, name, spriteSize, spriteSize);
 				listItem.Changed = copy.Changed;
 				listItem.BackColor = palette.Background;
 				listObjects.AddItem(listItem);
+
+				if (copy.ID == currentID) {
+					current = listItem;
+				}
 			}
 
 			spriteSize = ResizeListObjects();
@@ -476,7 +488,8 @@ namespace BabaIsYou.Views {
 
 			listObjects.SortItems();
 			listObjects.BackColor = palette.Edge;
-			if (!listObjects.SelectItemWithText(currentText)) {
+			listObjects.SelectedItem = current;
+			if (listObjects.SelectedItem == null) {
 				listObjects.SelectedIndex = 0;
 			}
 		}
@@ -1170,6 +1183,9 @@ namespace BabaIsYou.Views {
 			ListItem selected = listLevels.SelectedItem;
 			listLevels.SortItems();
 			listLevels.SelectedItem = selected;
+		}
+		private void menuItemSortObjectsByID_Click(object sender, EventArgs e) {
+			AddSprites();
 		}
 		private void menuItemRevertChanges_Click(object sender, EventArgs e) {
 			if (map != null && MessageBox.Show(this, $"Are you sure you want to revert all changes to \"{map.Name}\" and reload it?", "Revert Changes", MessageBoxButtons.YesNo) == DialogResult.Yes) {

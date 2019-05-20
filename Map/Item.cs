@@ -29,6 +29,7 @@ namespace BabaIsYou.Map {
 		public static Item EMPTY = new Item() { ID = -1, Name = "empty", Object = "empty" };
 		public static Item SELECTOR = new Item() { ID = short.MaxValue, Name = "selector", Object = "selector", Sprite = "grid", Layer = 255, Color = 768, Tiling = 255 };
 		public short ID;
+		public short Grid;
 		public short Position;
 		public string Object;
 		public string Name;
@@ -54,6 +55,7 @@ namespace BabaIsYou.Map {
 		public virtual Item Copy() {
 			return new Item() {
 				ID = ID,
+				Grid = Grid,
 				Position = Position,
 				Object = Object,
 				Name = Name,
@@ -75,6 +77,7 @@ namespace BabaIsYou.Map {
 		}
 		public void Apply(Item item) {
 			ID = item.ID;
+			Grid = item.Grid;
 			Object = item.Object;
 			Name = item.Name;
 			Sprite = item.Sprite;

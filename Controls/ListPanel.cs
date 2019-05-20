@@ -372,6 +372,11 @@ namespace BabaIsYou.Controls {
 					break;
 				default: {
 					string keyVal = e.KeyCode == Keys.Space ? " " : e.KeyCode.ToString();
+					if (keyVal.IndexOf("NumPad") == 0) {
+						keyVal = keyVal.Substring(6);
+					} else if ((int)e.KeyCode >= 0x30 && (int)e.KeyCode <= 0x39) {
+						keyVal = keyVal.Substring(1);
+					}
 					if (keyVal.Length == 1) {
 						if ((DateTime.Now - lastTyped).TotalSeconds > 1) {
 							typedString.Length = 0;
@@ -380,14 +385,23 @@ namespace BabaIsYou.Controls {
 						typedString.Append(keyVal);
 
 						keyVal = typedString.ToString();
+						int bestIndex = -1;
+						int bestIndexOf = int.MaxValue;
 						for (int i = 0; i < Items.Count; i++) {
 							ListItem item = Items[i];
 							if (!item.Visible) { continue; }
 
-							if (item.Text.IndexOf(keyVal, StringComparison.OrdinalIgnoreCase) == 0) {
-								SelectedIndex = i;
-								break;
+							int indexOf = item.Text.IndexOf(keyVal, StringComparison.OrdinalIgnoreCase);
+							if (indexOf >= 0) {
+								if (bestIndexOf > indexOf) {
+									bestIndex = i;
+									bestIndexOf = indexOf;
+								}
 							}
+						}
+
+						if (bestIndex >= 0) {
+							SelectedIndex = bestIndex;
 						}
 					}
 					break;

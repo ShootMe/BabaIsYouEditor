@@ -251,6 +251,7 @@ namespace BabaIsYou.Map {
 				case "tile": item.ID = CoordinateToShort(value); break;
 				case "argextra": item.ArgExtra = value.Substring(1, value.Length - 2).Replace("\"",""); break;
 				case "argtype": item.ArgType = value.Substring(1, value.Length - 2).Replace(" ", ""); break;
+				case "grid": item.Grid = CoordinateToShort(value); break;
 			}
 		}
 		public static short CoordinateToShort(string coordinate) {
