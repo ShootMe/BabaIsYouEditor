@@ -310,7 +310,7 @@ namespace BabaIsYou.Map {
 			return img;
 		}
 		public static void DrawSprite(Grid grid, Graphics g, Rectangle destination, Item item, Palette palette, int frameNumber = 0, int stackCount = 0, bool hasSpecialLevel = false) {
-			Color color = palette.Colors[item.Active && item.ActiveColor != -1 ? item.ActiveColor : item.Color];
+			Color color = palette.Colors[item.Active && item.ActiveColor != -1 && !(item is Level) ? item.ActiveColor : item.Color];
 			if (item is Special specialItem) {
 				if (specialItem.Type == (byte)SpecialType.Art || specialItem.Type == (byte)SpecialType.Unknown) {
 					g.DrawImage(SpecialIcon, destination);

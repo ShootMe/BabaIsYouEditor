@@ -8,6 +8,10 @@ Simple Level Editor for the game Baba Is You
   - ...\Baba Is You\Data\Worlds\baba
 
 ## Change Log
+  - 1.4.2
+    - Fixes
+	  - Fixed level object colors in the level list thumbnail
+
   - 1.4.1
     - Features
 	  - Added ability to change sorting of Objects to be based on the grid layout specified by the game

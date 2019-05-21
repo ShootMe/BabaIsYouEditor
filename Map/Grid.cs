@@ -85,6 +85,16 @@ namespace BabaIsYou.Map {
 			Cells = newCells;
 			Resized?.Invoke(this);
 		}
+		public bool ContainsObject(Item item) {
+			int size = Cells.Count;
+			for (int i = 0; i < size; i++) {
+				Cell cell = Cells[i];
+				if (cell.ContainsObject(item)) {
+					return true;
+				}
+			}
+			return false;
+		}
 		public int CountOfType<T>() {
 			int count = 0;
 			int size = Cells.Count;
