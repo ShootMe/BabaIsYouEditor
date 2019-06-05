@@ -90,11 +90,11 @@ namespace BabaIsYou.Map {
 
 				Sprite sprite;
 				if (!Sprites.TryGetValue(name, out sprite)) {
-					sprite = new Sprite(name, fileNoExt, isRoot);
+					sprite = new Sprite(name, isRoot);
 					Sprites.Add(name, sprite);
 				}
 
-				sprite[index, sub] = (Bitmap)Bitmap.FromFile(file);
+				sprite[index, sub] = new SpriteImage((Bitmap)Bitmap.FromFile(file), fileNoExt);
 			}
 		}
 		private static string GetSpriteInfo(string name, bool isSprite, out int index, out int sub) {
@@ -249,7 +249,7 @@ namespace BabaIsYou.Map {
 				case "active": item.ActiveColor = CoordinateToShort(value); break;
 				case "tiling": item.Tiling = ParseByte(value); break;
 				case "tile": item.ID = CoordinateToShort(value); break;
-				case "argextra": item.ArgExtra = value.Substring(1, value.Length - 2).Replace("\"",""); break;
+				case "argextra": item.ArgExtra = value.Substring(1, value.Length - 2).Replace("\"", ""); break;
 				case "argtype": item.ArgType = value.Substring(1, value.Length - 2).Replace(" ", ""); break;
 				case "grid": item.Grid = CoordinateToShort(value); break;
 			}
@@ -557,8 +557,10 @@ namespace BabaIsYou.Map {
 				if (level.Style == 255) {
 					string icon = grid.Info["icons", $"{level.Number}file"];
 					if (!string.IsNullOrEmpty(icon)) {
-						int a, b;
-						level.Sprite = GetSpriteInfo(icon, true, out a, out b);
+						int num, sub;
+						level.Sprite = GetSpriteInfo(icon, true, out num, out sub);
+						level.SpriteNum = (byte)num;
+						level.SpriteNumExtra = (byte)sub;
 					}
 				}
 				level.Position = (short)(level.Y * grid.Width + level.X);

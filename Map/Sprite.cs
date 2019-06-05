@@ -3,17 +3,15 @@ using System.Drawing;
 namespace BabaIsYou.Map {
 	public class Sprite {
 		public string Name;
-		public string ActualFile;
 		public bool IsRoot;
-		public Dictionary<int, Bitmap> Images = new Dictionary<int, Bitmap>();
+		public Dictionary<int, SpriteImage> Images = new Dictionary<int, SpriteImage>();
 
-		public Sprite(string name, string actualFile, bool isRoot) {
+		public Sprite(string name, bool isRoot) {
 			Name = name;
-			ActualFile = actualFile;
 			IsRoot = isRoot;
 		}
 		public Sprite Copy(string name) {
-			Sprite sprite = new Sprite(name, ActualFile, IsRoot);
+			Sprite sprite = new Sprite(name, IsRoot);
 			sprite.Images = Images;
 			return sprite;
 		}
@@ -29,9 +27,9 @@ namespace BabaIsYou.Map {
 				return max;
 			}
 		}
-		public Bitmap this[int index, int sub] {
+		public SpriteImage this[int index, int sub] {
 			get {
-				Bitmap img;
+				SpriteImage img;
 				if (Images.TryGetValue(index * 3 + sub, out img)) {
 					return img;
 				} else if (Images.TryGetValue(index * 3 + sub + (sub < 3 ? 1 : -2), out img)) {
@@ -52,6 +50,18 @@ namespace BabaIsYou.Map {
 		}
 		public override string ToString() {
 			return $"{Name} [{Images.Count}]";
+		}
+	}
+	public class SpriteImage {
+		public Bitmap Image;
+		public string Name;
+
+		public SpriteImage(Bitmap image, string fileName) {
+			Image = image;
+			Name = fileName;
+		}
+		public override string ToString() {
+			return Name;
 		}
 	}
 }

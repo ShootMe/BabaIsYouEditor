@@ -12,7 +12,7 @@ namespace BabaIsYou.Map {
 		private static Bitmap Selector, Petal;
 		private static Bitmap SpecialIcon, DownIcon, IdleIcon, LeftIcon, PauseIcon, RightIcon, UndoIcon, UpIcon;
 		public static Bitmap Error;
-		private static Sprite Levels = new Sprite("Level", "Level", true);
+		private static Sprite Levels = new Sprite("Level", true);
 
 		static Renderer() {
 			Selector = GetBitmapFromAssembly("BabaIsYou.Images.grid.png");
@@ -26,9 +26,9 @@ namespace BabaIsYou.Map {
 			UndoIcon = GetBitmapFromAssembly("BabaIsYou.Images.undo_icon.png");
 			UpIcon = GetBitmapFromAssembly("BabaIsYou.Images.up.png");
 			Error = GetBitmapFromAssembly("BabaIsYou.Images.error.png");
-			Levels[0, 1] = GetBitmapFromAssembly("BabaIsYou.Images.level1.png");
-			Levels[0, 2] = GetBitmapFromAssembly("BabaIsYou.Images.level2.png");
-			Levels[0, 3] = GetBitmapFromAssembly("BabaIsYou.Images.level3.png");
+			Levels[0, 1] = new SpriteImage(GetBitmapFromAssembly("BabaIsYou.Images.level1.png"), "Level_1");
+			Levels[0, 2] = new SpriteImage(GetBitmapFromAssembly("BabaIsYou.Images.level2.png"), "Level_2");
+			Levels[0, 3] = new SpriteImage(GetBitmapFromAssembly("BabaIsYou.Images.level3.png"), "Level_3");
 			using (Stream fontStream = typeof(Renderer).Assembly.GetManifestResourceStream("BabaIsYou.Images.Consolas.ttf")) {
 				byte[] fontdata = new byte[fontStream.Length];
 				fontStream.Read(fontdata, 0, (int)fontStream.Length);
@@ -123,7 +123,7 @@ namespace BabaIsYou.Map {
 			int frame = (frameNumber % 3) + 1;
 			for (int i = 0; i < grid.Images.Count; i++) {
 				string image = grid.Images[i];
-				Bitmap img = Reader.Sprites[image][0, frame];
+				Bitmap img = Reader.Sprites[image][0, frame].Image;
 				int width = img.Width * mapBounds.Width / 24;
 				if (width < 1) { width = 1; }
 				int height = img.Height * mapBounds.Height / 24;
@@ -295,8 +295,8 @@ namespace BabaIsYou.Map {
 			}
 		}
 		public static void DrawSprite(Graphics g, Rectangle destination, Sprite sprite, Color color) {
-			Bitmap image = sprite[0, 1];
-			DrawImage(g, image, destination, color, false);
+			SpriteImage image = sprite[0, 1];
+			DrawImage(g, image?.Image, destination, color, false);
 		}
 		public static Bitmap DrawSprite(Item item, int imgSize, Palette palette) {
 			Bitmap img = new Bitmap(imgSize, imgSize);
@@ -332,15 +332,15 @@ namespace BabaIsYou.Map {
 			if (item.ID == short.MaxValue) {
 				image = Selector;
 			} else {
-				image = sprite[0, frame];
+				image = sprite[0, frame]?.Image;
 			}
 			switch ((Tiling)item.Tiling) {
 				case Tiling.Directional:
 				case Tiling.Animated:
 					switch ((Direction)item.Direction) {
-						case Direction.Up: image = sprite[8, frame]; break;
-						case Direction.Left: image = sprite[16, frame]; break;
-						case Direction.Down: image = sprite[24, frame]; break;
+						case Direction.Up: image = sprite[8, frame]?.Image; break;
+						case Direction.Left: image = sprite[16, frame]?.Image; break;
+						case Direction.Down: image = sprite[24, frame]?.Image; break;
 					}
 					break;
 				case Tiling.Tiled:
@@ -372,28 +372,34 @@ namespace BabaIsYou.Map {
 							value |= cell.ContainsObject(item) || IsEdge(grid, position) || (isLevelPath && cell.HasLevelPath()) ? 1 : 0;
 						}
 
-						image = sprite[value, frame];
+						image = sprite[value, frame]?.Image;
 					}
 					break;
 				case Tiling.Character:
 					switch ((Direction)item.Direction) {
-						case Direction.Up: image = sprite[8, frame]; break;
-						case Direction.Left: image = sprite[16, frame]; break;
-						case Direction.Down: image = sprite[24, frame]; break;
+						case Direction.Up: image = sprite[8, frame]?.Image; break;
+						case Direction.Left: image = sprite[16, frame]?.Image; break;
+						case Direction.Down: image = sprite[24, frame]?.Image; break;
 					}
 					if (item.Sleeping) {
-						image = sprite[31, frame];
+						image = sprite[31, frame]?.Image;
 					}
 					break;
 			}
 			if (image == null) {
-				image = sprite[0, frame];
+				image = sprite[0, frame]?.Image;
 				if (image == null) {
 					image = Error;
 				}
 			}
 
 			if (item is Level level) {
+				if (level.Style == (byte)LevelStyle.Icon) {
+					Bitmap img = sprite[level.SpriteNum, level.SpriteNumExtra]?.Image;
+					if (img != null) {
+						image = img;
+					}
+				}
 				DrawLevel(g, destination, level, image, color, palette.Colors[level.Color], frameNumber);
 			} else {
 				DrawImage(g, image, destination, color, hasSpecialLevel);
@@ -411,7 +417,7 @@ namespace BabaIsYou.Map {
 		}
 		private static void DrawLevel(Graphics g, Rectangle bounds, Level level, Bitmap image, Color color, Color colorText, int frameNumber) {
 			int frame = ((frameNumber + level.Position) % 3) + 1;
-			DrawImage(g, Levels[0, frame], bounds, colorText, false);
+			DrawImage(g, Levels[0, frame].Image, bounds, colorText, false);
 
 			if (level.Style == (byte)LevelStyle.Icon) {
 				DrawImage(g, image, bounds, color, false);

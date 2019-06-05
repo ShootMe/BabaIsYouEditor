@@ -8,6 +8,10 @@ Simple Level Editor for the game Baba Is You
   - ...\Baba Is You\Data\Worlds\baba
 
 ## Change Log
+  - 1.4.3
+    - Fixes
+	  - Fixed level icons being saved incorrectly
+
   - 1.4.2
     - Fixes
 	  - Fixed level object colors in the level list thumbnail

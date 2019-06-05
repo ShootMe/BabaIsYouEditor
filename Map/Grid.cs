@@ -239,7 +239,8 @@ namespace BabaIsYou.Map {
 						Info["Levels", $"{levelID}dir"] = level.Direction.ToString();
 						if (level.Style == (byte)LevelStyle.Icon) {
 							Sprite sprite = Reader.Sprites[level.Sprite];
-							Info["Icons", $"{iconID}file"] = sprite.ActualFile;
+							SpriteImage image = sprite[level.SpriteNum, level.SpriteNumExtra];
+							Info["Icons", $"{iconID}file"] = image.Name;
 							Info["Icons", $"{iconID}root"] = sprite.IsRoot ? "1" : "0";
 							iconID++;
 						}

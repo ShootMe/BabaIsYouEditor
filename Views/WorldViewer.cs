@@ -94,7 +94,7 @@ namespace BabaIsYou.Views {
 			menuItemSaveWorld.Enabled = false;
 			menuItemSortLevels.Enabled = false;
 
-			if (GameDirectory.IndexOf(@"Baba Is You\Data\", StringComparison.OrdinalIgnoreCase) > 0 && Directory.Exists(Path.Combine(GameDirectory, "Worlds", GameWorld))) {
+			if (GameDirectory.IndexOf(@"\Data\", StringComparison.OrdinalIgnoreCase) > 0 && Directory.Exists(Path.Combine(GameDirectory, "Worlds", GameWorld))) {
 				LoadWorld();
 			}
 		}
@@ -1089,7 +1089,7 @@ namespace BabaIsYou.Views {
 
 			OpenFolderDialog browser = new OpenFolderDialog();
 			browser.Title = "Open World";
-			if (GameDirectory.IndexOf(@"Baba Is You\Data\", StringComparison.OrdinalIgnoreCase) > 0) {
+			if (GameDirectory.IndexOf(@"\Data\", StringComparison.OrdinalIgnoreCase) > 0) {
 				if (Directory.Exists(Path.Combine(GameDirectory, "Worlds"))) {
 					browser.InitialDirectory = Path.Combine(GameDirectory, "Worlds");
 				} else if (Directory.Exists(GameDirectory)) {
@@ -1104,15 +1104,14 @@ namespace BabaIsYou.Views {
 			if (browser.Show(this.Handle) && !string.IsNullOrEmpty(browser.FileName)) {
 				string gameDir = browser.FileName;
 				gameDir = gameDir.Replace('/', '\\');
-				int index = gameDir.IndexOf(@"Baba Is You\Data\Worlds\", StringComparison.OrdinalIgnoreCase);
+				int index = gameDir.IndexOf(@"\Data\Worlds\", StringComparison.OrdinalIgnoreCase);
 				if (index > 0) {
-					GameDirectory = gameDir.Substring(0, index + 17);
-					GameWorld = gameDir.Substring(index + 24);
+					GameDirectory = gameDir.Substring(0, index + 6);
+					GameWorld = gameDir.Substring(index + 13);
 					index = GameWorld.IndexOf('\\');
 					if (index > 0) {
 						GameWorld = GameWorld.Substring(0, index);
 					}
-
 					LoadWorld();
 				} else {
 					MessageBox.Show(this, "Invalid directory. Please verify and try again.", "Invalid World", MessageBoxButtons.OK, MessageBoxIcon.Warning);

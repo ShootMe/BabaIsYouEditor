@@ -18,6 +18,8 @@ namespace BabaIsYou.Map {
 		public byte Number;
 		public byte Style;
 		public byte State;
+		public byte SpriteNum;
+		public byte SpriteNumExtra;
 
 		public override Item Copy() {
 			return new Level() {
@@ -44,7 +46,9 @@ namespace BabaIsYou.Map {
 				Y = Y,
 				Number = Number,
 				Style = Style,
-				State = State
+				State = State,
+				SpriteNum = SpriteNum,
+				SpriteNumExtra = SpriteNumExtra
 			};
 		}
 
