@@ -8,6 +8,12 @@ Simple Level Editor for the game Baba Is You
   - ...\Baba Is You\Data\Worlds\baba
 
 ## Change Log
+  - 1.4.4
+    - Changes
+	  - Changed selector object to be the new object instead of specifying in the ld file
+    - Fixes
+	  - Fixed special objects (level) from causing errors with rule parsing
+
   - 1.4.3
     - Fixes
 	  - Fixed level icons being saved incorrectly

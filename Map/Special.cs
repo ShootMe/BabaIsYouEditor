@@ -15,6 +15,7 @@ namespace BabaIsYou.Map {
 		public Special() {
 			ID = -2;
 			Layer = 150;
+			IsObject = true;
 		}
 		public override Item Copy() {
 			return new Special() {

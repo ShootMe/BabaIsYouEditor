@@ -183,7 +183,11 @@ namespace BabaIsYou.Map {
 			if (selectorX >= 0 && selectorY >= 0 && selectorX < grid.Width && selectorY < grid.Height) {
 				mapBounds.X = xOrig + mapBounds.Width * selectorX;
 				mapBounds.Y = yOrig + mapBounds.Height * selectorY;
-				DrawSprite(grid, g, mapBounds, Item.SELECTOR, palette);
+				Item cursor = null;
+				if (!Reader.DefaultsByName.TryGetValue("cursor", out cursor)) {
+					cursor = Item.SELECTOR;
+				}
+				DrawSprite(grid, g, mapBounds, cursor, palette);
 			}
 		}
 		private static void DrawSpecials(Graphics g, Grid grid, Rectangle bounds, int rowEnd, Palette palette, bool drawLevels, int frameNumber) {

@@ -444,14 +444,14 @@ namespace BabaIsYou.Views {
 			Palette palette = Reader.Palettes[paletteName];
 			int spriteCount = 0;
 			foreach (Item item in Reader.DefaultsByObject.Values) {
-				if (item.ID <= 0 || string.IsNullOrEmpty(item.Sprite)) { continue; }
+				if (item.ID <= 0 || string.IsNullOrEmpty(item.Sprite) || item.Name.Equals("cursor", StringComparison.OrdinalIgnoreCase)) { continue; }
 
 				spriteCount++;
 			}
 
 			int spriteSize = 1;
 			foreach (Item item in Reader.DefaultsByObject.Values) {
-				if (item.ID <= 0 || string.IsNullOrEmpty(item.Sprite)) { continue; }
+				if (item.ID <= 0 || string.IsNullOrEmpty(item.Sprite) || item.Name.Equals("cursor", StringComparison.OrdinalIgnoreCase)) { continue; }
 
 				ItemChange change;
 				Item copy = item.Copy();
@@ -557,7 +557,13 @@ namespace BabaIsYou.Views {
 			if (map == null) { return; }
 
 			listObjects.SelectedItem = null;
-			UpdateCurrentObject(Item.SELECTOR.Copy(), true);
+			Item cursor = null;
+			if (!Reader.DefaultsByName.TryGetValue("cursor", out cursor)) {
+				cursor = Item.SELECTOR.Copy();
+			} else {
+				cursor = cursor.Copy();
+			}
+			UpdateCurrentObject(cursor, true);
 		}
 		private void listObjects_IndexChanged(int index, ListItem item) {
 			UpdateCurrentObject((Item)(item == null ? null : item.Value), true);
