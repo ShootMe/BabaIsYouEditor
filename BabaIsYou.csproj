@@ -237,9 +237,6 @@
     <None Include="Images\path.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Images\selector.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Images\grid.png" />
   </ItemGroup>
   <ItemGroup>

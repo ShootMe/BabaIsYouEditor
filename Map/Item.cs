@@ -27,7 +27,6 @@ namespace BabaIsYou.Map {
 	}
 	public class Item : IComparable, IComparable<Item> {
 		public static Item EMPTY = new Item() { ID = -1, Name = "empty", Object = "empty" };
-		public static Item SELECTOR = new Item() { ID = short.MaxValue, Name = "selector", Object = "selector", Sprite = "grid", Layer = 255, Color = 768, Tiling = 255 };
 		public short ID;
 		public short Grid;
 		public short Position;

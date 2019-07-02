@@ -9,13 +9,12 @@ namespace BabaIsYou.Map {
 	public class Renderer {
 		public static PrivateFontCollection CustomFont;
 		private static Font GlobalFont;
-		private static Bitmap Selector, Petal;
+		private static Bitmap Petal;
 		private static Bitmap SpecialIcon, DownIcon, IdleIcon, LeftIcon, PauseIcon, RightIcon, UndoIcon, UpIcon;
 		public static Bitmap Error;
 		private static Sprite Levels = new Sprite("Level", true);
 
 		static Renderer() {
-			Selector = GetBitmapFromAssembly("BabaIsYou.Images.grid.png");
 			Petal = GetBitmapFromAssembly("BabaIsYou.Images.petal.png");
 			SpecialIcon = GetBitmapFromAssembly("BabaIsYou.Images.special_icon.png");
 			DownIcon = GetBitmapFromAssembly("BabaIsYou.Images.down.png");
@@ -171,24 +170,6 @@ namespace BabaIsYou.Map {
 
 				DrawDirections(g, grid, mapBounds, rowEnd);
 			}
-
-			int selectorX;
-			if (!int.TryParse(grid.Info["general", "selectorX"], out selectorX)) {
-				selectorX = -1;
-			}
-			int selectorY;
-			if (!int.TryParse(grid.Info["general", "selectorY"], out selectorY)) {
-				selectorY = -1;
-			}
-			if (selectorX >= 0 && selectorY >= 0 && selectorX < grid.Width && selectorY < grid.Height) {
-				mapBounds.X = xOrig + mapBounds.Width * selectorX;
-				mapBounds.Y = yOrig + mapBounds.Height * selectorY;
-				Item cursor = null;
-				if (!Reader.DefaultsByName.TryGetValue("cursor", out cursor)) {
-					cursor = Item.SELECTOR;
-				}
-				DrawSprite(grid, g, mapBounds, cursor, palette);
-			}
 		}
 		private static void DrawSpecials(Graphics g, Grid grid, Rectangle bounds, int rowEnd, Palette palette, bool drawLevels, int frameNumber) {
 			int xOrig = bounds.X;
@@ -333,11 +314,7 @@ namespace BabaIsYou.Map {
 			}
 			Bitmap image = null;
 			int frame = ((frameNumber + item.Position) % 3) + 1;
-			if (item.ID == short.MaxValue) {
-				image = Selector;
-			} else {
-				image = sprite[0, frame]?.Image;
-			}
+			image = sprite[0, frame]?.Image;
 			switch ((Tiling)item.Tiling) {
 				case Tiling.Directional:
 				case Tiling.Animated:
