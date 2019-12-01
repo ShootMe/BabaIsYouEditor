@@ -203,3 +203,5 @@ Simple Level Editor for the game Baba Is You
     - Features
 	  - Added ability to add and modify level objects in levels
 	  - Added ability to add path objects in levels
+## Wiki
+The wiki can be viewed **[here](https://github.com/AteurGames/BabaIsYouEditor/wiki)**.
