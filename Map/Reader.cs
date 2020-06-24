@@ -164,9 +164,11 @@ namespace BabaIsYou.Map {
 					SetItemValue(item, obj, value);
 				}
 
-				DefaultsByObject.Add(data, item);
-				DefaultsByName.Add(item.Name, item);
-				DefaultsByID.Add(item.ID, item);
+				if (!DefaultsByName.ContainsKey(item.Name)) {
+					DefaultsByObject.Add(data, item);
+					DefaultsByName.Add(item.Name, item);
+					DefaultsByID.Add(item.ID, item);
+				}
 			}
 
 			DefaultsByObject.Add(Item.EMPTY.Object, Item.EMPTY);
