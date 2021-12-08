@@ -8,6 +8,10 @@ Simple Level Editor for the game Baba Is You
   - ...\Baba Is You\Data\Worlds\baba
 
 ## Change Log
+  - 1.4.7
+    - Fixes
+      - Ability to read DLC levels
+
   - 1.4.5
     - Changes
 	  - Removed selector object button and added it to the object list instead
