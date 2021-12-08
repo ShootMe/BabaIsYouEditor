@@ -118,6 +118,10 @@ namespace BabaIsYou.Map {
                 }
             } else {
                 if (!int.TryParse(name.Substring(sub + 1), out sub)) {
+                    if (spriteName.Equals("icon", StringComparison.OrdinalIgnoreCase)) {
+                        index = 1;
+                        return name;
+                    }
                     return string.Empty;
                 }
                 index = 0;
