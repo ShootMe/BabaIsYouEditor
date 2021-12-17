@@ -381,7 +381,7 @@ namespace BabaIsYou.Map {
 						image = img;
 					}
 				}
-				DrawLevel(g, destination, level, image, color, palette.Colors[level.Color], frameNumber);
+				DrawLevel(g, destination, level, image, palette.Colors[level.ActiveColor], palette.Colors[level.Color], frameNumber);
 			} else {
 				DrawImage(g, image, destination, color, hasSpecialLevel);
 			}
